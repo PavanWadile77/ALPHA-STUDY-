@@ -723,20 +723,27 @@
         }
 
         @media (max-width: 768px) {
-            .brand-logo-container {
-                position: static;
-                width: 100%;
-                justify-content: center;
-                margin-bottom: -10px;
-            }
             .page-container {
                 flex-direction: column;
                 padding: 30px 16px;
                 gap: 24px;
             }
+            .brand-logo-container {
+                position: static;
+                width: 100%;
+                justify-content: center;
+                margin-bottom: -10px;
+                order: 1;
+            }
+            .auth-section {
+                order: 2;
+                width: 100%;
+            }
             .lamp-section {
+                order: 3;
                 max-width: 240px;
                 height: auto;
+                align-self: center;
             }
             .auth-card {
                 padding: 30px 20px;

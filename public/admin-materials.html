@@ -116,6 +116,7 @@
             display: inline-flex; align-items: center; gap: 8px;
             background: var(--primary); color: #fff; text-decoration: none;
             padding: 12px 20px; border-radius: var(--radius-md); font-size: 0.92rem; font-weight: 600;
+            min-height: 44px; justify-content: center;
             transition: all 0.3s ease; box-shadow: 0 4px 14px var(--primary-glow);
         }
         .btn-add-new:hover { background: var(--primary-light); transform: translateY(-2px); }
@@ -130,14 +131,14 @@
         .search-wrapper { position: relative; }
         .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
         .search-input {
-            width: 100%; padding: 11px 16px 11px 42px;
+            width: 100%; padding: 13px 16px 13px 42px;
             background: rgba(0,0,0,0.25); border: 1px solid var(--border-color);
             border-radius: var(--radius-sm); color: #fff; font-size: 0.9rem; outline: none;
             font-family: inherit; transition: border-color 0.2s;
         }
         .search-input:focus { border-color: var(--primary-light); }
         .filter-select {
-            width: 100%; padding: 11px 14px; background: rgba(0,0,0,0.25);
+            width: 100%; padding: 13px 14px; background: rgba(0,0,0,0.25);
             border: 1px solid var(--border-color); border-radius: var(--radius-sm);
             color: #fff; font-size: 0.9rem; outline: none; font-family: inherit;
         }
@@ -264,6 +265,15 @@
             .admin-header { padding: 0 16px; }
             .nav-links { display: none; }
             .filters-card { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 768px) {
+            .dashboard-container { padding: 24px 16px; }
+            .section-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+            .btn-add-new { width: 100%; }
+        }
+        @media (max-width: 480px) {
+            .table-card { padding: 16px 12px; }
+            .filters-card { padding: 16px; }
         }
     </style>
     <script src="auth-status.js" defer></script>
