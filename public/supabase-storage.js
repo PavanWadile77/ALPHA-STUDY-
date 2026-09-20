@@ -51,14 +51,23 @@ export function connectMaterialLinks(container = document) {
     if(!path) return;
     event.preventDefault();
     if(link.dataset.busy) return;
-    link.dataset.busy = 'true'; link.setAttribute('aria-busy','true');
+    link.dataset.busy = 'true'; 
+    link.setAttribute('aria-busy','true');
+    const originalHTML = link.innerHTML;
+    link.innerHTML = '<span>Preparing...</span>';
+    
     try {
       const data = await storageRequest('download', path);
       const destination = new URL(data.url);
       if(destination.origin !== STORAGE_ORIGIN || !destination.pathname.startsWith('/storage/v1/object/sign/study-materials/')) throw new Error('Invalid download link.');
       // Same-tab navigation avoids popup blocking after asynchronous authorization.
       window.location.assign(destination.href);
-    } catch(error) { alert(error.message || 'Unable to open the file.'); }
-    finally { delete link.dataset.busy; link.removeAttribute('aria-busy'); }
+    } catch(error) { 
+      alert(error.message || 'Unable to open the file.'); 
+    } finally { 
+      delete link.dataset.busy; 
+      link.removeAttribute('aria-busy'); 
+      link.innerHTML = originalHTML; 
+    }
   });
 }

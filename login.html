@@ -95,6 +95,37 @@
             transform: translateY(15px);
         }
 
+        .brand-logo-container {
+            position: absolute;
+            top: 40px;
+            left: 40px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 100;
+            user-select: none;
+        }
+
+        .brand-text {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .brand-text-alpha {
+            font-size: 26px;
+            font-weight: 800;
+            color: #f8fafc;
+            letter-spacing: 1.5px;
+        }
+
+        .brand-text-study {
+            font-size: 24px;
+            font-weight: 700;
+            color: #F6C84C;
+            letter-spacing: 0.5px;
+        }
+
         /* ==================================================
            3. LAMP
            ================================================== */
@@ -692,6 +723,12 @@
         }
 
         @media (max-width: 768px) {
+            .brand-logo-container {
+                position: static;
+                width: 100%;
+                justify-content: center;
+                margin-bottom: -10px;
+            }
             .page-container {
                 flex-direction: column;
                 padding: 30px 16px;
@@ -759,6 +796,18 @@
 
     <div class="page-container">
         
+        <!-- BRAND LOGO -->
+        <div class="brand-logo-container">
+            <svg class="brand-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#F6C84C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-label="Education Icon">
+                <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+            </svg>
+            <div class="brand-text">
+                <span class="brand-text-alpha">ALPHA</span>
+                <span class="brand-text-study">STUDY</span>
+            </div>
+        </div>
+
         <!-- LAMP SECTION -->
         <div class="lamp-section">
             <!-- Full lamp is interactive -->
