@@ -16,12 +16,6 @@
             box-sizing: border-box;
         }
 
-        @property --lamp-color {
-            syntax: '<color>';
-            inherits: true;
-            initial-value: #FFD86B;
-        }
-
         :root {
             /* Base Colors */
             --bg-base: #f8fafc;
@@ -35,23 +29,14 @@
             --error-color: #ef4444;
             --success-color: #10b981;
 
-            /* Lamp Unlit Colors */
-            --shade-color-off: #cbd5e1;
-            --pole-color-off: #94a3b8;
-            --face-color: #475569;
+            /* Accent Color */
             --handle-color: #3B82F6;
-            --bulb-color-off: #cbd5e1;
-
-            /* Lamp Active Colors - Updated via JS */
-            --lamp-color: #FFD86B; 
             
-            /* UI colors derived from state */
+            /* UI colors */
             --btn-bg: var(--handle-color);
             --btn-border: var(--handle-color);
             --btn-text: #fff;
             --btn-hover-bg: #2563EB;
-
-            transition: --lamp-color 0.6s ease;
         }
 
         body {
@@ -60,24 +45,12 @@
             font-family: 'Outfit', sans-serif;
             min-height: 100dvh;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             overflow-x: hidden;
             background-image: none;
-            transition: background-image 0.6s ease, background-color 0.6s ease;
-        }
-
-        body.lamp-on {
-            background-color: #f1f5f9;
-            background-image: 
-                radial-gradient(circle at top right, color-mix(in srgb, var(--lamp-color) 15%, transparent), transparent 50%),
-                radial-gradient(circle at bottom left, color-mix(in srgb, var(--lamp-color) 10%, transparent), transparent 50%);
-            
-            /* Update UI colors for subtle lamp reaction */
-            --btn-bg: var(--lamp-color);
-            --btn-border: color-mix(in srgb, var(--lamp-color) 80%, #000);
-            --btn-text: #0f172a;
-            --btn-hover-bg: color-mix(in srgb, var(--lamp-color) 90%, #000);
+            padding: 40px 16px;
         }
 
         /* ==================================================
@@ -85,26 +58,24 @@
            ================================================== */
         .page-container {
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             width: 100%;
-            max-width: 1100px;
-            padding: 40px;
-            gap: 80px;
+            max-width: 420px;
+            gap: 32px;
             animation: elegantFadeIn 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             opacity: 0;
             transform: translateY(15px);
         }
 
         .brand-logo-container {
-            position: absolute;
-            top: 40px;
-            left: 40px;
             display: flex;
             align-items: center;
             gap: 12px;
             z-index: 100;
             user-select: none;
+            justify-content: center;
         }
 
         .brand-text {
@@ -128,146 +99,9 @@
         }
 
         /* ==================================================
-           3. LAMP
-           ================================================== */
-        .lamp-section {
-            flex: 1;
-            max-width: 400px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-
-        .lamp-svg {
-            width: 100%;
-            height: auto;
-            max-height: 500px;
-            overflow: visible;
-            cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
-            outline: none;
-        }
-
-        .lamp-svg:focus-visible {
-            border-radius: 20px;
-            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.4);
-        }
-
-        .lamp-body {
-            transition: filter 0.6s ease;
-        }
-
-        body.lamp-off .lamp-body {
-            filter: brightness(0.95);
-        }
-
-        /* Elements */
-        .shade-dome {
-            fill: var(--shade-color-off);
-            transition: fill 0.6s ease, filter 0.6s ease;
-        }
-
-        .shade-opening {
-            fill: color-mix(in srgb, var(--shade-color-off) 80%, #000);
-            transition: fill 0.6s ease;
-        }
-
-        .metal-part {
-            fill: var(--pole-color-off);
-        }
-
-        /* Face */
-        .face-part {
-            fill: var(--face-color);
-        }
-        .face-stroke {
-            stroke: var(--face-color);
-            fill: none;
-        }
-
-        /* Bulb */
-        .bulb {
-            fill: var(--bulb-color-off);
-            transition: fill 0.6s ease, filter 0.6s ease, opacity 0.6s ease;
-        }
-
-        /* ==================================================
-           4. LIGHTING
-           ================================================== */
-        .beam {
-            opacity: 0;
-            transition: opacity 0.6s ease;
-            filter: blur(16px);
-            pointer-events: none;
-        }
-
-        /* Stop colors animate natively in modern browsers */
-        stop {
-            transition: stop-color 0.6s ease;
-        }
-
-        body.lamp-on .beam {
-            opacity: 1;
-        }
-
-        body.lamp-on .bulb {
-            fill: var(--lamp-color);
-            filter: drop-shadow(0 0 15px var(--lamp-color));
-        }
-
-        body.lamp-on .shade-dome {
-            /* Warm tint to shade when ON */
-            fill: color-mix(in srgb, var(--shade-color-off) 40%, var(--lamp-color));
-            filter: drop-shadow(0 0 25px color-mix(in srgb, var(--lamp-color) 35%, transparent));
-        }
-
-        body.lamp-on .shade-opening {
-            fill: color-mix(in srgb, var(--shade-color-off) 30%, var(--lamp-color));
-        }
-
-        /* ==================================================
-           5. PULL CORD
-           ================================================== */
-        .interactive-cord {
-            cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
-            outline: none;
-        }
-
-        #cord-line, #cord-handle {
-            transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
-            transform-origin: 220px 150px;
-        }
-
-        #cord-handle {
-            fill: var(--handle-color);
-        }
-
-        .interactive-cord:hover #cord-handle {
-            filter: brightness(1.15);
-        }
-
-        .interactive-cord:active #cord-line {
-            transform: scaleY(1.15);
-        }
-
-        .interactive-cord:active #cord-handle {
-            transform: translateY(18px);
-        }
-
-        .interactive-cord:focus-visible #cord-handle {
-            stroke: var(--handle-color);
-            stroke-width: 2px;
-        }
-
-        /* ==================================================
            6. AUTHENTICATION CARD
            ================================================== */
         .auth-section {
-            flex: 1;
-            max-width: 420px;
             width: 100%;
             z-index: 10;
         }
@@ -281,12 +115,7 @@
             transition: all 0.6s ease;
             position: relative;
             overflow: hidden;
-        }
-
-        body.lamp-on .auth-card {
-            border-color: color-mix(in srgb, var(--lamp-color) 50%, var(--card-border));
-            box-shadow: 0 15px 50px color-mix(in srgb, var(--lamp-color) 15%, transparent), 
-                        0 2px 8px rgba(0,0,0,0.05);
+            width: 100%;
         }
 
         .panel {
@@ -351,11 +180,6 @@
             background: #ffffff;
             border-color: var(--handle-color);
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
-        }
-
-        body.lamp-on .input-group input:focus {
-            border-color: var(--lamp-color);
-            box-shadow: 0 0 0 3px color-mix(in srgb, var(--lamp-color) 25%, transparent);
         }
 
         .input-group input::placeholder {
@@ -600,10 +424,6 @@
             outline: none;
         }
 
-        body.lamp-on .form-footer button.link-btn {
-            color: color-mix(in srgb, var(--lamp-color) 80%, #000);
-        }
-
         .form-footer button.link-btn:hover {
             text-decoration: underline;
         }
@@ -641,46 +461,6 @@
         }
 
         /* ==================================================
-           8. COLOR INDICATORS
-           ================================================== */
-        .color-dots {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            margin-top: -10px;
-            z-index: 5;
-            position: relative;
-        }
-
-        .color-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
-            opacity: 0.6;
-            border: 1px solid rgba(0,0,0,0.1);
-        }
-
-        .color-dot:hover {
-            transform: scale(1.2);
-            opacity: 1;
-        }
-
-        .color-dot.active {
-            opacity: 1;
-            transform: scale(1.3);
-            box-shadow: 0 0 0 2px var(--bg-base), 0 0 0 3px currentColor, 0 0 8px currentColor;
-        }
-        
-        .color-dot:focus-visible {
-            outline: none;
-            transform: scale(1.3);
-            box-shadow: 0 0 0 2px var(--text-primary);
-            opacity: 1;
-        }
-
-        /* ==================================================
            9. ANIMATIONS
            ================================================== */
         @keyframes elegantFadeIn {
@@ -696,66 +476,13 @@
             to { transform: rotate(360deg); }
         }
 
-        #lampshade-group {
-            transform-origin: 150px 140px;
-        }
-
-        @keyframes bounceShade {
-            0% { transform: translateY(0); }
-            30% { transform: translateY(-6px); }
-            100% { transform: translateY(0); }
-        }
-        .bounce { animation: bounceShade 0.4s ease; }
-
-        @keyframes flashBulb {
-            0% { filter: brightness(1) drop-shadow(0 0 15px var(--lamp-color)); }
-            50% { filter: brightness(1.6) drop-shadow(0 0 30px var(--lamp-color)); }
-            100% { filter: brightness(1) drop-shadow(0 0 15px var(--lamp-color)); }
-        }
-        .flash { animation: flashBulb 0.4s ease; }
-
         /* ==================================================
            10. RESPONSIVE
            ================================================== */
-        @media (max-width: 850px) {
-            .page-container { gap: 40px; }
-        }
-
-        @media (max-width: 768px) {
-            .page-container {
-                flex-direction: column;
-                padding: 30px 16px;
-                gap: 24px;
-            }
-            .brand-logo-container {
-                position: static;
-                width: 100%;
-                justify-content: center;
-                margin-bottom: 0px;
-                order: 1;
-            }
-            .auth-section {
-                order: 2;
-                width: 100%;
-            }
-            .lamp-section {
-                order: 3;
-                max-width: 240px;
-                height: auto;
-                align-self: center;
-            }
-            .auth-card {
-                padding: 30px 20px;
-                width: 100%;
-                max-width: 100%;
-            }
-            .color-dots {
-                margin-top: -5px;
-            }
-        }
-
         @media (max-width: 430px) {
-            .lamp-section { max-width: 200px; }
+            body {
+                padding: 24px 16px;
+            }
             .auth-card {
                 padding: 24px 16px;
                 border-radius: 20px;
@@ -793,7 +520,7 @@
     </style>
     <script src="auth-status.js" defer></script>
 </head>
-<body class="lamp-off">
+<body>
 
     <!-- AUTH LOADING OVERLAY: Hides content until Firebase resolves auth state -->
     <div id="auth-loading-overlay">
@@ -812,70 +539,6 @@
                 <span class="brand-text-alpha">ALPHA</span>
                 <span class="brand-text-study">STUDY</span>
             </div>
-        </div>
-
-        <!-- LAMP SECTION -->
-        <div class="lamp-section">
-            <!-- Full lamp is interactive -->
-            <svg viewBox="0 0 300 500" class="lamp-svg" id="lamp-container" role="button" aria-label="Interactive Lamp Toggle and Color Cycle" tabindex="0">
-                <defs>
-                    <linearGradient id="beam-gradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stop-color="var(--lamp-color)" stop-opacity="0.8" />
-                        <stop offset="40%" stop-color="var(--lamp-color)" stop-opacity="0.25" />
-                        <stop offset="100%" stop-color="var(--lamp-color)" stop-opacity="0" />
-                    </linearGradient>
-                </defs>
-
-                <!-- Light Beam -->
-                <polygon points="100,165 200,165 380,550 -80,550" fill="url(#beam-gradient)" class="beam" />
-                
-                <g class="lamp-body">
-                    <!-- Base -->
-                    <rect x="100" y="450" width="100" height="16" rx="8" class="metal-part" />
-                    <rect x="135" y="435" width="30" height="15" class="metal-part" />
-                    
-                    <!-- Lower Pole -->
-                    <rect x="144" y="200" width="12" height="240" class="metal-part" rx="6" />
-                    
-                    <!-- Joint -->
-                    <circle cx="150" cy="200" r="14" fill="#64748b" />
-                    <circle cx="150" cy="200" r="6" fill="#475569" />
-                    
-                    <!-- Upper Pole -->
-                    <line x1="150" y1="200" x2="150" y2="140" stroke="var(--pole-color-off)" stroke-width="12" stroke-linecap="round" />
-                    
-                    <!-- Dynamic Bouncing Shade Group -->
-                    <g id="lampshade-group">
-                        <!-- Lampshade Dome -->
-                        <path d="M 50 150 C 50 35 250 35 250 150 Z" class="shade-dome" />
-                        
-                        <!-- Face -->
-                        <g class="face">
-                            <!-- Eyes -->
-                            <circle cx="110" cy="115" r="5" class="face-part" />
-                            <circle cx="111.5" cy="113" r="1.5" fill="#fff" />
-                            <circle cx="190" cy="115" r="5" class="face-part" />
-                            <circle cx="191.5" cy="113" r="1.5" fill="#fff" />
-                            
-                            <!-- Smile -->
-                            <path d="M 138 128 Q 150 138 162 128" class="face-stroke" stroke-width="3.5" stroke-linecap="round" />
-                        </g>
-
-                        <!-- Shade Bottom Opening -->
-                        <ellipse cx="150" cy="150" rx="100" ry="18" class="shade-opening" />
-                        
-                        <!-- Light Bulb Core -->
-                        <circle cx="150" cy="155" r="16" class="bulb" id="bulb-element" />
-
-                        <!-- Pull Cord System (Separate Interaction) -->
-                        <g id="pull-system" class="interactive-cord" role="button" aria-label="Toggle Lamp Power" tabindex="0">
-                            <line id="cord-line" x1="220" y1="150" x2="220" y2="280" stroke="#64748b" stroke-width="3.5" stroke-linecap="round" />
-                            <rect id="cord-handle" x="213" y="280" width="14" height="28" rx="7" />
-                        </g>
-                    </g>
-                </g>
-            </svg>
-            <div class="color-dots" id="color-dots" aria-label="Select Lamp Color"></div>
         </div>
 
         <!-- AUTH SECTION -->
@@ -1106,118 +769,6 @@
             // Only show error if the code is an actual failure (not just no pending redirect)
             if (error.code && error.code !== 'auth/no-auth-event') {
                 showError('googleAuthError', getGoogleErrorMessage(error));
-            }
-        });
-
-        // --------------------------------------------------
-        // 3. LAMP STATE & COLOR CYCLING
-        // --------------------------------------------------
-        const colors = [
-            { name: 'Warm Yellow', hex: '#FFD86B' },
-            { name: 'Soft Orange', hex: '#FF9F68' },
-            { name: 'Coral Pink',  hex: '#FF7A8A' },
-            { name: 'Purple',      hex: '#A78BFA' },
-            { name: 'Electric Blue',hex: '#60A5FA' },
-            { name: 'Cyan',        hex: '#67E8F9' },
-            { name: 'Mint Green',  hex: '#6EE7B7' },
-            { name: 'Soft White',  hex: '#FFF4DC' }
-        ];
-
-        let currentColorIndex = 0;
-        const root = document.documentElement;
-        const body = document.body;
-        
-        const lampSvg = document.getElementById('lamp-container');
-        const pullSystem = document.getElementById('pull-system');
-        const dotsContainer = document.getElementById('color-dots');
-        const shadeGroup = document.getElementById('lampshade-group');
-        const bulbEl = document.getElementById('bulb-element');
-
-        function applyColor(index) {
-            const hex = colors[index].hex;
-            root.style.setProperty('--lamp-color', hex);
-            
-            // update dots UI
-            document.querySelectorAll('.color-dot').forEach((dot, i) => {
-                dot.classList.toggle('active', i === index);
-            });
-        }
-
-        function playLampFeedback() {
-            // Remove animation classes
-            shadeGroup.classList.remove('bounce');
-            bulbEl.classList.remove('flash');
-            
-            // Trigger browser reflow to restart animation
-            void shadeGroup.offsetWidth; 
-            
-            // Add classes back
-            shadeGroup.classList.add('bounce');
-            bulbEl.classList.add('flash');
-        }
-
-        function setLampState(turnOn) {
-            if (turnOn) {
-                body.classList.remove('lamp-off');
-                body.classList.add('lamp-on');
-            } else {
-                body.classList.remove('lamp-on');
-                body.classList.add('lamp-off');
-            }
-        }
-
-        // Initialize indicator dots
-        colors.forEach((c, i) => {
-            const dot = document.createElement('button');
-            dot.className = 'color-dot';
-            dot.style.backgroundColor = c.hex;
-            dot.style.color = c.hex;
-            dot.setAttribute('aria-label', `Select ${c.name} light`);
-            dot.addEventListener('click', (e) => {
-                e.stopPropagation();
-                currentColorIndex = i;
-                applyColor(i);
-                setLampState(true);
-                playLampFeedback();
-            });
-            dotsContainer.appendChild(dot);
-        });
-        
-        // Initial setup
-        applyColor(0);
-
-        // SVG click (entire lamp)
-        lampSvg.addEventListener('click', () => {
-            if (body.classList.contains('lamp-on')) {
-                // Cycle
-                currentColorIndex = (currentColorIndex + 1) % colors.length;
-                applyColor(currentColorIndex);
-            } else {
-                // Turn on
-                setLampState(true);
-            }
-            playLampFeedback();
-        });
-
-        lampSvg.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                lampSvg.click();
-            }
-        });
-
-        // Pull handle click
-        pullSystem.addEventListener('click', (e) => {
-            e.stopPropagation(); // prevent parent SVG click
-            setLampState(!body.classList.contains('lamp-on'));
-            playLampFeedback();
-        });
-
-        pullSystem.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                e.stopPropagation();
-                pullSystem.click();
             }
         });
 
