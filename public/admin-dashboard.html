@@ -206,6 +206,7 @@
         .btn-logout {
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 6px;
             background: rgba(244, 63, 94, 0.1);
             color: var(--accent-rose);
@@ -217,12 +218,18 @@
             cursor: pointer;
             transition: all 0.2s ease;
             font-family: inherit;
+            min-height: 44px;
         }
 
-        .btn-logout:hover {
+        .btn-logout:hover, .btn-logout:focus-visible {
             background: var(--accent-rose);
             color: #fff;
             box-shadow: 0 4px 14px rgba(244, 63, 94, 0.3);
+            outline: none;
+        }
+        
+        .btn-logout:focus-visible {
+            border-color: #fff;
         }
 
         /* --------------------------------------------------
@@ -284,6 +291,7 @@
         .btn-action-primary {
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
             background: var(--primary);
             color: #fff;
@@ -294,17 +302,24 @@
             font-weight: 600;
             transition: all 0.3s ease;
             box-shadow: 0 4px 16px var(--primary-glow);
+            min-height: 44px;
         }
 
-        .btn-action-primary:hover {
+        .btn-action-primary:hover, .btn-action-primary:focus-visible {
             background: var(--primary-light);
             transform: translateY(-2px);
             box-shadow: 0 6px 20px var(--primary-glow);
+            outline: none;
+        }
+        
+        .btn-action-primary:focus-visible {
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5), 0 6px 20px var(--primary-glow);
         }
 
         .btn-action-secondary {
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
             background: rgba(255, 255, 255, 0.05);
             color: var(--text-primary);
@@ -315,10 +330,16 @@
             font-size: 0.95rem;
             font-weight: 500;
             transition: all 0.3s ease;
+            min-height: 44px;
         }
 
-        .btn-action-secondary:hover {
+        .btn-action-secondary:hover, .btn-action-secondary:focus-visible {
             background: rgba(255, 255, 255, 0.1);
+            outline: none;
+        }
+        
+        .btn-action-secondary:focus-visible {
+            border-color: #fff;
         }
 
         /* --------------------------------------------------
@@ -326,23 +347,24 @@
            -------------------------------------------------- */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 20px;
+            gap: 16px;
+            grid-template-columns: repeat(4, 1fr);
         }
 
         .stat-card {
             background: var(--bg-surface);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
-            padding: 24px;
+            padding: 24px 16px;
             display: flex;
             align-items: center;
-            gap: 18px;
+            gap: 16px;
             box-shadow: var(--shadow-card);
             transition: transform 0.2s ease, border-color 0.2s ease;
+            min-height: 92px;
         }
 
-        .stat-card:hover {
+        .stat-card:hover, .stat-card:focus-within {
             transform: translateY(-2px);
             border-color: rgba(255, 255, 255, 0.15);
         }
@@ -534,30 +556,60 @@
         .tag-emerald { background: rgba(16, 185, 129, 0.15); color: #34d399; }
 
         /* Responsive */
-        @media (max-width: 900px) {
+        @media (max-width: 1024px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        
+        @media (max-width: 767px) {
             .admin-header {
                 padding: 0 16px;
+                gap: 12px;
             }
-            .welcome-banner {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 20px;
+            .dashboard-container { 
+                padding: 24px 16px; 
+                width: 100%; 
+                max-width: 100%; 
+                gap: 24px;
             }
-            .nav-links {
-                display: none;
+            .welcome-banner { 
+                flex-direction: column; 
+                align-items: flex-start; 
+                padding: 24px 16px; 
+                gap: 24px; 
+                border-radius: 16px;
             }
-        }
-        @media (max-width: 768px) {
-            .dashboard-container { padding: 24px 16px; }
-            .stats-grid, .cards-grid { grid-template-columns: 1fr; }
-            .admin-details { display: none; }
-            .welcome-text h1 { font-size: 1.5rem; }
+            .welcome-text h1 { font-size: 1.6rem; color: #f8fafc; }
+            .welcome-text p { font-size: 0.95rem; color: #94a3b8; line-height: 1.5; }
+            
             .banner-actions { flex-direction: column; width: 100%; }
             .btn-action-primary, .btn-action-secondary { width: 100%; justify-content: center; }
+            
+            .stats-grid, .cards-grid { grid-template-columns: 1fr; gap: 12px; }
+            .stat-card { padding: 16px; min-height: 92px; }
+            
+            .nav-links { display: none; }
+            
+            .admin-details { 
+                display: flex; 
+                max-width: 90px;
+            }
+            .admin-name { font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+            .admin-email { font-size: 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+            .btn-logout { padding: 10px; min-width: 44px; min-height: 44px; justify-content: center; }
+            .btn-logout-text { display: none; }
+            .brand-title { font-size: 1.1rem; }
+            .admin-badge { padding: 2px 6px; font-size: 0.65rem; }
+            
+            .section-title { font-size: 1.15rem; }
         }
-        @media (max-width: 480px) {
-            .btn-logout { padding: 8px; }
-            .btn-logout svg { margin: 0; }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
         }
     </style>
     <script src="auth-status.js" defer></script>
@@ -608,9 +660,9 @@
                         <span class="admin-email" id="admin-display-email">admin@study.edu</span>
                     </div>
                 </div>
-                <button class="btn-logout" id="btn-admin-logout" title="Sign out from Admin">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-                    Logout
+                <button class="btn-logout" id="btn-admin-logout" title="Sign out from Admin" aria-label="Logout">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                    <span class="btn-logout-text">Logout</span>
                 </button>
             </div>
         </header>
