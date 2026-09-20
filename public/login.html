@@ -1,0 +1,1433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STUDY - Login</title>
+    <meta name="google-signin-client_id" content="151775555113-g3l1dfuavqotb20q1j933d1kd8ovsksu.apps.googleusercontent.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ==================================================
+           1. BASE
+           ================================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @property --lamp-color {
+            syntax: '<color>';
+            inherits: true;
+            initial-value: #FFD86B;
+        }
+
+        :root {
+            /* Base Colors */
+            --bg-base: #0f0f11;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --card-border: rgba(255, 255, 255, 0.08);
+            
+            /* Error / Success */
+            --error-color: #ff5e5e;
+            --success-color: #4ade80;
+
+            /* Lamp Unlit Colors */
+            --shade-color-off: #e8e4db;
+            --pole-color-off: #a3a8b0;
+            --face-color: #333333;
+            --handle-color: #D9775F; /* Coral */
+            --bulb-color-off: #5a5a5a;
+
+            /* Lamp Active Colors - Updated via JS */
+            --lamp-color: #FFD86B; 
+            
+            /* UI colors derived from state */
+            --btn-bg: var(--handle-color);
+            --btn-border: var(--handle-color);
+            --btn-text: #fff;
+            --btn-hover-bg: #e8846a;
+
+            transition: --lamp-color 0.6s ease;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            font-family: 'Outfit', sans-serif;
+            min-height: 100dvh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            background-image: none;
+            transition: background-image 0.6s ease, background-color 0.6s ease;
+        }
+
+        body.lamp-on {
+            background-color: #121010;
+            background-image: 
+                radial-gradient(circle at top right, color-mix(in srgb, var(--lamp-color) 8%, transparent), transparent 50%),
+                radial-gradient(circle at bottom left, color-mix(in srgb, var(--lamp-color) 6%, transparent), transparent 50%);
+            
+            /* Update UI colors for subtle lamp reaction */
+            --btn-bg: color-mix(in srgb, var(--lamp-color) 15%, transparent);
+            --btn-border: color-mix(in srgb, var(--lamp-color) 40%, transparent);
+            --btn-text: var(--text-primary);
+            --btn-hover-bg: color-mix(in srgb, var(--lamp-color) 25%, transparent);
+        }
+
+        /* ==================================================
+           2. LAYOUT
+           ================================================== */
+        .page-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 1100px;
+            padding: 40px;
+            gap: 80px;
+            animation: elegantFadeIn 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+            transform: translateY(15px);
+        }
+
+        /* ==================================================
+           3. LAMP
+           ================================================== */
+        .lamp-section {
+            flex: 1;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .lamp-svg {
+            width: 100%;
+            height: auto;
+            max-height: 500px;
+            overflow: visible;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            outline: none;
+        }
+
+        .lamp-svg:focus-visible {
+            border-radius: 20px;
+            box-shadow: 0 0 0 4px rgba(255,255,255,0.2);
+        }
+
+        .lamp-body {
+            transition: filter 0.6s ease;
+        }
+
+        body.lamp-off .lamp-body {
+            filter: brightness(0.7);
+        }
+
+        /* Elements */
+        .shade-dome {
+            fill: var(--shade-color-off);
+            transition: fill 0.6s ease, filter 0.6s ease;
+        }
+
+        .shade-opening {
+            fill: color-mix(in srgb, var(--shade-color-off) 80%, #000);
+            transition: fill 0.6s ease;
+        }
+
+        .metal-part {
+            fill: var(--pole-color-off);
+        }
+
+        /* Face */
+        .face-part {
+            fill: var(--face-color);
+        }
+        .face-stroke {
+            stroke: var(--face-color);
+            fill: none;
+        }
+
+        /* Bulb */
+        .bulb {
+            fill: var(--bulb-color-off);
+            transition: fill 0.6s ease, filter 0.6s ease, opacity 0.6s ease;
+        }
+
+        /* ==================================================
+           4. LIGHTING
+           ================================================== */
+        .beam {
+            opacity: 0;
+            transition: opacity 0.6s ease;
+            filter: blur(16px);
+            pointer-events: none;
+        }
+
+        /* Stop colors animate natively in modern browsers */
+        stop {
+            transition: stop-color 0.6s ease;
+        }
+
+        body.lamp-on .beam {
+            opacity: 1;
+        }
+
+        body.lamp-on .bulb {
+            fill: var(--lamp-color);
+            filter: drop-shadow(0 0 15px var(--lamp-color));
+        }
+
+        body.lamp-on .shade-dome {
+            /* Warm tint to shade when ON */
+            fill: color-mix(in srgb, var(--shade-color-off) 80%, var(--lamp-color));
+            filter: drop-shadow(0 0 25px color-mix(in srgb, var(--lamp-color) 25%, transparent));
+        }
+
+        body.lamp-on .shade-opening {
+            fill: color-mix(in srgb, var(--shade-color-off) 60%, var(--lamp-color));
+        }
+
+        /* ==================================================
+           5. PULL CORD
+           ================================================== */
+        .interactive-cord {
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            outline: none;
+        }
+
+        #cord-line, #cord-handle {
+            transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+            transform-origin: 220px 150px;
+        }
+
+        #cord-handle {
+            fill: var(--handle-color);
+        }
+
+        .interactive-cord:hover #cord-handle {
+            filter: brightness(1.15);
+        }
+
+        .interactive-cord:active #cord-line {
+            transform: scaleY(1.15);
+        }
+
+        .interactive-cord:active #cord-handle {
+            transform: translateY(18px);
+        }
+
+        .interactive-cord:focus-visible #cord-handle {
+            stroke: #fff;
+            stroke-width: 2px;
+        }
+
+        /* ==================================================
+           6. AUTHENTICATION CARD
+           ================================================== */
+        .auth-section {
+            flex: 1;
+            max-width: 420px;
+            width: 100%;
+            z-index: 10;
+        }
+
+        .auth-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 22px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            transition: all 0.6s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body.lamp-on .auth-card {
+            border-color: color-mix(in srgb, var(--lamp-color) 35%, transparent);
+            box-shadow: 0 15px 50px color-mix(in srgb, var(--lamp-color) 12%, transparent), 
+                        inset 0 0 25px color-mix(in srgb, var(--lamp-color) 8%, transparent);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .panel {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .panel.active {
+            display: block;
+        }
+
+        .panel h2 {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+        }
+
+        .panel .subtitle {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        /* ==================================================
+           7. FORMS
+           ================================================== */
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            color: #ffffff;
+            -webkit-text-fill-color: #ffffff;
+            caret-color: #ffffff;
+            font-size: 1rem;
+            font-family: inherit;
+            outline: none;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+            position: relative;
+            z-index: 2;
+        }
+
+        .input-group input:focus {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--handle-color);
+            box-shadow: 0 0 0 3px rgba(217, 119, 95, 0.15);
+        }
+
+        body.lamp-on .input-group input:focus {
+            border-color: color-mix(in srgb, var(--lamp-color) 80%, transparent);
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--lamp-color) 20%, transparent);
+        }
+
+        .input-group input::placeholder {
+            color: #94a3b8;
+            -webkit-text-fill-color: #94a3b8;
+            opacity: 1;
+        }
+
+        /* Password Input Visibility & Masking Fix (Desktop & Mobile/Android Chrome) */
+        #password,
+        input[type="password"] {
+            color: #ffffff !important;
+            -webkit-text-fill-color: #ffffff !important;
+            caret-color: #ffffff !important;
+            opacity: 1 !important;
+            font-size: 1rem !important;
+            position: relative;
+            z-index: 2;
+            padding-right: 52px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            letter-spacing: 0.12em;
+            -webkit-text-security: disc;
+        }
+
+        #password[type="text"],
+        input[type="text"].pwd-revealed {
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            letter-spacing: normal;
+            -webkit-text-security: none;
+        }
+
+        #password::placeholder,
+        input[type="password"]::placeholder {
+            color: #94a3b8;
+            -webkit-text-fill-color: #94a3b8;
+            opacity: 1;
+            font-family: 'Outfit', sans-serif;
+            letter-spacing: normal;
+        }
+
+        /* Prevent Chrome Autofill from hiding text or distorting colors */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover, 
+        input:-webkit-autofill:focus,
+        input:-webkit-autofill:active {
+            -webkit-text-fill-color: #ffffff !important;
+            -webkit-box-shadow: 0 0 0 1000px #1a1a1f inset !important;
+            caret-color: #ffffff !important;
+            transition: background-color 5000s ease-in-out 0s;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 14px;
+            top: 38px;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.3s;
+            outline: none;
+            border-radius: 6px;
+            z-index: 3;
+        }
+
+        .password-toggle:hover, .password-toggle:focus-visible {
+            color: var(--text-primary);
+        }
+        
+        .password-toggle:focus-visible {
+            box-shadow: 0 0 0 2px var(--handle-color);
+        }
+
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+            font-size: 0.9rem;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            user-select: none;
+        }
+
+        .checkbox-group input {
+            accent-color: var(--handle-color);
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .forgot-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .forgot-link:hover {
+            color: var(--text-primary);
+            text-decoration: underline;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            width: 100%;
+            padding: 15px;
+            background-color: var(--btn-bg);
+            color: var(--btn-text);
+            border: 1px solid var(--btn-border);
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            font-family: inherit;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background-color: var(--btn-hover-bg);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px color-mix(in srgb, var(--btn-border) 40%, transparent);
+        }
+
+        .btn-primary:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .btn-primary:disabled {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.4);
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        
+        .btn-primary:focus-visible {
+            outline: 2px solid #fff;
+            outline-offset: 2px;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            color: var(--text-secondary);
+            margin: 24px 0;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .divider::before { margin-right: 15px; }
+        .divider::after { margin-left: 15px; }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 14px;
+            background-color: transparent;
+            color: var(--text-primary);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            font-family: inherit;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .btn-secondary:focus-visible {
+            outline: 2px solid #fff;
+            outline-offset: 2px;
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 28px;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+
+        /* Standalone link button - used outside form-footer (e.g. Forgot Password) */
+        button.link-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-family: inherit;
+            font-size: inherit;
+            cursor: pointer;
+            transition: color 0.3s;
+            outline: none;
+            padding: 0;
+        }
+        button.link-btn:hover, button.link-btn:focus-visible {
+            color: var(--text-primary);
+            text-decoration: underline;
+        }
+        button.link-btn:focus-visible {
+            box-shadow: 0 0 0 2px var(--handle-color);
+            border-radius: 2px;
+        }
+
+        .form-footer button.link-btn {
+            background: none;
+            border: none;
+            color: var(--handle-color);
+            font-weight: 600;
+            font-family: inherit;
+            font-size: inherit;
+            cursor: pointer;
+            margin-left: 4px;
+            transition: color 0.3s;
+            outline: none;
+        }
+
+        body.lamp-on .form-footer button.link-btn {
+            color: var(--lamp-color);
+        }
+
+        .form-footer button.link-btn:hover {
+            text-decoration: underline;
+        }
+        .form-footer button.link-btn:focus-visible {
+            text-decoration: underline;
+        }
+
+        /* Status Messages */
+        .msg-error {
+            color: var(--error-color);
+            font-size: 0.85rem;
+            margin-top: 6px;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .msg-success {
+            color: var(--success-color);
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            display: none;
+            animation: fadeIn 0.3s ease;
+            background: rgba(74, 222, 128, 0.1);
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(74, 222, 128, 0.2);
+        }
+
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        /* ==================================================
+           8. COLOR INDICATORS
+           ================================================== */
+        .color-dots {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: -10px;
+            z-index: 5;
+            position: relative;
+        }
+
+        .color-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
+            opacity: 0.4;
+        }
+
+        .color-dot:hover {
+            transform: scale(1.3);
+            opacity: 0.8;
+        }
+
+        .color-dot.active {
+            opacity: 1;
+            transform: scale(1.4);
+            box-shadow: 0 0 0 2px var(--bg-base), 0 0 0 3px currentColor, 0 0 10px currentColor;
+        }
+        
+        .color-dot:focus-visible {
+            outline: none;
+            transform: scale(1.4);
+            box-shadow: 0 0 0 2px #fff;
+            opacity: 1;
+        }
+
+        /* ==================================================
+           9. ANIMATIONS
+           ================================================== */
+        @keyframes elegantFadeIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        #lampshade-group {
+            transform-origin: 150px 140px;
+        }
+
+        @keyframes bounceShade {
+            0% { transform: translateY(0); }
+            30% { transform: translateY(-6px); }
+            100% { transform: translateY(0); }
+        }
+        .bounce { animation: bounceShade 0.4s ease; }
+
+        @keyframes flashBulb {
+            0% { filter: brightness(1) drop-shadow(0 0 15px var(--lamp-color)); }
+            50% { filter: brightness(1.6) drop-shadow(0 0 30px var(--lamp-color)); }
+            100% { filter: brightness(1) drop-shadow(0 0 15px var(--lamp-color)); }
+        }
+        .flash { animation: flashBulb 0.4s ease; }
+
+        /* ==================================================
+           10. RESPONSIVE
+           ================================================== */
+        @media (max-width: 850px) {
+            .page-container { gap: 40px; }
+        }
+
+        @media (max-width: 768px) {
+            .page-container {
+                flex-direction: column;
+                padding: 30px 16px;
+                gap: 24px;
+            }
+            .lamp-section {
+                max-width: 240px;
+                height: auto;
+            }
+            .auth-card {
+                padding: 30px 20px;
+                width: 100%;
+                max-width: 100%;
+            }
+            .color-dots {
+                margin-top: -5px;
+            }
+        }
+
+        @media (max-width: 430px) {
+            .lamp-section { max-width: 200px; }
+            .auth-card {
+                padding: 24px 16px;
+                border-radius: 20px;
+            }
+            .panel h2 { font-size: 1.75rem; }
+            .input-group input, .btn-primary, .btn-secondary {
+                min-height: 48px; /* Touch target size */
+            }
+        }
+    </style>
+    <style>
+        /* AUTH LOADING OVERLAY */
+        #auth-loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-base);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.4s ease;
+        }
+        #auth-loading-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .auth-loader-ring {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top-color: var(--handle-color);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+    </style>
+    <script src="auth-status.js" defer></script>
+</head>
+<body class="lamp-off">
+
+    <!-- AUTH LOADING OVERLAY: Hides content until Firebase resolves auth state -->
+    <div id="auth-loading-overlay">
+        <div class="auth-loader-ring"></div>
+    </div>
+
+    <div class="page-container">
+        
+        <!-- LAMP SECTION -->
+        <div class="lamp-section">
+            <!-- Full lamp is interactive -->
+            <svg viewBox="0 0 300 500" class="lamp-svg" id="lamp-container" role="button" aria-label="Interactive Lamp Toggle and Color Cycle" tabindex="0">
+                <defs>
+                    <linearGradient id="beam-gradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="var(--lamp-color)" stop-opacity="0.8" />
+                        <stop offset="40%" stop-color="var(--lamp-color)" stop-opacity="0.25" />
+                        <stop offset="100%" stop-color="var(--lamp-color)" stop-opacity="0" />
+                    </linearGradient>
+                </defs>
+
+                <!-- Light Beam -->
+                <polygon points="100,165 200,165 380,550 -80,550" fill="url(#beam-gradient)" class="beam" />
+                
+                <g class="lamp-body">
+                    <!-- Base -->
+                    <rect x="100" y="450" width="100" height="16" rx="8" class="metal-part" />
+                    <rect x="135" y="435" width="30" height="15" class="metal-part" />
+                    
+                    <!-- Lower Pole -->
+                    <rect x="144" y="200" width="12" height="240" class="metal-part" rx="6" />
+                    
+                    <!-- Joint -->
+                    <circle cx="150" cy="200" r="14" fill="#64748b" />
+                    <circle cx="150" cy="200" r="6" fill="#475569" />
+                    
+                    <!-- Upper Pole -->
+                    <line x1="150" y1="200" x2="150" y2="140" stroke="var(--pole-color-off)" stroke-width="12" stroke-linecap="round" />
+                    
+                    <!-- Dynamic Bouncing Shade Group -->
+                    <g id="lampshade-group">
+                        <!-- Lampshade Dome -->
+                        <path d="M 50 150 C 50 35 250 35 250 150 Z" class="shade-dome" />
+                        
+                        <!-- Face -->
+                        <g class="face">
+                            <!-- Eyes -->
+                            <circle cx="110" cy="115" r="5" class="face-part" />
+                            <circle cx="111.5" cy="113" r="1.5" fill="#fff" />
+                            <circle cx="190" cy="115" r="5" class="face-part" />
+                            <circle cx="191.5" cy="113" r="1.5" fill="#fff" />
+                            
+                            <!-- Smile -->
+                            <path d="M 138 128 Q 150 138 162 128" class="face-stroke" stroke-width="3.5" stroke-linecap="round" />
+                        </g>
+
+                        <!-- Shade Bottom Opening -->
+                        <ellipse cx="150" cy="150" rx="100" ry="18" class="shade-opening" />
+                        
+                        <!-- Light Bulb Core -->
+                        <circle cx="150" cy="155" r="16" class="bulb" id="bulb-element" />
+
+                        <!-- Pull Cord System (Separate Interaction) -->
+                        <g id="pull-system" class="interactive-cord" role="button" aria-label="Toggle Lamp Power" tabindex="0">
+                            <line id="cord-line" x1="220" y1="150" x2="220" y2="280" stroke="#64748b" stroke-width="3.5" stroke-linecap="round" />
+                            <rect id="cord-handle" x="213" y="280" width="14" height="28" rx="7" />
+                        </g>
+                    </g>
+                </g>
+            </svg>
+            <div class="color-dots" id="color-dots" aria-label="Select Lamp Color"></div>
+        </div>
+
+        <!-- AUTH SECTION -->
+        <div class="auth-section">
+            <div class="auth-card">
+                
+                <!-- 1. LOGIN PANEL -->
+                <div id="panel-login" class="panel active">
+                    <form id="form-login">
+                        <h2>Welcome Back</h2>
+                        <p class="subtitle">Sign in to continue studying</p>
+
+                        <div class="input-group">
+                            <label for="login-email">Email</label>
+                            <input type="email" id="login-email" placeholder="john@example.com" autocomplete="username">
+                            <span class="msg-error" id="err-login-email" aria-live="polite"></span>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="password">Password</label>
+                            <input
+                              type="password"
+                              id="password"
+                              placeholder="Enter your password"
+                              autocomplete="current-password"
+                            >
+                            <button type="button" class="password-toggle" id="toggle-login-pwd" aria-label="Show password">
+                                <!-- Eye Icon -->
+                                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </button>
+                            <span class="msg-error" id="err-password" aria-live="polite"></span>
+                        </div>
+
+                        <div class="form-row">
+                            <label class="checkbox-group">
+                                <input type="checkbox" id="remember-me" checked>
+                                <span>Remember me</span>
+                            </label>
+                            <button type="button" class="link-btn forgot-link" id="nav-to-forgot">Forgot Password?</button>
+                        </div>
+
+                        <span class="msg-error" id="err-login-general" style="margin-bottom: 12px; display:block;" aria-live="polite"></span>
+
+                        <button type="submit" class="btn-primary" id="btn-login">
+                            <span class="btn-text">Login</span>
+                            <span class="spinner" style="display:none;"></span>
+                        </button>
+
+                        <div class="divider">OR</div>
+
+                        <div id="googleAuthError" class="msg-error" aria-live="polite" style="margin-bottom: 12px; display:none;"></div>
+                        <button type="button" class="btn-secondary" id="googleLoginBtn">
+                            <svg viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                            </svg>
+                            <span class="btn-text">Continue with Google</span>
+                            <span class="spinner" style="display:none;"></span>
+                        </button>
+
+                        <div class="form-footer">
+                            Don't have an account? <button type="button" class="link-btn" id="nav-to-signup">Sign Up</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- 2. SIGNUP PANEL -->
+                <div id="panel-signup" class="panel">
+                    <form id="form-signup">
+                        <h2>Create Account</h2>
+                        <p class="subtitle">Join us and start studying</p>
+                        
+                        <div class="input-group">
+                            <label for="signup-name">Full Name</label>
+                            <input type="text" id="signup-name" placeholder="John Doe" autocomplete="name">
+                            <span class="msg-error" id="err-signup-name"></span>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="signup-email">Email</label>
+                            <input type="email" id="signup-email" placeholder="john@example.com" autocomplete="email">
+                            <span class="msg-error" id="err-signup-email"></span>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="signup-password">Password</label>
+                            <input type="password" id="signup-password" placeholder="••••••••" autocomplete="new-password">
+                            <button type="button" class="password-toggle" id="toggle-signup-pwd" aria-label="Show password">
+                                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </button>
+                            <span class="msg-error" id="err-signup-password"></span>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="signup-confirm">Confirm Password</label>
+                            <input type="password" id="signup-confirm" placeholder="••••••••" autocomplete="new-password">
+                            <button type="button" class="password-toggle" id="toggle-signup-confirm" aria-label="Show password">
+                                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </button>
+                            <span class="msg-error" id="err-signup-confirm"></span>
+                        </div>
+
+                        <span class="msg-error" id="err-signup-general" style="margin-bottom: 12px; display:block;"></span>
+
+                        <button type="submit" class="btn-primary" id="btn-signup" style="margin-top: 10px;">
+                            <span class="btn-text">Create Account</span>
+                            <span class="spinner" style="display:none;"></span>
+                        </button>
+
+                        <div class="form-footer">
+                            Already have an account? <button type="button" class="link-btn" id="nav-to-login">Sign In</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- 3. FORGOT PASSWORD PANEL -->
+                <div id="panel-forgot" class="panel">
+                    <form id="form-forgot">
+                        <h2>Reset Password</h2>
+                        <p class="subtitle">Enter your email and we'll send you a password reset link.</p>
+                        
+                        <div class="msg-success" id="msg-forgot-success" aria-live="polite"></div>
+
+                        <div class="input-group">
+                            <label for="forgot-email">Email</label>
+                            <input type="email" id="forgot-email" placeholder="john@example.com" autocomplete="email">
+                            <span class="msg-error" id="err-forgot-email"></span>
+                        </div>
+
+                        <span class="msg-error" id="err-forgot-general" style="margin-bottom: 12px; display:block;"></span>
+
+                        <button type="submit" class="btn-primary" id="btn-forgot" style="margin-top: 10px;">
+                            <span class="btn-text">Send Reset Link</span>
+                            <span class="spinner" style="display:none;"></span>
+                        </button>
+
+                        <div class="form-footer">
+                            <button type="button" class="link-btn" id="nav-to-login-from-forgot">Back to Login</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================================================
+         SCRIPT SECTIONS
+         ================================================== -->
+    <script type="module">
+        // --------------------------------------------------
+        // 1. FIREBASE INITIALIZATION & IMPORTS
+        // --------------------------------------------------
+        import { 
+            auth,
+            onAuthStateChanged,
+            signInWithEmailAndPassword,
+            createUserWithEmailAndPassword,
+            updateProfile,
+            sendPasswordResetEmail,
+            setPersistence,
+            browserLocalPersistence,
+            browserSessionPersistence,
+            GoogleAuthProvider,
+            signInWithPopup,
+            signInWithRedirect,
+            getRedirectResult
+        } from "./firebase-config.js";
+
+        // --------------------------------------------------
+        // GOOGLE PROVIDER SETUP
+        // --------------------------------------------------
+        const provider = new GoogleAuthProvider();
+        provider.setCustomParameters({
+            prompt: "select_account"
+        });
+
+
+
+        // --------------------------------------------------
+        // 2. AUTHENTICATION STATE & ROUTING
+        // --------------------------------------------------
+        let isRouting = false;
+        let creatingAccount = false;
+        const overlay = document.getElementById('auth-loading-overlay');
+
+        /**
+         * Routes authenticated user to the student portal.
+         * All logins from this page go to choose-path.html.
+         * Admins who need to manage content must use admin-login.html.
+         */
+        function routeAuthenticatedUser(user) {
+            if (!user || isRouting || creatingAccount) return;
+            isRouting = true;
+            window.location.replace("choose-path.html");
+        }
+
+        // Auth state listener — resolves session on page load
+        onAuthStateChanged(auth, (user) => {
+            window.dispatchEvent(new Event("study-auth-ready"));
+            // Hide the loading overlay regardless of login state
+            overlay.classList.add('hidden');
+            setTimeout(() => { overlay.style.display = 'none'; }, 450);
+
+            if (user) {
+                // User is already logged in — redirect immediately
+                routeAuthenticatedUser(user);
+            }
+        });
+
+        // Handle redirect result for Google sign-in (after signInWithRedirect)
+        getRedirectResult(auth).then((result) => {
+            if (result && result.user) {
+                routeAuthenticatedUser(result.user);
+            }
+        }).catch((error) => {
+            // Only show error if the code is an actual failure (not just no pending redirect)
+            if (error.code && error.code !== 'auth/no-auth-event') {
+                showError('googleAuthError', getGoogleErrorMessage(error));
+            }
+        });
+
+        // --------------------------------------------------
+        // 3. LAMP STATE & COLOR CYCLING
+        // --------------------------------------------------
+        const colors = [
+            { name: 'Warm Yellow', hex: '#FFD86B' },
+            { name: 'Soft Orange', hex: '#FF9F68' },
+            { name: 'Coral Pink',  hex: '#FF7A8A' },
+            { name: 'Purple',      hex: '#A78BFA' },
+            { name: 'Electric Blue',hex: '#60A5FA' },
+            { name: 'Cyan',        hex: '#67E8F9' },
+            { name: 'Mint Green',  hex: '#6EE7B7' },
+            { name: 'Soft White',  hex: '#FFF4DC' }
+        ];
+
+        let currentColorIndex = 0;
+        const root = document.documentElement;
+        const body = document.body;
+        
+        const lampSvg = document.getElementById('lamp-container');
+        const pullSystem = document.getElementById('pull-system');
+        const dotsContainer = document.getElementById('color-dots');
+        const shadeGroup = document.getElementById('lampshade-group');
+        const bulbEl = document.getElementById('bulb-element');
+
+        function applyColor(index) {
+            const hex = colors[index].hex;
+            root.style.setProperty('--lamp-color', hex);
+            
+            // update dots UI
+            document.querySelectorAll('.color-dot').forEach((dot, i) => {
+                dot.classList.toggle('active', i === index);
+            });
+        }
+
+        function playLampFeedback() {
+            // Remove animation classes
+            shadeGroup.classList.remove('bounce');
+            bulbEl.classList.remove('flash');
+            
+            // Trigger browser reflow to restart animation
+            void shadeGroup.offsetWidth; 
+            
+            // Add classes back
+            shadeGroup.classList.add('bounce');
+            bulbEl.classList.add('flash');
+        }
+
+        function setLampState(turnOn) {
+            if (turnOn) {
+                body.classList.remove('lamp-off');
+                body.classList.add('lamp-on');
+            } else {
+                body.classList.remove('lamp-on');
+                body.classList.add('lamp-off');
+            }
+        }
+
+        // Initialize indicator dots
+        colors.forEach((c, i) => {
+            const dot = document.createElement('button');
+            dot.className = 'color-dot';
+            dot.style.backgroundColor = c.hex;
+            dot.style.color = c.hex;
+            dot.setAttribute('aria-label', `Select ${c.name} light`);
+            dot.addEventListener('click', (e) => {
+                e.stopPropagation();
+                currentColorIndex = i;
+                applyColor(i);
+                setLampState(true);
+                playLampFeedback();
+            });
+            dotsContainer.appendChild(dot);
+        });
+        
+        // Initial setup
+        applyColor(0);
+
+        // SVG click (entire lamp)
+        lampSvg.addEventListener('click', () => {
+            if (body.classList.contains('lamp-on')) {
+                // Cycle
+                currentColorIndex = (currentColorIndex + 1) % colors.length;
+                applyColor(currentColorIndex);
+            } else {
+                // Turn on
+                setLampState(true);
+            }
+            playLampFeedback();
+        });
+
+        lampSvg.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                lampSvg.click();
+            }
+        });
+
+        // Pull handle click
+        pullSystem.addEventListener('click', (e) => {
+            e.stopPropagation(); // prevent parent SVG click
+            setLampState(!body.classList.contains('lamp-on'));
+            playLampFeedback();
+        });
+
+        pullSystem.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                e.stopPropagation();
+                pullSystem.click();
+            }
+        });
+
+        // --------------------------------------------------
+        // 4. UI / PANEL SWITCHING
+        // --------------------------------------------------
+        function switchPanel(panelId) {
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            document.getElementById(panelId).classList.add('active');
+            // Clear all errors and success messages when switching
+            document.querySelectorAll('.msg-error').forEach(el => { el.textContent = ''; el.style.display = 'none'; });
+            document.querySelectorAll('.msg-success').forEach(el => el.style.display = 'none');
+        }
+
+        document.getElementById('nav-to-signup').addEventListener('click', () => switchPanel('panel-signup'));
+        document.getElementById('nav-to-login').addEventListener('click', () => {
+            switchPanel('panel-login');
+            // Reset login heading when coming back from signup
+            document.querySelector('#form-login h2').textContent = 'Welcome Back';
+        });
+        document.getElementById('nav-to-forgot').addEventListener('click', () => switchPanel('panel-forgot'));
+        document.getElementById('nav-to-login-from-forgot').addEventListener('click', () => {
+            switchPanel('panel-login');
+            document.querySelector('#form-login h2').textContent = 'Welcome Back';
+        });
+
+        // No admin toggle on user login page.
+        // Admin login is available at admin-login.html (direct URL only).
+
+        // --------------------------------------------------
+        // 5. PASSWORD TOGGLE
+        // --------------------------------------------------
+        const iconEye = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+        </svg>`;
+        
+        const iconEyeSlash = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+            <line x1="1" y1="1" x2="23" y2="23"></line>
+        </svg>`;
+
+        function setupPwdToggle(btnId, inputId) {
+            const btn = document.getElementById(btnId);
+            const input = document.getElementById(inputId);
+            if (!btn || !input) return;
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const isPwd = input.type === 'password';
+                input.type = isPwd ? 'text' : 'password';
+                input.classList.toggle('pwd-revealed', isPwd);
+                btn.innerHTML = isPwd ? iconEyeSlash : iconEye;
+                btn.setAttribute('aria-label', isPwd ? 'Hide password' : 'Show password');
+            });
+        }
+        setupPwdToggle('toggle-login-pwd', 'password');
+        setupPwdToggle('toggle-signup-pwd', 'signup-password');
+        setupPwdToggle('toggle-signup-confirm', 'signup-confirm');
+
+        // --------------------------------------------------
+        // 6. VALIDATION & ERROR HELPERS
+        // --------------------------------------------------
+        function showError(id, msg) {
+            const el = document.getElementById(id);
+            if(el) {
+                el.textContent = msg;
+                el.style.display = 'block';
+            }
+        }
+        function clearError(id) {
+            const el = document.getElementById(id);
+            if(el) {
+                el.textContent = '';
+                el.style.display = 'none';
+            }
+        }
+        // Auto clear error on input
+        document.querySelectorAll('input').forEach(inp => {
+            inp.addEventListener('input', () => {
+                clearError(`err-${inp.id}`);
+                // also clear general errors on that form
+                const form = inp.closest('form');
+                if(form) {
+                    const generalError = form.querySelector('[id$="-general"]');
+                    if(generalError) clearError(generalError.id);
+                }
+            });
+        });
+
+        function isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        function getFriendlyErrorMessage(error) {
+            const code = error.code || '';
+            if (code === 'auth/invalid-email') return 'Please enter a valid email address.';
+            if (code === 'auth/invalid-credential' || code === 'auth/wrong-password' || code === 'auth/user-not-found') return 'Incorrect email or password.';
+            if (code === 'auth/user-disabled') return 'This account has been disabled.';
+            if (code === 'auth/too-many-requests') return 'Too many attempts. Please try again later.';
+            if (code === 'auth/network-request-failed') return 'Network error. Please check your connection.';
+            if (code === 'auth/email-already-in-use') return 'An account with this email already exists.';
+            if (code === 'auth/weak-password') return 'Password should be at least 6 characters.';
+            return 'An unexpected error occurred. Please try again.';
+        }
+
+        function getGoogleErrorMessage(error) {
+            console.error("Google Auth Error:", error);
+            const code = error.code || '';
+            if (code === 'auth/popup-closed-by-user') return 'Google sign-in was cancelled.';
+            if (code === 'auth/account-exists-with-different-credential') return 'An account already exists with this email using another sign-in method.';
+            if (code === 'auth/network-request-failed') return 'Please check your internet connection and try again.';
+            if (code === 'auth/unauthorized-domain') return 'This domain is not authorized for Google sign-in. Check Firebase Console.';
+            if (code === 'auth/operation-not-allowed') return 'Google sign-in is not enabled for this project.';
+            return `Google sign-in could not be completed. Please try again. (${code})`;
+        }
+
+        function setLoading(btnId, isLoading, text) {
+            const btn = document.getElementById(btnId);
+            const spanText = btn.querySelector('.btn-text');
+            const spinner = btn.querySelector('.spinner');
+            const icon = btn.querySelector('svg');
+            
+            btn.disabled = isLoading;
+            if(isLoading) {
+                btn.dataset.originalText = spanText.textContent;
+                spanText.textContent = text;
+                spinner.style.display = 'block';
+                if (icon && btnId === 'googleLoginBtn') icon.style.display = 'none';
+            } else {
+                spanText.textContent = btn.dataset.originalText || text;
+                spinner.style.display = 'none';
+                if (icon && btnId === 'googleLoginBtn') icon.style.display = 'block';
+            }
+        }
+
+        // --------------------------------------------------
+        // 7. FIREBASE AUTH LOGIC
+        // --------------------------------------------------
+
+        // LOGIN (Email & Password - Handles both Admin & Student)
+        document.getElementById('form-login').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value.trim();
+            const passwordInput = document.getElementById('password');
+            const password = passwordInput.value;
+            const rememberMe = document.getElementById('remember-me').checked;
+
+            let valid = true;
+            if (!email) { showError('err-login-email', 'Email is required.'); valid = false; }
+            else if (!isValidEmail(email)) { showError('err-login-email', 'Invalid email format.'); valid = false; }
+            if (!password) { showError('err-password', 'Password is required.'); valid = false; }
+
+            if (!valid) return;
+
+            setLoading('btn-login', true, 'Logging in...');
+            
+            try {
+                const persistence = rememberMe ? browserLocalPersistence : browserSessionPersistence;
+                await setPersistence(auth, persistence);
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                await routeAuthenticatedUser(userCredential.user);
+            } catch (error) {
+                showError('err-login-general', getFriendlyErrorMessage(error));
+                setLoading('btn-login', false, 'Login');
+            }
+        });
+
+        // --------------------------------------------------
+        // GOOGLE SIGN IN (Students & Admins)
+        // --------------------------------------------------
+        document.getElementById('googleLoginBtn').addEventListener('click', async () => {
+            if (window.location.protocol === 'file:') {
+                showError('googleAuthError', 'Google Sign-In requires a web server (http/https). Please run this via Live Server, not as a local file.');
+                return;
+            }
+
+            setLoading('googleLoginBtn', true, 'Connecting...');
+            clearError('googleAuthError');
+
+            try {
+                const result = await signInWithPopup(auth, provider);
+                await routeAuthenticatedUser(result.user);
+            } catch (error) {
+                console.error("Popup Sign-in Error:", error);
+                const code = error.code || '';
+                
+                // Fallback for appropriate popup-related errors
+                if (code === 'auth/popup-blocked' || code === 'auth/operation-not-supported-in-this-environment') {
+                    try {
+                        showError('googleAuthError', 'Popup blocked. Attempting redirect...');
+                        await signInWithRedirect(auth, provider);
+                        return; // wait for redirect
+                    } catch (redirectError) {
+                        showError('googleAuthError', getGoogleErrorMessage(redirectError));
+                        setLoading('googleLoginBtn', false, 'Continue with Google');
+                    }
+                } else {
+                    showError('googleAuthError', getGoogleErrorMessage(error));
+                    setLoading('googleLoginBtn', false, 'Continue with Google');
+                }
+            }
+        });
+
+        // SIGN UP (Students only - does NOT create admin documents)
+        document.getElementById('form-signup').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('signup-name').value.trim();
+            const email = document.getElementById('signup-email').value.trim();
+            const pass = document.getElementById('signup-password').value;
+            const confirm = document.getElementById('signup-confirm').value;
+
+            let valid = true;
+            if (!name) { showError('err-signup-name', 'Full Name is required.'); valid = false; }
+            if (!email) { showError('err-signup-email', 'Email is required.'); valid = false; }
+            else if (!isValidEmail(email)) { showError('err-signup-email', 'Invalid email format.'); valid = false; }
+            if (!pass) { showError('err-signup-password', 'Password is required.'); valid = false; }
+            else if (pass.length < 6) { showError('err-signup-password', 'Minimum 6 characters.'); valid = false; }
+            if (!confirm) { showError('err-signup-confirm', 'Please confirm password.'); valid = false; }
+            else if (pass !== confirm) { showError('err-signup-confirm', 'Passwords do not match.'); valid = false; }
+
+            if (!valid) return;
+
+            creatingAccount = true;
+            setLoading('btn-signup', true, 'Creating Account...');
+
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+                await updateProfile(userCredential.user, { displayName: name });
+                // Directly redirect new student registrations to choose-path.html
+                window.location.replace("choose-path.html");
+            } catch (error) {
+                creatingAccount = false;
+                showError('err-signup-general', getFriendlyErrorMessage(error));
+                setLoading('btn-signup', false, 'Create Account');
+            }
+        });
+
+        // FORGOT PASSWORD
+        document.getElementById('form-forgot').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('forgot-email').value.trim();
+            
+            if (!email) { 
+                showError('err-forgot-email', 'Email is required.'); 
+                return;
+            } else if (!isValidEmail(email)) { 
+                showError('err-forgot-email', 'Invalid email format.'); 
+                return;
+            }
+
+            setLoading('btn-forgot', true, 'Sending...');
+
+            try {
+                await sendPasswordResetEmail(auth, email);
+                const successEl = document.getElementById('msg-forgot-success');
+                successEl.textContent = "If an eligible account exists for this email, you'll receive a password-reset link.";
+                successEl.style.display = 'block';
+                document.getElementById('forgot-email').value = '';
+            } catch (error) {
+                showError('err-forgot-general', getFriendlyErrorMessage(error));
+            } finally {
+                setLoading('btn-forgot', false, 'Send Reset Link');
+            }
+        });
+
+    </script>
+</body>
+</html>

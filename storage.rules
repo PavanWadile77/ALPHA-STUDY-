@@ -1,0 +1,21 @@
+rules_version = '2';
+service firebase.storage {
+ match /b/{bucket}/o {
+  function isAdmin() {
+   return request.auth != null && request.auth.uid in ['fMGIdEIX9YcpqTYS9LswRMcFSIb2','jIf44hCNk6heym0SI0dGRUhIs7G2'];
+  }
+  function validGroup(year, group) {
+   return (year == 'year-1' && group in ['group-a','group-b'])
+    || (year in ['year-2','year-3','year-4'] && group in ['cse','it','ds','ecs']);
+  }
+  match /materials/{year}/{group}/{file} {
+   allow read: if request.auth != null;
+   allow create: if isAdmin() && validGroup(year,group)
+    && request.resource.size > 0 && request.resource.size <= 25 * 1024 * 1024
+    && request.resource.contentType in ['application/pdf','application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document','application/vnd.ms-powerpoint','application/vnd.openxmlformats-officedocument.presentationml.presentation','application/zip','text/plain'];
+   allow update: if false;
+   allow delete: if isAdmin();
+  }
+  match /{path=**} { allow read, write: if false; }
+ }
+}

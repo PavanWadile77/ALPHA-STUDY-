@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STUDY — Admin Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ==================================================
+           BASE
+           ================================================== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-base: #0c0e14;
+            --bg-surface: #141722;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-color: rgba(255,255,255,0.08);
+            --primary: #4f46e5;
+            --primary-light: #6366f1;
+            --primary-glow: rgba(99,102,241,0.25);
+            --accent-rose: #f43f5e;
+            --success-color: #4ade80;
+            --error-color: #fb7185;
+            --radius-lg: 20px;
+            --radius-md: 14px;
+            --radius-sm: 10px;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            background-image:
+                radial-gradient(circle at 15% 25%, rgba(79,70,229,0.10) 0%, transparent 45%),
+                radial-gradient(circle at 85% 75%, rgba(99,102,241,0.07) 0%, transparent 45%);
+            color: var(--text-primary);
+            font-family: 'Outfit', sans-serif;
+            min-height: 100dvh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+        }
+
+        /* ==================================================
+           FULL-SCREEN LOADER
+           ================================================== */
+        #auth-loader {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-base);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+            transition: opacity 0.35s ease;
+        }
+        #auth-loader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .auth-spinner {
+            width: 44px;
+            height: 44px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top-color: var(--primary-light);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        /* ==================================================
+           CARD
+           ================================================== */
+        .login-wrapper {
+            width: 100%;
+            max-width: 440px;
+            padding: 24px 16px;
+            animation: fadeUp 0.7s cubic-bezier(0.16,1,0.3,1) forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        /* Branding above card */
+        .brand-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 28px;
+        }
+        .brand-logo {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 800;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 14px var(--primary-glow);
+            flex-shrink: 0;
+        }
+        .brand-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: -0.4px;
+        }
+        .admin-badge {
+            margin-left: auto;
+            background: rgba(99,102,241,0.15);
+            color: var(--primary-light);
+            border: 1px solid rgba(99,102,241,0.3);
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            padding: 3px 8px;
+            border-radius: 6px;
+        }
+
+        .auth-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        /* Panel visibility */
+        .panel { display: none; }
+        .panel.active { display: block; animation: fadeIn 0.35s ease; }
+
+        .panel h2 {
+            font-size: 1.85rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+            letter-spacing: -0.5px;
+        }
+        .panel .subtitle {
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+            line-height: 1.5;
+        }
+
+        /* ==================================================
+           FORM INPUTS
+           ================================================== */
+        .input-group {
+            margin-bottom: 18px;
+            position: relative;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 7px;
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 13px 16px;
+            background: rgba(0,0,0,0.25);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            color: #fff;
+            -webkit-text-fill-color: #fff;
+            caret-color: #fff;
+            font-size: 0.97rem;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.25s ease, box-shadow 0.25s ease;
+            box-sizing: border-box;
+        }
+        .input-group input:focus {
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px var(--primary-glow);
+        }
+        .input-group input::placeholder {
+            color: #64748b;
+            -webkit-text-fill-color: #64748b;
+        }
+        input[type="password"] {
+            padding-right: 50px;
+            letter-spacing: 0.1em;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        input[type="text"].pwd-revealed {
+            letter-spacing: normal;
+            font-family: 'Outfit', sans-serif;
+        }
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus {
+            -webkit-text-fill-color: #fff !important;
+            -webkit-box-shadow: 0 0 0 1000px #1a1a2e inset !important;
+            caret-color: #fff !important;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 37px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s;
+            border-radius: 6px;
+            z-index: 2;
+        }
+        .password-toggle:hover { color: var(--text-primary); }
+        .password-toggle:focus-visible {
+            outline: 2px solid var(--primary-light);
+            outline-offset: 2px;
+        }
+
+        .form-row {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 26px;
+        }
+        .link-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.88rem;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: inherit;
+            padding: 0;
+            transition: color 0.2s;
+        }
+        .link-btn:hover { color: var(--text-primary); text-decoration: underline; }
+        .link-btn:focus-visible { outline: 2px solid var(--primary-light); border-radius: 3px; }
+
+        /* ==================================================
+           BUTTONS
+           ================================================== */
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 18px var(--primary-glow);
+        }
+        .btn-primary:hover:not(:disabled) {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px var(--primary-glow);
+        }
+        .btn-primary:active:not(:disabled) { transform: translateY(0); }
+        .btn-primary:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .btn-primary:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+
+        /* ==================================================
+           MESSAGES
+           ================================================== */
+        .msg-error {
+            color: var(--error-color);
+            font-size: 0.83rem;
+            margin-top: 5px;
+            display: none;
+            animation: fadeIn 0.25s ease;
+        }
+        .msg-general {
+            display: none;
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 0.88rem;
+            margin-bottom: 18px;
+            animation: fadeIn 0.25s ease;
+        }
+        .msg-general.error {
+            background: rgba(244,63,94,0.12);
+            border: 1px solid rgba(244,63,94,0.3);
+            color: var(--error-color);
+        }
+        .msg-general.success {
+            background: rgba(74,222,128,0.1);
+            border: 1px solid rgba(74,222,128,0.25);
+            color: var(--success-color);
+        }
+        /* Access denied — special prominent message */
+        .denied-box {
+            display: none;
+            background: rgba(244,63,94,0.1);
+            border: 1px solid rgba(244,63,94,0.3);
+            border-radius: var(--radius-sm);
+            padding: 20px;
+            margin-bottom: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+        .denied-box h3 {
+            color: var(--accent-rose);
+            font-size: 1rem;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+        .denied-box p {
+            color: #fda4af;
+            font-size: 0.88rem;
+            line-height: 1.5;
+        }
+
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 0.88rem;
+            color: var(--text-muted);
+        }
+        .form-footer button.link-btn {
+            color: var(--primary-light);
+            font-weight: 600;
+            font-size: 0.88rem;
+            margin-left: 4px;
+        }
+
+        /* ==================================================
+           FORGOT PASSWORD PANEL
+           ================================================== */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-muted);
+            font-size: 0.88rem;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-family: inherit;
+            padding: 0;
+            transition: color 0.2s;
+            margin-bottom: 8px;
+        }
+        .back-link:hover { color: var(--text-primary); }
+
+        /* ==================================================
+           SECURITY NOTICE
+           ================================================== */
+        .security-note {
+            margin-top: 24px;
+            text-align: center;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        /* ==================================================
+           ANIMATIONS
+           ================================================== */
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @keyframes fadeUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* ==================================================
+           RESPONSIVE
+           ================================================== */
+        @media (max-width: 480px) {
+            .auth-card { padding: 28px 20px; }
+            .panel h2 { font-size: 1.6rem; }
+        }
+    </style>
+    <script src="auth-status.js" defer></script>
+</head>
+<body>
+
+    <!-- FULL-SCREEN AUTH LOADER -->
+    <div id="auth-loader">
+        <div class="auth-spinner"></div>
+        <p style="color:#64748b; margin-top:16px; font-size:0.9rem;">Checking session...</p>
+    </div>
+
+    <!-- MAIN LOGIN CARD -->
+    <div class="login-wrapper">
+
+        <!-- Branding -->
+        <div class="brand-row">
+            <div class="brand-logo">S</div>
+            <span class="brand-title">STUDY</span>
+            <span class="admin-badge">Admin Portal</span>
+        </div>
+
+        <div class="auth-card">
+
+            <!-- ==============================
+                 PANEL 1: ADMIN LOGIN
+                 ============================== -->
+            <div id="panel-login" class="panel active">
+
+                <!-- Access Denied Block (shown after UID check fails) -->
+                <div class="denied-box" id="denied-box">
+                    <h3>🚫 Access Denied</h3>
+                    <p>This account is not authorized for admin access. Please use your student account at <a href="login.html" style="color:#fda4af;">login.html</a> to access study materials.</p>
+                </div>
+
+                <h2>Admin Sign In</h2>
+                <p class="subtitle">Authorized administrators only. This portal is not linked from the student-facing site.</p>
+
+                <div class="msg-general error" id="msg-login-error"></div>
+
+                <form id="form-admin-login" novalidate>
+                    <div class="input-group">
+                        <label for="admin-email">Email Address</label>
+                        <input type="email" id="admin-email" placeholder="admin@example.com" autocomplete="username" required>
+                        <span class="msg-error" id="err-email" aria-live="polite"></span>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="admin-password">Password</label>
+                        <input type="password" id="admin-password" placeholder="••••••••" autocomplete="current-password" required>
+                        <button type="button" class="password-toggle" id="toggle-pwd" aria-label="Show password">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </button>
+                        <span class="msg-error" id="err-password" aria-live="polite"></span>
+                    </div>
+
+                    <div class="form-row">
+                        <button type="button" class="link-btn" id="nav-to-forgot">Forgot Password?</button>
+                    </div>
+
+                    <button type="submit" class="btn-primary" id="btn-login">
+                        <span class="btn-text">Sign In to Admin</span>
+                        <span class="spinner" style="display:none;"></span>
+                    </button>
+                </form>
+
+                <div class="security-note">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                    Secured by Firebase Authentication
+                </div>
+            </div>
+
+            <!-- ==============================
+                 PANEL 2: FORGOT PASSWORD
+                 ============================== -->
+            <div id="panel-forgot" class="panel">
+                <button class="back-link" id="nav-back-to-login" type="button">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"></path></svg>
+                    Back to Login
+                </button>
+
+                <h2>Reset Password</h2>
+                <p class="subtitle">Enter your admin email address and we'll send a password reset link.</p>
+
+                <div class="msg-general success" id="msg-reset-success"></div>
+                <div class="msg-general error"   id="msg-reset-error"></div>
+
+                <form id="form-forgot" novalidate>
+                    <div class="input-group">
+                        <label for="reset-email">Email Address</label>
+                        <input type="email" id="reset-email" placeholder="admin@example.com" autocomplete="email" required>
+                        <span class="msg-error" id="err-reset-email" aria-live="polite"></span>
+                    </div>
+
+                    <button type="submit" class="btn-primary" id="btn-reset">
+                        <span class="btn-text">Send Reset Link</span>
+                        <span class="spinner" style="display:none;"></span>
+                    </button>
+                </form>
+            </div>
+
+        </div><!-- /.auth-card -->
+    </div><!-- /.login-wrapper -->
+
+
+    <!-- ==================================================
+         SCRIPT
+         ================================================== -->
+    <script type="module">
+        import {
+            auth,
+            isUserAdmin,
+            onAuthStateChanged,
+            signInWithEmailAndPassword,
+            sendPasswordResetEmail,
+            signOut,
+            setPersistence,
+            browserLocalPersistence
+        } from "./firebase-config.js";
+
+        const loader = document.getElementById('auth-loader');
+
+        // --------------------------------------------------
+        // 1. AUTH STATE GUARD
+        // If already signed in AND is admin → go to dashboard.
+        // If already signed in but NOT admin → show access denied.
+        // If not signed in → hide loader, show login form.
+        // --------------------------------------------------
+        onAuthStateChanged(auth, async (user) => {
+            window.dispatchEvent(new Event("study-auth-ready"));
+            if (user) {
+                if (isUserAdmin(user)) {
+                    // Already an authorized admin session — go to dashboard
+                    window.location.replace("admin-dashboard.html");
+                    return; // don't hide loader; page is navigating away
+                } else {
+                    // Signed in but not an admin — sign them out and show denied
+                    // Keep the existing user session; deny this admin page.
+                    showDenied();
+                }
+            }
+            // Hide loader (covers both: no user, and non-admin user that was signed out above)
+            loader.classList.add('hidden');
+            setTimeout(() => { loader.style.display = 'none'; }, 380);
+        });
+
+        // --------------------------------------------------
+        // 2. PANEL SWITCHING
+        // --------------------------------------------------
+        function switchPanel(id) {
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            clearAllMessages();
+        }
+
+        document.getElementById('nav-to-forgot').addEventListener('click', () => switchPanel('panel-forgot'));
+        document.getElementById('nav-back-to-login').addEventListener('click', () => switchPanel('panel-login'));
+
+        // --------------------------------------------------
+        // 3. PASSWORD TOGGLE
+        // --------------------------------------------------
+        const iconEye = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+        const iconEyeOff = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`;
+
+        const toggleBtn = document.getElementById('toggle-pwd');
+        const pwdInput  = document.getElementById('admin-password');
+        toggleBtn.addEventListener('click', () => {
+            const show = pwdInput.type === 'password';
+            pwdInput.type = show ? 'text' : 'password';
+            pwdInput.classList.toggle('pwd-revealed', show);
+            toggleBtn.innerHTML = show ? iconEyeOff : iconEye;
+            toggleBtn.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+        });
+
+        // --------------------------------------------------
+        // 4. HELPERS
+        // --------------------------------------------------
+        function isValidEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
+
+        function showError(id, msg) {
+            const el = document.getElementById(id);
+            if (el) { el.textContent = msg; el.style.display = 'block'; }
+        }
+        function clearError(id) {
+            const el = document.getElementById(id);
+            if (el) { el.textContent = ''; el.style.display = 'none'; }
+        }
+        function showMsg(id, msg, type = 'error') {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.textContent = msg;
+            el.className = `msg-general ${type}`;
+            el.style.display = 'block';
+        }
+        function clearAllMessages() {
+            document.querySelectorAll('.msg-error, .msg-general').forEach(el => {
+                el.textContent = '';
+                el.style.display = 'none';
+            });
+            document.getElementById('denied-box').style.display = 'none';
+        }
+        function showDenied() {
+            document.getElementById('denied-box').style.display = 'block';
+            clearError('err-email');
+            clearError('err-password');
+            document.getElementById('msg-login-error').style.display = 'none';
+        }
+
+        function getFriendlyError(error) {
+            const c = error.code || '';
+            if (c === 'auth/invalid-email') return 'Please enter a valid email address.';
+            if (c === 'auth/invalid-credential' || c === 'auth/wrong-password' || c === 'auth/user-not-found')
+                return 'Incorrect email or password.';
+            if (c === 'auth/user-disabled') return 'This account has been disabled.';
+            if (c === 'auth/too-many-requests') return 'Too many failed attempts. Please try again later.';
+            if (c === 'auth/network-request-failed') return 'Network error. Please check your connection.';
+            return 'Sign-in failed. Please try again.';
+        }
+
+        function setLoading(btnId, loading, label) {
+            const btn = document.getElementById(btnId);
+            const span = btn.querySelector('.btn-text');
+            const spinner = btn.querySelector('.spinner');
+            if (loading && !btn.dataset.originalLabel) btn.dataset.originalLabel = span.textContent;
+            btn.disabled = loading;
+            span.textContent = loading ? label : (btn.dataset.originalLabel || label);
+            spinner.style.display = loading ? 'block' : 'none';
+            if (!loading && btn.dataset.originalLabel) span.textContent = btn.dataset.originalLabel;
+
+        }
+
+        // Auto-clear field errors on input
+        document.querySelectorAll('input').forEach(inp => {
+            inp.addEventListener('input', () => {
+                clearError('err-' + inp.id.replace('admin-', '').replace('reset-', ''));
+                document.getElementById('msg-login-error') && (document.getElementById('msg-login-error').style.display = 'none');
+            });
+        });
+
+        // --------------------------------------------------
+        // 5. ADMIN LOGIN SUBMIT
+        // --------------------------------------------------
+        let submitting = false;
+
+        document.getElementById('form-admin-login').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (submitting) return;
+
+            const email    = document.getElementById('admin-email').value.trim();
+            const password = document.getElementById('admin-password').value;
+
+            // Client-side validation
+            let valid = true;
+            clearAllMessages();
+            if (!email) { showError('err-email', 'Email is required.'); valid = false; }
+            else if (!isValidEmail(email)) { showError('err-email', 'Invalid email format.'); valid = false; }
+            if (!password) { showError('err-password', 'Password is required.'); valid = false; }
+            if (!valid) return;
+
+            submitting = true;
+            setLoading('btn-login', true, 'Signing in...');
+
+            try {
+                // Use local persistence for admin sessions
+                await setPersistence(auth, browserLocalPersistence);
+                const credential = await signInWithEmailAndPassword(auth, email, password);
+                const user = credential.user;
+
+                // UID check — fails closed if UIDs are placeholders
+                if (!isUserAdmin(user)) {
+                    // Not on the allowlist — sign them out immediately
+                    showDenied();
+                    setLoading('btn-login', false, 'Sign In to Admin');
+                    submitting = false;
+                    return;
+                }
+
+                // Authorized — navigate to dashboard
+                window.location.replace("admin-dashboard.html");
+
+            } catch (error) {
+                console.error("Admin login error:", error);
+                showMsg('msg-login-error', getFriendlyError(error), 'error');
+                setLoading('btn-login', false, 'Sign In to Admin');
+                submitting = false;
+            }
+        });
+
+        // --------------------------------------------------
+        // 6. PASSWORD RESET
+        // --------------------------------------------------
+        document.getElementById('form-forgot').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('reset-email').value.trim();
+
+            clearError('err-reset-email');
+            document.getElementById('msg-reset-success').style.display = 'none';
+            document.getElementById('msg-reset-error').style.display = 'none';
+
+            if (!email) { showError('err-reset-email', 'Email is required.'); return; }
+            if (!isValidEmail(email)) { showError('err-reset-email', 'Invalid email format.'); return; }
+
+            setLoading('btn-reset', true, 'Sending...');
+
+            try {
+                await sendPasswordResetEmail(auth, email);
+                showMsg('msg-reset-success',
+                    "If this email has an account, you'll receive a reset link shortly. Check your inbox and spam folder.",
+                    'success');
+                document.getElementById('reset-email').value = '';
+            } catch (error) {
+                console.error("Password reset error:", error);
+                showMsg('msg-reset-error', getFriendlyError(error), 'error');
+            } finally {
+                setLoading('btn-reset', false, 'Send Reset Link');
+            }
+        });
+    </script>
+</body>
+</html>

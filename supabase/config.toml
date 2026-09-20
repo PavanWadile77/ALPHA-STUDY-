@@ -1,0 +1,4 @@
+[functions.study-storage]
+verify_jwt = false
+# The function independently verifies Firebase RS256 signature, issuer, audience,
+# expiry and UID before any Storage operation. Never remove that validation.

@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>IT 2nd Year - STUDY</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* IT "Connected Systems" Theme */
+            --primary: #7C3AED;
+            --primary-hover: #6D28D9;
+            --secondary: #5B21B6;
+            --accent: #A78BFA;
+            --supporting-blue: #3B82F6;
+            
+            --bg-color: #f8fafc;
+            --surface-color: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border-color: rgba(15, 23, 42, 0.08);
+            --glass-bg: rgba(255, 255, 255, 0.85);
+
+            --shadow-sm: 0 2px 8px rgba(124, 58, 237, 0.04);
+            --shadow-md: 0 8px 24px rgba(124, 58, 237, 0.08);
+            --shadow-lg: 0 16px 32px rgba(124, 58, 237, 0.12);
+            --shadow-glow: 0 12px 32px rgba(124, 58, 237, 0.25);
+
+            --radius-lg: 20px;
+            --radius-md: 16px;
+            --radius-sm: 12px;
+
+            --transition-smooth: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            --transition-fast: all 0.2s ease-out;
+            --max-width: 1180px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            -webkit-font-smoothing: antialiased;
+            min-height: 100dvh;
+            padding-bottom: 90px;
+            overflow-x: hidden;
+        }
+
+        button { border: none; background: none; font-family: inherit; cursor: pointer; outline: none; }
+        a { text-decoration: none; color: inherit; }
+
+        .interactive-tap { transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .interactive-tap:active { transform: scale(0.985); }
+
+        /* Background Elements */
+        .ambient-blob {
+            position: fixed; border-radius: 50%; filter: blur(100px); opacity: 0.2; z-index: -1; pointer-events: none;
+        }
+        .blob-1 { top: -10%; left: -10%; width: 400px; height: 400px; background: var(--primary); }
+        .blob-2 { bottom: 10%; right: -10%; width: 500px; height: 500px; background: var(--supporting-blue); }
+
+        body::before {
+            content: ''; position: fixed; inset: 0; z-index: -2; pointer-events: none; opacity: 0.3;
+            background-image: radial-gradient(rgba(124, 58, 237, 0.1) 1px, transparent 1px);
+            background-size: 32px 32px;
+        }
+
+        /* Top App Bar */
+        .top-app-bar {
+            position: sticky; top: 0; left: 0; right: 0; height: 64px;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 20px; background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            z-index: 50; border-bottom: 1px solid var(--border-color);
+        }
+        .back-btn {
+            width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            color: var(--text-primary); background: rgba(0,0,0,0.03); transition: var(--transition-fast);
+        }
+        .back-btn:hover { background: rgba(0,0,0,0.06); }
+        .brand-logo { font-size: 1.2rem; font-weight: 800; letter-spacing: -0.5px; color: var(--text-primary); }
+        .avatar-btn {
+            width: 36px; height: 36px; border-radius: 50%; background: var(--primary); color: #fff;
+            font-weight: 700; display: flex; align-items: center; justify-content: center;
+            overflow: hidden; border: 2px solid #fff; box-shadow: var(--shadow-sm); cursor: pointer;
+        }
+        .avatar-btn img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* Main Content */
+        .main-content {
+            width: 100%; max-width: var(--max-width); margin: 0 auto;
+            padding: 24px 20px 40px; display: flex; flex-direction: column; gap: 32px;
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Hero */
+        .hero-card {
+            position: relative; background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: var(--radius-lg); padding: 32px 24px; color: #fff; overflow: hidden;
+            box-shadow: var(--shadow-glow); display: flex; justify-content: space-between; align-items: center;
+        }
+        .hero-pattern {
+            position: absolute; inset: 0; opacity: 0.15; pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='15' cy='15' r='3' fill='%23ffffff'/%3E%3Ccircle cx='45' cy='45' r='3' fill='%23ffffff'/%3E%3Cpath d='M15 15 L45 45' stroke='%23ffffff' stroke-width='1.5' stroke-dasharray='4 4'/%3E%3C/svg%3E");
+            background-size: 60px 60px;
+        }
+        .hero-content { position: relative; z-index: 2; flex: 1; }
+        .hero-badge {
+            display: inline-flex; padding: 6px 12px; background: rgba(255,255,255,0.2); backdrop-filter: blur(8px);
+            border-radius: 100px; font-size: 0.75rem; font-weight: 700; margin-bottom: 12px;
+            border: 1px solid rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .hero-title { font-size: 2.1rem; font-weight: 800; line-height: 1.15; margin-bottom: 8px; letter-spacing: -0.5px; }
+        .hero-subtitle { font-size: 0.95rem; opacity: 0.9; max-width: 280px; line-height: 1.5; }
+        
+        .hero-visual { width: 100px; height: 100px; position: relative; z-index: 2; flex-shrink: 0; margin-left: 16px; display: flex; justify-content: flex-end; }
+        .hero-visual svg { width: 100%; height: 100%; max-width: 120px; }
+        
+        @media (max-width: 480px) {
+            .hero-card { flex-direction: column; align-items: flex-start; gap: 20px; padding: 28px 20px; }
+            .hero-visual { position: absolute; right: -10px; bottom: -10px; opacity: 0.4; width: 140px; height: 140px; }
+        }
+
+        /* Semester Selector */
+        .semester-selector-wrapper { display: flex; justify-content: flex-start; }
+        .segmented-control {
+            background: rgba(124, 58, 237, 0.08); border-radius: 100px; padding: 6px; display: inline-flex;
+            position: relative; border: 1px solid rgba(124, 58, 237, 0.1);
+        }
+        .seg-btn {
+            padding: 8px 20px; border-radius: 100px; font-weight: 600; font-size: 0.9rem;
+            color: var(--text-secondary); transition: var(--transition-smooth); position: relative; z-index: 2;
+        }
+        .seg-btn.active { color: var(--primary); }
+        .seg-slider {
+            position: absolute; top: 6px; left: 6px; height: calc(100% - 12px);
+            background: var(--surface-color); border-radius: 100px; box-shadow: var(--shadow-sm);
+            transition: var(--transition-smooth); z-index: 1; width: calc(50% - 6px);
+        }
+
+        /* Search */
+        .search-container { position: relative; width: 100%; max-width: 600px; }
+        .search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted); width: 20px; height: 20px; pointer-events: none; }
+        .search-input {
+            width: 100%; padding: 14px 40px 14px 44px; border-radius: 100px;
+            border: 1px solid var(--border-color); background: var(--surface-color);
+            font-family: inherit; font-size: 0.95rem; color: var(--text-primary);
+            box-shadow: var(--shadow-sm); transition: var(--transition-smooth); outline: none;
+        }
+        .search-input:focus { border-color: var(--accent); box-shadow: 0 4px 20px rgba(124, 58, 237, 0.15); }
+        .search-clear {
+            position: absolute; right: 16px; top: 50%; transform: translateY(-50%);
+            color: var(--text-muted); width: 20px; height: 20px; cursor: pointer; display: none;
+        }
+
+        /* IT Stack & Quick Resources */
+        .section-label { font-size: 0.9rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .section-label::before { content: ''; display: inline-block; width: 6px; height: 18px; background: var(--primary); border-radius: 4px; }
+        
+        .scrollable-row {
+            display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none;
+            -ms-overflow-style: none; margin: 0 -20px; padding-left: 20px; padding-right: 20px;
+        }
+        .scrollable-row::-webkit-scrollbar { display: none; }
+        
+        .chip {
+            white-space: nowrap; padding: 8px 16px; border-radius: 100px; font-size: 0.85rem; font-weight: 600;
+            background: var(--surface-color); color: var(--text-secondary); border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm); transition: var(--transition-fast); display: flex; align-items: center; gap: 6px;
+        }
+        .chip:hover { border-color: var(--primary); color: var(--primary); transform: translateY(-1px); }
+        .chip.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+        .resource-chip {
+            background: rgba(124, 58, 237, 0.05); color: var(--primary); border-color: rgba(124, 58, 237, 0.15);
+        }
+        .resource-chip:hover { background: rgba(124, 58, 237, 0.1); }
+
+        /* Subjects Grid */
+        .subjects-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+        @media (min-width: 768px) { .subjects-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; } }
+        @media (min-width: 1024px) { .subjects-grid { grid-template-columns: repeat(3, 1fr); } }
+
+        .subject-card {
+            background: var(--surface-color); border-radius: var(--radius-md); padding: 20px;
+            display: flex; flex-direction: column; gap: 16px; position: relative; overflow: hidden;
+            box-shadow: var(--shadow-sm); border: 1px solid var(--border-color);
+            transition: var(--transition-smooth); animation: cardEnter 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+        }
+        @keyframes cardEnter { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .subject-card:hover {
+            transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: rgba(124, 58, 237, 0.3);
+        }
+
+        /* Network pattern accent */
+        .subject-card::before {
+            content: ''; position: absolute; right: 0; top: 0; width: 100px; height: 100px;
+            background-image: radial-gradient(var(--card-accent) 1px, transparent 1px);
+            background-size: 16px 16px; opacity: 0.1; border-bottom-left-radius: 100%;
+            transition: var(--transition-smooth); pointer-events: none;
+        }
+        .subject-card:hover::before { opacity: 0.2; transform: scale(1.2); }
+
+        .sc-header { display: flex; justify-content: space-between; align-items: flex-start; }
+        .sc-icon {
+            width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
+            background: var(--card-bg); color: var(--card-accent); transition: var(--transition-fast);
+        }
+        .subject-card:hover .sc-icon { transform: scale(1.05); }
+        .sc-icon svg { width: 22px; height: 22px; stroke-width: 2; }
+        
+        .sc-title { font-size: 1.15rem; font-weight: 700; color: var(--text-primary); line-height: 1.3; margin-top: 4px; }
+        .sc-code { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; font-family: monospace; letter-spacing: 0.5px; }
+
+        .sc-footer { display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto; }
+        .sc-badges { display: flex; flex-direction: column; gap: 6px; }
+        .sc-badge {
+            font-size: 0.7rem; font-weight: 700; padding: 4px 8px; border-radius: 6px;
+            text-transform: uppercase; letter-spacing: 0.5px; width: fit-content;
+        }
+        .badge-sem { background: var(--card-bg); color: var(--card-accent); }
+        .badge-type { background: #f1f5f9; color: var(--text-secondary); border: 1px solid #e2e8f0; }
+
+        .sc-arrow {
+            width: 36px; height: 36px; border-radius: 50%; background: #f8fafc;
+            display: flex; align-items: center; justify-content: center; color: var(--text-muted);
+            transition: var(--transition-smooth); border: 1px solid #e2e8f0;
+        }
+        .subject-card:hover .sc-arrow {
+            background: var(--card-accent); color: #fff; border-color: transparent; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .sc-arrow svg { width: 18px; height: 18px; transition: var(--transition-smooth); }
+        .subject-card:hover .sc-arrow svg { transform: translateX(2px); }
+
+        /* Specific Subject Colors */
+        .color-blue { --card-accent: #2563EB; --card-bg: #EFF6FF; }
+        .color-cyan { --card-accent: #0891B2; --card-bg: #ECFEFF; }
+        .color-violet { --card-accent: #7C3AED; --card-bg: #F5F3FF; }
+        .color-orange { --card-accent: #EA580C; --card-bg: #FFF7ED; }
+
+        /* Empty State */
+        .empty-state {
+            grid-column: 1/-1; padding: 48px 20px; text-align: center; background: var(--surface-color);
+            border-radius: var(--radius-md); border: 1px dashed var(--border-color); color: var(--text-secondary);
+        }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border-radius: 100px; padding: 8px 16px; display: flex; gap: 8px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.4); z-index: 100;
+        }
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            width: 60px; height: 50px; border-radius: 16px; color: var(--text-muted);
+            transition: var(--transition-fast); gap: 4px;
+        }
+        .nav-item.active { color: var(--primary); background: rgba(124, 58, 237, 0.08); }
+        .nav-item:hover:not(.active) { color: var(--text-primary); background: rgba(0,0,0,0.03); }
+        .nav-item svg { width: 20px; height: 20px; }
+        .nav-item span { font-size: 0.65rem; font-weight: 700; }
+
+        @media (min-width: 768px) {
+            .bottom-nav { display: none; }
+            body { padding-bottom: 40px; }
+        }
+
+    </style>
+<link rel="stylesheet" href="materials-view.css">
+</head>
+<body>
+    <div class="ambient-blob blob-1"></div>
+    <div class="ambient-blob blob-2"></div>
+
+    <div class="app-container">
+        <header class="top-app-bar">
+            <button class="back-btn interactive-tap" onclick="window.location.href='second-year.html'" aria-label="Go back">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+            </button>
+            <div class="brand-logo">STUDY</div>
+            <div class="avatar-btn interactive-tap" id="top-avatar">?</div>
+        </header>
+
+        <main class="main-content">
+            <!-- Hero Section -->
+            <section class="hero-card">
+                <div class="hero-pattern"></div>
+                <div class="hero-content">
+                    <div class="hero-badge">IT • Connected Systems</div>
+                    <h1 class="hero-title">Information Technology<br>2nd Year</h1>
+                    <p class="hero-subtitle">Build, connect and manage intelligent digital systems.</p>
+                </div>
+                <div class="hero-visual">
+                    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="50" cy="50" r="35" stroke="rgba(255,255,255,0.2)" stroke-width="2"/>
+                        <path d="M50 15 L50 30 M50 70 L50 85 M15 50 L30 50 M70 50 L85 50" stroke="rgba(255,255,255,0.6)" stroke-width="2" stroke-linecap="round"/>
+                        <circle cx="50" cy="50" r="12" fill="rgba(255,255,255,0.9)"/>
+                        <circle cx="30" cy="30" r="6" fill="rgba(255,255,255,0.5)"/>
+                        <circle cx="70" cy="30" r="6" fill="rgba(255,255,255,0.5)"/>
+                        <circle cx="30" cy="70" r="6" fill="rgba(255,255,255,0.5)"/>
+                        <circle cx="70" cy="70" r="6" fill="rgba(255,255,255,0.5)"/>
+                        <path d="M34 34 L43 43 M57 43 L66 34 M43 57 L34 66 M66 66 L57 57" stroke="rgba(255,255,255,0.4)" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </div>
+            </section>
+
+            <!-- Semester & Search Controls -->
+            <div class="semester-selector-wrapper">
+                <div class="segmented-control" id="semester-selector">
+                    <div class="seg-slider" id="seg-slider"></div>
+                    <button class="seg-btn active interactive-tap" data-sem="3">Semester III</button>
+                    <button class="seg-btn interactive-tap" data-sem="4">Semester IV</button>
+                </div>
+            </div>
+
+            <div class="search-container">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" id="search-input" class="search-input" placeholder="Search IT subjects..." autocomplete="off">
+                <svg class="search-clear" id="search-clear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </div>
+
+            <!-- IT Stack & Quick Resources -->
+            <div>
+                <h2 class="section-label">IT Stack</h2>
+                <div class="scrollable-row" id="it-stack">
+                    <button class="chip interactive-tap" data-filter="all">All Subjects</button>
+                    <button class="chip interactive-tap" data-filter="math">Mathematics</button>
+                    <button class="chip interactive-tap" data-filter="programming">Programming</button>
+                    <button class="chip interactive-tap" data-filter="data">Data Structures</button>
+                    <button class="chip interactive-tap" data-filter="electronics">Electronics</button>
+                </div>
+            </div>
+
+            <div>
+                <h2 class="section-label">Quick Resources</h2>
+                <div class="scrollable-row">
+                    <a href="#" class="chip resource-chip interactive-tap">Notes</a>
+                    <a href="#" class="chip resource-chip interactive-tap">PPTs</a>
+                    <a href="#" class="chip resource-chip interactive-tap">PYQs</a>
+                    <a href="#" class="chip resource-chip interactive-tap">MCQs</a>
+                    <a href="#" class="chip resource-chip interactive-tap">Syllabus</a>
+                    <a href="#" class="chip resource-chip interactive-tap">Downloads</a>
+                </div>
+            </div>
+
+            <!-- Subjects Grid -->
+            <div>
+                <h2 class="section-label">Your Subjects</h2>
+                <div class="subjects-grid" id="subjects-container">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        <section class="materials-live" data-materials-year="year-2" data-materials-group="it"></section>
+</main>
+        
+        <!-- Bottom Nav -->
+        <nav class="bottom-nav">
+            <a href="index.html" class="nav-item interactive-tap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                <span>Home</span>
+            </a>
+            <a href="#" class="nav-item active interactive-tap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                <span>Subjects</span>
+            </a>
+            <a href="downloads.html" class="nav-item interactive-tap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                <span>Downloads</span>
+            </a>
+            <a href="profile.html" class="nav-item interactive-tap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                <span>Profile</span>
+            </a>
+        </nav>
+    </div>
+
+    <script type="module">
+        import { auth, onAuthStateChanged, signOut } from "./firebase-config.js";
+
+        onAuthStateChanged(auth, (user) => {
+            window.dispatchEvent(new Event("study-auth-ready"));
+            if (user) {
+                let displayName = user.displayName || (user.email ? user.email.split('@')[0] : "Student");
+                const topAvatar = document.getElementById('top-avatar');
+                if (user.photoURL) {
+                    topAvatar.innerHTML = `<img src="${user.photoURL}" alt="Avatar">`;
+                } else {
+                    topAvatar.textContent = displayName.charAt(0).toUpperCase();
+                }
+                topAvatar.addEventListener('click', () => {
+                    if(confirm(`Signed in as ${user.email}\nDo you want to log out?`)) {
+                        signOut(auth).then(() => window.location.replace("login.html"));
+                    }
+                });
+            } else {
+                window.location.replace("login.html");
+            }
+        });
+
+        const itSubjects = [
+            { 
+                title: "Engineering Mathematics III", code: "BTBS301", type: "Theory", semester: 3, branch: "it", slug: "engineering-mathematics-3", 
+                colorClass: "color-blue", category: "math",
+                icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg>' 
+            },
+            { 
+                title: "Data Structure", code: "BTES303", type: "Theory", semester: 3, branch: "it", slug: "data-structure", 
+                colorClass: "color-cyan", category: "data",
+                icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>' 
+            },
+            { 
+                title: "Object Oriented Programming Using Java", code: "BTIT304", type: "Theory / Practical", semester: 3, branch: "it", slug: "object-oriented-programming-using-java", 
+                colorClass: "color-violet", category: "programming",
+                icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>' 
+            },
+            { 
+                title: "EDC", code: "BTES305", type: "Theory", semester: 3, branch: "it", slug: "edc", 
+                colorClass: "color-orange", category: "electronics",
+                icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>' 
+            }
+        ];
+
+        let currentSem = 3;
+        let searchQuery = "";
+        let activeFilter = "all";
+
+        const container = document.getElementById('subjects-container');
+        const searchInput = document.getElementById('search-input');
+        const searchClear = document.getElementById('search-clear');
+        const stackChips = document.querySelectorAll('#it-stack .chip');
+
+        function renderSubjects() {
+            container.innerHTML = '';
+            
+            const semFiltered = itSubjects.filter(s => s.semester === currentSem);
+            
+            if (semFiltered.length === 0) {
+                container.innerHTML = '<div class="empty-state">Semester IV subjects will be added soon.</div>';
+                return;
+            }
+
+            const query = searchQuery.toLowerCase().trim();
+            const filtered = semFiltered.filter(s => {
+                const matchSearch = s.title.toLowerCase().includes(query) || (s.code && s.code.toLowerCase().includes(query));
+                const matchFilter = activeFilter === "all" || s.category === activeFilter;
+                return matchSearch && matchFilter;
+            });
+
+            if (filtered.length === 0) {
+                container.innerHTML = '<div class="empty-state">No subjects found matching your criteria.</div>';
+                return;
+            }
+
+            filtered.forEach((sub, index) => {
+                const a = document.createElement('a');
+                a.href = `subject.html?year=year-2&group=${sub.branch}&semester=${sub.semester}&subject=${encodeURIComponent(sub.title)}`;
+                a.className = `subject-card ${sub.colorClass} interactive-tap`;
+                a.style.animationDelay = `${index * 0.05}s`;
+                
+                a.innerHTML = `
+                    <div class="sc-header">
+                        <div class="sc-icon">${sub.icon}</div>
+                        <div class="sc-badges">
+                            <span class="sc-badge badge-sem">Sem ${sub.semester === 3 ? 'III' : 'IV'}</span>
+                            <span class="sc-badge badge-type">${sub.type}</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="sc-title">${sub.title}</h3>
+                        ${sub.code ? `<div class="sc-code">${sub.code}</div>` : ''}
+                    </div>
+                    <div class="sc-footer">
+                        <div class="sc-arrow">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline>
+                            </svg>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(a);
+            });
+        }
+
+        // Init
+        stackChips[0].classList.add('active');
+        renderSubjects();
+
+        // Search logic
+        searchInput.addEventListener('input', (e) => {
+            searchQuery = e.target.value;
+            searchClear.style.display = searchQuery.length > 0 ? 'block' : 'none';
+            renderSubjects();
+        });
+        searchClear.addEventListener('click', () => {
+            searchInput.value = '';
+            searchQuery = '';
+            searchClear.style.display = 'none';
+            searchInput.focus();
+            renderSubjects();
+        });
+
+        // Filter Logic
+        stackChips.forEach(chip => {
+            chip.addEventListener('click', () => {
+                stackChips.forEach(c => c.classList.remove('active'));
+                chip.classList.add('active');
+                activeFilter = chip.getAttribute('data-filter');
+                renderSubjects();
+            });
+        });
+
+        // Segmented Control Logic
+        const segBtns = document.querySelectorAll('.seg-btn');
+        const slider = document.getElementById('seg-slider');
+
+        segBtns.forEach((btn, index) => {
+            btn.addEventListener('click', () => {
+                segBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                slider.style.left = index === 0 ? '6px' : 'calc(50% + 6px)';
+                
+                currentSem = parseInt(btn.getAttribute('data-sem'));
+                renderSubjects();
+            });
+        });
+    </script>
+<script type="module" src="materials-view.js"></script>
+</body>
+</html>

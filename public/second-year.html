@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2nd Year Branches - STUDY</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* ==================================================
+           1. CORE & VARIABLES
+           ================================================== */
+        :root {
+            --bg-color: #f7f8fc;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --border-light: rgba(255, 255, 255, 0.15);
+            --glass-bg: rgba(255, 255, 255, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            
+            /* Shadows */
+            --shadow-sm: 0 4px 12px rgba(0,0,0,0.05);
+            --shadow-md: 0 12px 32px rgba(0,0,0,0.15);
+            --shadow-lg: 0 24px 48px rgba(0,0,0,0.25);
+            
+            /* Transitions */
+            --transition-smooth: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            --transition-fast: all 0.2s ease-out;
+            
+            --max-width: 1100px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Ambient Blobs */
+        .ambient-blob {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.4;
+            z-index: -1;
+            pointer-events: none;
+        }
+        .blob-1 { top: -10%; left: -10%; width: 400px; height: 400px; background: rgba(37, 99, 235, 0.15); }
+        .blob-2 { bottom: -10%; right: -10%; width: 500px; height: 500px; background: rgba(124, 58, 237, 0.12); }
+        .blob-3 { top: 40%; left: 60%; width: 300px; height: 300px; background: rgba(15, 118, 110, 0.1); }
+
+        button { border: none; background: none; font-family: inherit; cursor: pointer; }
+        a { text-decoration: none; color: inherit; }
+
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100dvh;
+            padding-bottom: 60px;
+        }
+
+        /* ==================================================
+           2. TOP APP BAR
+           ================================================== */
+        .top-app-bar {
+            position: sticky;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 40;
+            border-bottom: 1px solid rgba(255,255,255,0.6);
+        }
+
+        .back-btn {
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--text-primary);
+            transition: var(--transition-fast);
+        }
+        .back-btn:hover { background: rgba(0,0,0,0.05); }
+
+        .wordmark {
+            font-size: 1.25rem; font-weight: 700;
+            letter-spacing: -0.5px;
+            color: #0f172a;
+        }
+
+        .avatar-btn {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            color: #475569;
+            font-weight: 600;
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .avatar-btn img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* ==================================================
+           3. MAIN CONTENT & HERO
+           ================================================== */
+        .main-content {
+            flex: 1;
+            width: 100%;
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 32px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 48px;
+            animation: elegantFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .hero-section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid rgba(0,0,0,0.03);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-text { flex: 1; z-index: 2; }
+        
+        .hero-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            letter-spacing: -1px;
+        }
+
+        .hero-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 400px;
+            line-height: 1.5;
+        }
+
+        .hero-visual {
+            width: 140px;
+            height: 140px;
+            position: relative;
+            z-index: 2;
+            flex-shrink: 0;
+            display: none;
+        }
+        @media (min-width: 600px) { .hero-visual { display: block; } }
+
+        /* Orbit Illustration */
+        .orbit-visual { width: 100%; height: 100%; animation: spinSlow 30s linear infinite; }
+        @keyframes spinSlow { to { transform: rotate(360deg); } }
+
+        /* ==================================================
+           4. BRANCH SECTION HEADER
+           ================================================== */
+        .section-header {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        @media (min-width: 768px) {
+            .section-header { flex-direction: row; align-items: flex-end; justify-content: space-between; }
+        }
+
+        .sh-main {
+            display: flex; flex-direction: column; gap: 4px;
+        }
+        .sh-title { font-size: 1.75rem; font-weight: 700; letter-spacing: -0.5px; }
+        .sh-subtitle { font-size: 1rem; color: var(--text-secondary); }
+        .sh-badge {
+            display: inline-flex;
+            background: #e2e8f0; color: #475569;
+            padding: 4px 12px; border-radius: 20px;
+            font-size: 0.8rem; font-weight: 700;
+            align-self: flex-start;
+        }
+
+        /* ==================================================
+           5. UNIQUE BRANCH CARDS
+           ================================================== */
+        .branches-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+        @media (min-width: 800px) {
+            .branches-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        .branch-card {
+            position: relative;
+            border-radius: 24px;
+            padding: 32px;
+            display: flex;
+            flex-direction: column;
+            color: white;
+            text-decoration: none;
+            overflow: hidden;
+            transition: var(--transition-smooth);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            min-height: 240px;
+            outline: none;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .branch-card::before {
+            content: ''; position: absolute; inset: 0;
+            background-size: cover; background-position: center;
+            opacity: 0.2; transition: var(--transition-smooth);
+            z-index: 1; pointer-events: none;
+        }
+
+        /* Inner Highlight */
+        .branch-card::after {
+            content: ''; position: absolute; inset: 0;
+            border-radius: 24px; pointer-events: none;
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.2);
+            z-index: 5;
+        }
+
+        .bc-content { position: relative; z-index: 2; display: flex; flex-direction: column; height: 100%; }
+
+        .bc-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
+        
+        .bc-badge {
+            background: rgba(0,0,0,0.2);
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            padding: 6px 14px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+
+        .bc-icon-wrapper {
+            width: 56px; height: 56px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            display: flex; align-items: center; justify-content: center;
+            border: 1px solid rgba(255,255,255,0.3);
+            transition: var(--transition-smooth);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .bc-icon-wrapper svg { width: 28px; height: 28px; color: #fff; transition: var(--transition-smooth); }
+
+        .bc-title {
+            font-size: 1.5rem; font-weight: 700; line-height: 1.2; margin-bottom: 8px; letter-spacing: -0.5px;
+        }
+        .bc-desc {
+            font-size: 0.95rem; opacity: 0.85; line-height: 1.4; margin-bottom: 24px; max-width: 90%;
+        }
+
+        .bc-footer {
+            margin-top: auto;
+            display: flex; justify-content: space-between; align-items: flex-end;
+        }
+        
+        .bc-micro {
+            font-size: 0.8rem; font-weight: 600; opacity: 0.7; letter-spacing: 0.5px; text-transform: uppercase;
+        }
+
+        .bc-arrow {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            display: flex; align-items: center; justify-content: center;
+            transition: var(--transition-smooth);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .bc-arrow svg { width: 20px; height: 20px; transition: var(--transition-smooth); }
+
+        /* INTERACTIONS */
+        @media (hover: hover) {
+            .branch-card:hover {
+                transform: translateY(-6px);
+                box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+            }
+            .branch-card:hover::before {
+                opacity: 0.4;
+                transform: scale(1.05);
+            }
+            .branch-card:hover .bc-icon-wrapper {
+                transform: scale(1.1) rotate(5deg);
+                background: rgba(255,255,255,0.25);
+            }
+            .branch-card:hover .bc-arrow {
+                background: rgba(255,255,255,0.2);
+            }
+            .branch-card:hover .bc-arrow svg {
+                transform: translateX(4px);
+            }
+        }
+        
+        .branch-card:active {
+            transform: scale(0.985);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: transform 0.1s;
+        }
+
+        /* --------------------------------------------------
+           5.A. CSE (COMPUTER SCIENCE)
+           -------------------------------------------------- */
+        .card-cse {
+            background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+            box-shadow: 0 12px 32px rgba(37, 99, 235, 0.3);
+        }
+        .card-cse .bc-title { color: #ffffff; }
+        .card-cse .bc-desc { color: #e0e7ff; }
+        
+        /* Bracket Pattern SVG */
+        .pattern-cse {
+            position: absolute; inset: 0; z-index: 1; opacity: 0.15; pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 15 L10 30 L20 45 M40 15 L50 30 L40 45' stroke='%23ffffff' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-size: 80px 80px;
+            transition: transform 0.5s ease;
+        }
+
+        /* --------------------------------------------------
+           5.B. IT (INFORMATION TECHNOLOGY)
+           -------------------------------------------------- */
+        .card-it {
+            background: linear-gradient(135deg, #7C3AED 0%, #5B21B6 100%);
+            box-shadow: 0 12px 32px rgba(124, 58, 237, 0.3);
+        }
+        .card-it .bc-title { color: #ffffff; }
+        .card-it .bc-desc { color: #ede9fe; }
+
+        /* Network Node Pattern SVG */
+        .pattern-it {
+            position: absolute; inset: 0; z-index: 1; opacity: 0.15; pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='20' cy='20' r='3' fill='%23ffffff'/%3E%3Ccircle cx='60' cy='60' r='3' fill='%23ffffff'/%3E%3Ccircle cx='20' cy='60' r='3' fill='%23ffffff'/%3E%3Cpath d='M20 20 L60 60 M20 60 L60 20' stroke='%23ffffff' stroke-width='1' opacity='0.5'/%3E%3C/svg%3E");
+            transition: transform 0.5s ease;
+        }
+
+        /* --------------------------------------------------
+           5.C. DS (DATA SCIENCE)
+           -------------------------------------------------- */
+        .card-ds {
+            background: linear-gradient(135deg, #0F766E 0%, #059669 100%);
+            box-shadow: 0 12px 32px rgba(15, 118, 110, 0.3);
+        }
+        .card-ds .bc-title { color: #ffffff; }
+        .card-ds .bc-desc { color: #d1fae5; }
+
+        /* Chart/Data Pattern SVG */
+        .pattern-ds {
+            position: absolute; inset: 0; z-index: 1; opacity: 0.12; pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 50 L20 35 L35 45 L50 20' stroke='%23ffffff' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='50' cy='20' r='2' fill='%23ffffff'/%3E%3C/svg%3E");
+            background-size: 100px 100px;
+            transition: transform 0.5s ease;
+        }
+
+        /* --------------------------------------------------
+           5.D. ECS (ELECTRONICS & COMPUTER SCIENCE)
+           -------------------------------------------------- */
+        .card-ecs {
+            background: linear-gradient(135deg, #F97316 0%, #EA580C 100%);
+            box-shadow: 0 12px 32px rgba(234, 88, 12, 0.3);
+        }
+        .card-ecs .bc-title { color: #ffffff; }
+        .card-ecs .bc-desc { color: #ffedd5; }
+
+        /* Circuit Pattern SVG */
+        .pattern-ecs {
+            position: absolute; inset: 0; z-index: 1; opacity: 0.15; pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 40 H30 V20 H50' stroke='%23ffffff' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='50' cy='20' r='3' fill='%23ffffff'/%3E%3Cpath d='M40 70 V50 H70' stroke='%23ffffff' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='70' cy='50' r='3' fill='%23ffffff'/%3E%3C/svg%3E");
+            transition: transform 0.5s ease;
+        }
+
+        @keyframes elegantFadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 480px) {
+            .hero-section { padding: 32px 24px; }
+            .hero-title { font-size: 2rem; }
+            .branch-card { padding: 24px; min-height: 220px; }
+            .bc-title { font-size: 1.35rem; }
+            .bc-desc { font-size: 0.9rem; }
+        }
+
+    </style>
+<link rel="stylesheet" href="materials-view.css">
+</head>
+<body>
+
+    <!-- Ambient Background Blobs -->
+    <div class="ambient-blob blob-1"></div>
+    <div class="ambient-blob blob-2"></div>
+    <div class="ambient-blob blob-3"></div>
+
+    <div class="app-container">
+        
+        <!-- 2. TOP APP BAR -->
+        <header class="top-app-bar">
+            <a href="choose-path.html" class="back-btn" aria-label="Go back">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+            </a>
+            <div class="wordmark">STUDY</div>
+            <div class="avatar-btn" id="top-avatar">?</div>
+        </header>
+
+        <main class="main-content">
+            
+            <!-- 3. HERO SECTION -->
+            <section class="hero-section">
+                <div class="hero-text">
+                    <h1 class="hero-title">2nd Year<br>Engineering</h1>
+                    <p class="hero-subtitle">Choose your branch and continue your DBATU journey.</p>
+                </div>
+                
+                <div class="hero-visual">
+                    <!-- Custom SVG Orbit indicating branches -->
+                    <svg class="orbit-visual" viewBox="0 0 100 100" fill="none">
+                        <!-- Orbits -->
+                        <circle cx="50" cy="50" r="40" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="4 4"/>
+                        <circle cx="50" cy="50" r="24" stroke="#e2e8f0" stroke-width="1.5"/>
+                        <!-- Center Core -->
+                        <circle cx="50" cy="50" r="8" fill="#0f172a"/>
+                        <!-- Branch Nodes -->
+                        <!-- CSE Blue -->
+                        <circle cx="50" cy="10" r="6" fill="#2563EB"/>
+                        <!-- IT Purple -->
+                        <circle cx="90" cy="50" r="6" fill="#7C3AED"/>
+                        <!-- DS Teal -->
+                        <circle cx="50" cy="90" r="6" fill="#0F766E"/>
+                        <!-- ECS Orange -->
+                        <circle cx="10" cy="50" r="6" fill="#F97316"/>
+                    </svg>
+                </div>
+            </section>
+
+            <!-- 4. SECTION HEADER -->
+            <section class="section-header">
+                <div class="sh-main">
+                    <h2 class="sh-title">Choose Your Branch</h2>
+                    <p class="sh-subtitle">Your subjects and resources will be customized for your program.</p>
+                </div>
+                <div class="sh-badge">4 Programs</div>
+            </section>
+
+            <!-- 5. BRANCHES GRID -->
+            <section class="branches-grid">
+                
+                <!-- CSE CARD -->
+                <a href="second-year-cse.html" class="branch-card card-cse" onclick="localStorage.setItem('selectedSecondYearBranch', 'cse');">
+                    <div class="pattern-cse"></div>
+                    <div class="bc-content">
+                        <div class="bc-header">
+                            <span class="bc-badge">CSE</span>
+                            <div class="bc-icon-wrapper">
+                                <!-- Processor/Code Icon -->
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="16 18 22 12 16 6"></polyline>
+                                    <polyline points="8 6 2 12 8 18"></polyline>
+                                    <line x1="15" y1="2" x2="9" y2="22"></line>
+                                </svg>
+                            </div>
+                        </div>
+                        <h3 class="bc-title">Computer Science<br>Engineering</h3>
+                        <p class="bc-desc">Master the software, systems, and algorithms that power the digital world.</p>
+                        
+                        <div class="bc-footer">
+                            <span class="bc-micro">Code • Algorithms • Systems</span>
+                            <div class="bc-arrow">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- IT CARD -->
+                <a href="second-year-it.html" class="branch-card card-it" onclick="localStorage.setItem('selectedSecondYearBranch', 'it');">
+                    <div class="pattern-it"></div>
+                    <div class="bc-content">
+                        <div class="bc-header">
+                            <span class="bc-badge">IT</span>
+                            <div class="bc-icon-wrapper">
+                                <!-- Network Cloud Icon -->
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M20 16.2A5 5 0 0 0 18 6.53a9 9 0 0 0-15.3 4.47 5 5 0 0 0 1.3 9.9H20z"></path>
+                                    <polyline points="8 12 12 16 16 12"></polyline>
+                                    <line x1="12" y1="16" x2="12" y2="22"></line>
+                                </svg>
+                            </div>
+                        </div>
+                        <h3 class="bc-title">Information<br>Technology</h3>
+                        <p class="bc-desc">Design and manage the infrastructure, networks, and software services of tomorrow.</p>
+                        
+                        <div class="bc-footer">
+                            <span class="bc-micro">Networks • Software • Systems</span>
+                            <div class="bc-arrow">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- DS CARD -->
+                <a href="second-year-ds.html" class="branch-card card-ds" onclick="localStorage.setItem('selectedSecondYearBranch', 'ds');">
+                    <div class="pattern-ds"></div>
+                    <div class="bc-content">
+                        <div class="bc-header">
+                            <span class="bc-badge">DS</span>
+                            <div class="bc-icon-wrapper">
+                                <!-- Database/Analytics Icon -->
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                                    <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+                                    <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <h3 class="bc-title">Data Science<br>Engineering</h3>
+                        <p class="bc-desc">Uncover insights, build AI models, and transform raw data into intelligent action.</p>
+                        
+                        <div class="bc-footer">
+                            <span class="bc-micro">Data • AI • Analytics</span>
+                            <div class="bc-arrow">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- ECS CARD -->
+                <a href="subject.html?year=year-2&amp;group=ecs" class="branch-card card-ecs">
+                    <div class="pattern-ecs"></div>
+                    <div class="bc-content">
+                        <div class="bc-header">
+                            <span class="bc-badge">ECS</span>
+                            <div class="bc-icon-wrapper">
+                                <!-- Chip/Circuit Icon -->
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+                                    <rect x="9" y="9" width="6" height="6"></rect>
+                                    <line x1="9" y1="1" x2="9" y2="4"></line>
+                                    <line x1="15" y1="1" x2="15" y2="4"></line>
+                                    <line x1="9" y1="20" x2="9" y2="23"></line>
+                                    <line x1="15" y1="20" x2="15" y2="23"></line>
+                                    <line x1="20" y1="9" x2="23" y2="9"></line>
+                                    <line x1="20" y1="14" x2="23" y2="14"></line>
+                                    <line x1="1" y1="9" x2="4" y2="9"></line>
+                                    <line x1="1" y1="14" x2="4" y2="14"></line>
+                                </svg>
+                            </div>
+                        </div>
+                        <h3 class="bc-title">Electronics & Computer Science</h3>
+                        <p class="bc-desc">Bridge the gap between hardware architecture and advanced embedded software.</p>
+                        
+                        <div class="bc-footer">
+                            <span class="bc-micro">Circuits • Embedded • Computing</span>
+                            <div class="bc-arrow">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+            </section>
+        <section class="materials-live" data-materials-year="year-2" data-materials-group=""></section>
+</main>
+    </div>
+
+    <!-- ==================================================
+         SCRIPTS
+         ================================================== -->
+    <script type="module">
+        import { auth, onAuthStateChanged } from "./firebase-config.js";
+
+        onAuthStateChanged(auth, (user) => {
+            window.dispatchEvent(new Event("study-auth-ready"));
+            if (user) {
+                let displayName = user.displayName;
+                if (!displayName && user.email) displayName = user.email.split('@')[0];
+                if (!displayName) displayName = "Student";
+
+                const topAvatar = document.getElementById('top-avatar');
+                if (user.photoURL) {
+                    topAvatar.innerHTML = `<img src="${user.photoURL}" alt="Avatar">`;
+                } else {
+                    topAvatar.textContent = displayName.charAt(0).toUpperCase();
+                }
+            } else {
+                window.location.replace("login.html");
+            }
+        });
+        
+        // Add subtle hover effect for patterns on branch cards
+        document.querySelectorAll('.branch-card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = (e.clientX - rect.left) / rect.width - 0.5;
+                const y = (e.clientY - rect.top) / rect.height - 0.5;
+                
+                const pattern = card.querySelector('[class^="pattern-"]');
+                if (pattern) {
+                    pattern.style.transform = `translate(${x * -10}px, ${y * -10}px)`;
+                }
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                const pattern = card.querySelector('[class^="pattern-"]');
+                if (pattern) {
+                    pattern.style.transform = `translate(0px, 0px)`;
+                }
+            });
+        });
+    </script>
+<script type="module" src="materials-view.js"></script>
+</body>
+</html>

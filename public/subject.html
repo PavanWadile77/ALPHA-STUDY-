@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBATU 1st Year - STUDY</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ==================================================
+           1. CORE & VARIABLES
+           ================================================== */
+        :root {
+            /* Colors */
+            --bg-color: #f8fafc;
+            --surface-color: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-tertiary: #94a3b8;
+            --border-color: #e2e8f0;
+            --border-light: #f1f5f9;
+            
+            /* Accents */
+            --primary: #3b82f6;
+            --primary-light: #eff6ff;
+            --primary-dark: #2563eb;
+            --accent-teal: #0d9488;
+            --accent-orange: #ea580c;
+            --accent-indigo: #4f46e5;
+            
+            /* Category Colors (Subject Tiles) */
+            --cat-math: #2563eb; --cat-math-bg: #eff6ff;
+            --cat-physics: #4f46e5; --cat-physics-bg: #eef2ff;
+            --cat-chem: #059669; --cat-chem-bg: #ecfdf5;
+            --cat-prog: #0891b2; --cat-prog-bg: #ecfeff;
+            --cat-mech: #ea580c; --cat-mech-bg: #fff7ed;
+            --cat-elec: #d97706; --cat-elec-bg: #fffbeb;
+            --cat-graph: #7e22ce; --cat-graph-bg: #faf5ff;
+            --cat-comm: #db2777; --cat-comm-bg: #fdf2f8;
+            --cat-env: #16a34a; --cat-env-bg: #f0fdf4;
+            --cat-design: #e11d48; --cat-design-bg: #fff1f2;
+            --cat-work: #ca8a04; --cat-work-bg: #fefce8;
+            --cat-iks: #4338ca; --cat-iks-bg: #eef2ff;
+            --cat-gen: #475569; --cat-gen-bg: #f1f5f9;
+
+            /* Shadows & Effects */
+            --shadow-sm: 0 1px 3px rgba(15,23,42,0.05);
+            --shadow-md: 0 4px 12px rgba(15,23,42,0.08);
+            --shadow-lg: 0 12px 32px rgba(15,23,42,0.12);
+            --shadow-float: 0 8px 24px rgba(59,130,246,0.15);
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.4);
+            
+            /* Layout */
+            --max-width: 1200px;
+            --app-bar-height: 64px;
+            --bottom-nav-height: 72px;
+            --border-radius-lg: 24px;
+            --border-radius-md: 16px;
+            --border-radius-sm: 12px;
+            --transition-smooth: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            
+            /* Safe area for mobile bottoms */
+            --safe-bottom: env(safe-area-inset-bottom, 16px);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            overscroll-behavior-y: none;
+        }
+
+        button { border: none; background: none; font-family: inherit; cursor: pointer; }
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100dvh;
+            padding-bottom: calc(var(--bottom-nav-height) + var(--safe-bottom) + 20px);
+        }
+
+        /* ==================================================
+           2. TOP APP BAR
+           ================================================== */
+        .top-app-bar {
+            position: sticky;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--app-bar-height);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            z-index: 40;
+            border-bottom: 1px solid var(--border-light);
+            transition: var(--transition-smooth);
+        }
+
+        .menu-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary);
+            transition: background 0.2s;
+        }
+        .menu-btn:active { background: var(--border-light); }
+
+        .wordmark {
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .avatar-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--primary-light);
+            color: var(--primary);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 2px solid var(--surface-color);
+            box-shadow: var(--shadow-sm);
+        }
+        .avatar-btn img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* ==================================================
+           3. MAIN LAYOUT
+           ================================================== */
+        .main-content {
+            flex: 1;
+            width: 100%;
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 24px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+            animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* ==================================================
+           4. HERO SECTION
+           ================================================== */
+        .hero-section {
+            background: linear-gradient(135deg, #1e3a8a 0%, #312e81 100%);
+            border-radius: var(--border-radius-lg);
+            padding: 32px 24px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .hero-bg-visual {
+            position: absolute;
+            right: -20%;
+            top: -20%;
+            width: 250px;
+            height: 250px;
+            opacity: 0.15;
+            pointer-events: none;
+        }
+        .hero-bg-visual svg { width: 100%; height: 100%; }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(8px);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .hero-label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #93c5fd;
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        .hero-title {
+            font-size: 2.25rem;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        .hero-subtitle {
+            font-size: 0.95rem;
+            color: #bfdbfe;
+            max-width: 80%;
+            line-height: 1.5;
+        }
+
+        /* ==================================================
+           5. SMART SELECTOR & SEARCH
+           ================================================== */
+        .controls-row {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        @media (min-width: 768px) {
+            .controls-row {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+            }
+        }
+
+        .smart-selectors {
+            display: flex;
+            gap: 16px;
+        }
+
+        .segmented-control {
+            display: flex;
+            background: var(--surface-color);
+            padding: 4px;
+            border-radius: var(--border-radius-sm);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-light);
+            position: relative;
+        }
+
+        .segmented-indicator {
+            position: absolute;
+            top: 4px;
+            bottom: 4px;
+            width: calc(50% - 4px);
+            background: var(--primary-light);
+            border-radius: 8px;
+            transition: var(--transition-smooth);
+            z-index: 1;
+        }
+
+        .seg-btn {
+            position: relative;
+            z-index: 2;
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            border-radius: 8px;
+            transition: color 0.3s;
+        }
+
+        .seg-btn.active { color: var(--primary-dark); }
+        
+        .group-selector .segmented-indicator { transform: translateX(0); }
+        .group-selector[data-active="B"] .segmented-indicator { transform: translateX(100%); }
+        
+        .sem-selector .segmented-indicator { transform: translateX(0); }
+        .sem-selector[data-active="2"] .segmented-indicator { transform: translateX(100%); }
+
+        /* Search */
+        .search-container {
+            position: relative;
+            flex: 1;
+            max-width: 400px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-tertiary);
+            pointer-events: none;
+        }
+
+        .search-input {
+            width: 100%;
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            padding: 14px 16px 14px 44px;
+            border-radius: var(--border-radius-sm);
+            font-family: inherit;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition-smooth);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+        
+        .search-input::placeholder { color: var(--text-tertiary); }
+
+        /* ==================================================
+           6. QUICK ACTIONS
+           ================================================== */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .section-meta {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            background: var(--border-light);
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 16px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            margin: 0 -20px;
+            padding: 4px 20px 12px;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: none; /* Firefox */
+        }
+        .quick-actions::-webkit-scrollbar { display: none; }
+
+        .qa-card {
+            flex: 0 0 auto;
+            width: 90px;
+            height: 90px;
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-md);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: var(--shadow-sm);
+            scroll-snap-align: start;
+            transition: var(--transition-smooth);
+        }
+
+        .qa-card:active { transform: scale(0.95); }
+        .qa-card:hover { border-color: var(--primary); transform: translateY(-2px); }
+
+        .qa-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .qa-text {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* QA Colors */
+        .qa-notes { background: var(--cat-math-bg); color: var(--cat-math); }
+        .qa-pyq { background: var(--cat-design-bg); color: var(--cat-design); }
+        .qa-syllabus { background: var(--cat-env-bg); color: var(--cat-env); }
+        .qa-books { background: var(--cat-prog-bg); color: var(--cat-prog); }
+        .qa-mcq { background: var(--cat-physics-bg); color: var(--cat-physics); }
+        .qa-down { background: var(--cat-work-bg); color: var(--cat-work); }
+
+        /* ==================================================
+           7. CONTINUE STUDYING
+           ================================================== */
+        .continue-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+        
+        @media (min-width: 768px) {
+            .continue-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        .continue-card {
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-md);
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition-smooth);
+        }
+        .continue-card:active { transform: scale(0.98); background: var(--border-light); }
+
+        .continue-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .c-title { font-size: 1rem; font-weight: 600; color: var(--text-primary); }
+        .c-subtitle { font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 6px;}
+        
+        .c-progress-bar {
+            width: 60px; height: 4px; background: var(--border-color); border-radius: 2px; overflow: hidden; display: inline-block;
+        }
+        .c-progress-fill { height: 100%; background: var(--primary); }
+
+        .c-action {
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* ==================================================
+           8. SUBJECTS
+           ================================================== */
+        .subjects-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+        
+        @media (min-width: 768px) {
+            .subjects-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (min-width: 1024px) {
+            .subjects-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        .subject-tile {
+            background: var(--surface-color);
+            border-radius: var(--border-radius-md);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition-smooth);
+            overflow: hidden;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .subject-tile:active {
+            transform: scale(0.98);
+            box-shadow: none;
+            background: #fafafa;
+        }
+        
+        @media (hover: hover) {
+            .subject-tile:hover {
+                box-shadow: var(--shadow-md);
+                border-color: var(--primary-light);
+                transform: translateY(-2px);
+            }
+            .subject-tile:hover .tile-arrow {
+                transform: translateX(4px);
+                color: var(--primary);
+            }
+        }
+
+        /* Left edge accent */
+        .tile-accent {
+            position: absolute;
+            left: 0;
+            top: 24px;
+            bottom: 24px;
+            width: 4px;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .tile-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .tile-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .tile-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .tile-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1.3;
+            margin-bottom: 4px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .tile-code {
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            background: var(--border-light);
+            padding: 2px 6px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .tile-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: auto;
+            padding-top: 16px;
+            border-top: 1px dashed var(--border-color);
+        }
+
+        .tile-badges {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .badge-type {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 4px 10px;
+            border-radius: 12px;
+        }
+
+        /* Specific Badge Styles based on TYPE */
+        .badge-theory { background: #e0e7ff; color: #4338ca; }
+        .badge-lab { background: #dcfce7; color: #15803d; }
+
+        .tile-arrow {
+            color: var(--text-tertiary);
+            transition: var(--transition-smooth);
+            display: flex;
+            align-items: center;
+        }
+
+        /* Utility Color Classes applied dynamically */
+        .c-math .tile-accent { background: var(--cat-math); }
+        .c-math .tile-icon { background: var(--cat-math-bg); color: var(--cat-math); }
+
+        .c-physics .tile-accent { background: var(--cat-physics); }
+        .c-physics .tile-icon { background: var(--cat-physics-bg); color: var(--cat-physics); }
+
+        .c-chem .tile-accent { background: var(--cat-chem); }
+        .c-chem .tile-icon { background: var(--cat-chem-bg); color: var(--cat-chem); }
+
+        .c-prog .tile-accent { background: var(--cat-prog); }
+        .c-prog .tile-icon { background: var(--cat-prog-bg); color: var(--cat-prog); }
+
+        .c-mech .tile-accent { background: var(--cat-mech); }
+        .c-mech .tile-icon { background: var(--cat-mech-bg); color: var(--cat-mech); }
+
+        .c-elec .tile-accent { background: var(--cat-elec); }
+        .c-elec .tile-icon { background: var(--cat-elec-bg); color: var(--cat-elec); }
+
+        .c-graph .tile-accent { background: var(--cat-graph); }
+        .c-graph .tile-icon { background: var(--cat-graph-bg); color: var(--cat-graph); }
+
+        .c-comm .tile-accent { background: var(--cat-comm); }
+        .c-comm .tile-icon { background: var(--cat-comm-bg); color: var(--cat-comm); }
+
+        .c-env .tile-accent { background: var(--cat-env); }
+        .c-env .tile-icon { background: var(--cat-env-bg); color: var(--cat-env); }
+
+        .c-design .tile-accent { background: var(--cat-design); }
+        .c-design .tile-icon { background: var(--cat-design-bg); color: var(--cat-design); }
+
+        .c-work .tile-accent { background: var(--cat-work); }
+        .c-work .tile-icon { background: var(--cat-work-bg); color: var(--cat-work); }
+
+        .c-iks .tile-accent { background: var(--cat-iks); }
+        .c-iks .tile-icon { background: var(--cat-iks-bg); color: var(--cat-iks); }
+
+        .c-gen .tile-accent { background: var(--cat-gen); }
+        .c-gen .tile-icon { background: var(--cat-gen-bg); color: var(--cat-gen); }
+
+
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-tertiary);
+            background: var(--surface-color);
+            border-radius: var(--border-radius-md);
+            border: 1px dashed var(--border-color);
+        }
+
+        /* ==================================================
+           9. BOTTOM NAVIGATION
+           ================================================== */
+        .bottom-nav {
+            position: fixed;
+            bottom: var(--safe-bottom);
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 40px);
+            max-width: 400px;
+            height: var(--bottom-nav-height);
+            background: var(--surface-color);
+            border-radius: 100px;
+            box-shadow: var(--shadow-float);
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 0 12px;
+            z-index: 50;
+            border: 1px solid rgba(255,255,255,0.8);
+        }
+
+        .b-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            width: 60px;
+            height: 100%;
+            color: var(--text-tertiary);
+            transition: var(--transition-smooth);
+            position: relative;
+        }
+
+        .b-nav-item.active {
+            color: var(--primary-dark);
+        }
+        
+        .b-nav-item:active { transform: scale(0.9); }
+
+        .b-nav-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .b-nav-text {
+            font-size: 0.65rem;
+            font-weight: 600;
+        }
+
+        /* ==================================================
+           10. DRAWER (SIDE NAV)
+           ================================================== */
+        .drawer-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .drawer-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .drawer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 85%;
+            max-width: 340px;
+            background: var(--surface-color);
+            z-index: 101;
+            transform: translateX(-100%);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--shadow-lg);
+        }
+        .drawer.active { transform: translateX(0); }
+
+        .drawer-header {
+            padding: 40px 24px 24px;
+            background: var(--primary-light);
+            border-bottom: 1px solid var(--border-light);
+            position: relative;
+        }
+        
+        .drawer-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            border-radius: 50%;
+            background: var(--surface-color);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .d-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+        .d-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+        .d-name { font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+        .d-email { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 12px; }
+        
+        .d-badge {
+            display: inline-block;
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+
+        .drawer-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px 16px;
+        }
+
+        .d-menu-list {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-bottom: 24px;
+        }
+
+        .d-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: var(--transition-smooth);
+        }
+        
+        .d-menu-item:active { background: var(--border-light); }
+        .d-menu-item.active { background: var(--primary-light); color: var(--primary-dark); }
+        
+        .d-icon { color: var(--text-tertiary); display: flex; }
+        .d-menu-item.active .d-icon { color: var(--primary); }
+
+        .d-divider {
+            height: 1px;
+            background: var(--border-light);
+            margin: 8px 16px;
+        }
+
+        .d-menu-danger { color: #dc2626; }
+        .d-menu-danger .d-icon { color: #ef4444; }
+        .d-menu-danger:active { background: #fef2f2; }
+
+        /* ==================================================
+           11. ANIMATIONS
+           ================================================== */
+        @keyframes slideUpFade {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+    </style>
+<link rel="stylesheet" href="materials-view.css">
+</head>
+<body>
+
+    <!-- 10. DRAWER OVERLAY -->
+    <div class="drawer-overlay" id="drawer-overlay"></div>
+
+    <!-- 10. DRAWER -->
+    <aside class="drawer" id="main-drawer">
+        <div class="drawer-header">
+            <button class="drawer-close" id="btn-close-drawer">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+            <div class="d-avatar" id="drawer-avatar">?</div>
+            <div class="d-name" id="drawer-name">Student</div>
+            <div class="d-email" id="drawer-email">student@dbatu.ac.in</div>
+            <div class="d-badge">DBATU • 1st Year</div>
+        </div>
+        <div class="drawer-content">
+            <ul class="d-menu-list">
+                <li><a href="#" class="d-menu-item"><span class="d-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg></span>Home</a></li>
+                <li><a href="#" class="d-menu-item active"><span class="d-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg></span>Subjects</a></li>
+                <li><a href="#" class="d-menu-item"><span class="d-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg></span>Notes</a></li>
+                <li><a href="#" class="d-menu-item"><span class="d-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg></span>Handwritten Notes</a></li>
+                <li><a href="#" class="d-menu-item"><span class="d-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></span>Question Bank</a></li>
+                <li><a href="#" class="d-menu-item"><span class="d-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg></span>MCQ Practice</a></li>
+                <li><a href="#" class="d-menu-item"><span class="d-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg></span>Syllabus</a></li>
+                <li><a href="#" class="d-menu-item"><span class="d-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></span>Downloads</a></li>
+                <li><a href="#" class="d-menu-item"><span class="d-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></span>AI Assistant</a></li>
+            </ul>
+            
+            <div class="d-divider"></div>
+            
+            <ul class="d-menu-list">
+                <li><a href="choose-path.html" class="d-menu-item"><span class="d-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></span>Change Year</a></li>
+                <li><button id="btn-logout" class="d-menu-item d-menu-danger" style="width: 100%; text-align: left;"><span class="d-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg></span>Logout</button></li>
+            </ul>
+        </div>
+    </aside>
+
+    <div class="app-container">
+        
+        <!-- 2. TOP APP BAR -->
+        <header class="top-app-bar">
+            <button class="menu-btn" id="btn-menu" aria-label="Open menu">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </button>
+            <div class="wordmark">
+                STUDY
+            </div>
+            <button class="avatar-btn" id="top-avatar">
+                ?
+            </button>
+        </header>
+
+        <main class="main-content">
+            
+            <!-- 4. SUBJECT HERO -->
+            <section class="hero-section" id="subject-hero">
+                <div class="hero-bg-visual">
+                    <svg viewBox="0 0 100 100" fill="none" stroke="white" stroke-width="1.5">
+                        <circle cx="50" cy="50" r="40" stroke-dasharray="4 4" />
+                        <circle cx="50" cy="50" r="25" />
+                    </svg>
+                </div>
+                <div class="hero-content">
+                    <div class="hero-badge" id="subject-badge">Loading...</div>
+                    <span class="hero-label" id="subject-code">...</span>
+                    <h1 class="hero-title" id="subject-title">Loading Subject</h1>
+                    <p class="hero-subtitle">Study materials, notes, and previous year questions.</p>
+                </div>
+            </section>
+
+            <!-- 5. MATERIALS VIEW -->
+            <section class="materials-live" id="live-subject-materials">
+                <div class="section-header">
+                    <h2 class="section-title">Study Materials</h2>
+                    <span class="section-meta" id="materials-count">0 Items</span>
+                </div>
+                <div class="subjects-grid" id="materials-container" style="grid-template-columns: 1fr;">
+                    <div style="text-align:center; padding: 40px; color: var(--text-tertiary);">Loading materials...</div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- 9. BOTTOM NAVIGATION -->
+        <nav class="bottom-nav">
+            <a href="#" class="b-nav-item active">
+                <span class="b-nav-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg></span>
+                <span class="b-nav-text">Home</span>
+            </a>
+            <a href="#" class="b-nav-item">
+                <span class="b-nav-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg></span>
+                <span class="b-nav-text">Subjects</span>
+            </a>
+            <a href="#" class="b-nav-item">
+                <span class="b-nav-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></span>
+                <span class="b-nav-text">Downloads</span>
+            </a>
+            <a href="#" class="b-nav-item">
+                <span class="b-nav-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></span>
+                <span class="b-nav-text">Profile</span>
+            </a>
+        </nav>
+
+    </div>
+
+    <!-- ==================================================
+         SCRIPTS
+         ================================================== -->
+    <script type="module">
+        import { auth, db, onAuthStateChanged, signOut, collection, getDocs, query, where, orderBy } from "./firebase-config.js";
+
+        import { isValidYearGroup, getYearLabel, getGroupLabel } from './year-group-config.js';
+        const parameters = new URLSearchParams(location.search);
+        const year = parameters.get('year') || (parameters.get('branch') ? 'year-2' : 'year-1');
+        const group = parameters.get('group') || parameters.get('branch') || (localStorage.getItem('dbatu_group') === 'B' ? 'group-b' : 'group-a');
+        const subject = parameters.get('subject') || '';
+        const host = document.getElementById('live-subject-materials');
+        if (isValidYearGroup(year, group)) {
+            host.dataset.materialsYear = year;
+            host.dataset.materialsGroup = group;
+            host.dataset.materialsSubject = subject;
+            document.getElementById('subject-title').textContent = subject ? subject.replace(/-/g, ' ') : getGroupLabel(year, group);
+            document.getElementById('subject-badge').textContent = getYearLabel(year);
+            document.getElementById('subject-code').textContent = getGroupLabel(year, group);
+            import('./materials-view.js').catch(() => { host.textContent = 'Unable to load materials. Please reload.'; });
+        } else { host.textContent = 'Invalid year or group. Please return to the year selection page.'; }
+        // GLOBAL AUTH STATE
+        onAuthStateChanged(auth, (user) => {
+            window.dispatchEvent(new Event("study-auth-ready"));
+            if (user) {
+                let displayName = user.displayName || (user.email ? user.email.split('@')[0] : "Student");
+                const topAvatar = document.getElementById('top-avatar');
+                const dAvatar = document.getElementById('drawer-avatar');
+                
+                if (user.photoURL) {
+                    const imgHTML = `<img src="${user.photoURL}" alt="Avatar">`;
+                    topAvatar.innerHTML = imgHTML;
+                    dAvatar.innerHTML = imgHTML;
+                } else {
+                    const initial = displayName.charAt(0).toUpperCase();
+                    topAvatar.textContent = initial;
+                    dAvatar.textContent = initial;
+                }
+
+                document.getElementById('drawer-name').textContent = displayName;
+                document.getElementById('drawer-email').textContent = user.email || '';
+            } else {
+                window.location.replace("login.html");
+            }
+        });
+
+        document.getElementById('btn-logout').addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                window.location.replace("login.html");
+            } catch (error) {
+                alert("Failed to log out.");
+            }
+        });
+
+        // DRAWER LOGIC
+        const btnMenu = document.getElementById('btn-menu');
+        const btnCloseDrawer = document.getElementById('btn-close-drawer');
+        const drawer = document.getElementById('main-drawer');
+        const drawerOverlay = document.getElementById('drawer-overlay');
+
+        function openDrawer() {
+            drawer.classList.add('active');
+            drawerOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeDrawer() {
+            drawer.classList.remove('active');
+            drawerOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        btnMenu.addEventListener('click', openDrawer);
+        btnCloseDrawer.addEventListener('click', closeDrawer);
+        drawerOverlay.addEventListener('click', closeDrawer);
+
+    </script>
+</body>
+</html>
