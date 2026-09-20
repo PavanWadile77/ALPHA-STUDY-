@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STUDY - Choose Path</title>
+    <meta name="google-signin-client_id" content="151775555113-g3l1dfuavqotb20q1j933d1kd8ovsksu.apps.googleusercontent.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ==================================================
+           1. BASE
+           ================================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            
+            /* Gradients */
+            --grad-1: linear-gradient(135deg, #3B82F6, #2563EB);
+            --grad-2: linear-gradient(135deg, #8B5CF6, #6D28D9);
+            --grad-3: linear-gradient(135deg, #14B8A6, #059669);
+            --grad-4: linear-gradient(135deg, #F59E0B, #EA580C);
+            
+            /* Shadows */
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
+            --shadow-md: 0 10px 40px rgba(0,0,0,0.08);
+            --shadow-card-hover: 0 15px 30px rgba(0,0,0,0.15);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: 'Outfit', sans-serif;
+            min-height: 100dvh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            transition: opacity 0.4s ease;
+        }
+
+        /* ==================================================
+           2. LOADING STATE
+           ================================================== */
+        #loader {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--bg-color);
+            z-index: 100;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #e2e8f0;
+            border-top-color: #3B82F6;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ==================================================
+           3. LAYOUT & CARD
+           ================================================== */
+        .page-container {
+            width: 100%;
+            max-width: 520px;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: elegantFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .main-card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 32px 40px 40px;
+            width: 100%;
+            box-shadow: var(--shadow-md);
+            position: relative;
+        }
+
+        /* ==================================================
+           4. USER PROFILE
+           ================================================== */
+        .card-header {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 10px;
+        }
+
+        .user-profile {
+            position: relative;
+        }
+
+        .profile-btn {
+            background: #f1f5f9;
+            border: 1px solid var(--border-color);
+            border-radius: 30px;
+            padding: 8px 16px 8px 8px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            outline: none;
+            font-family: inherit;
+        }
+
+        .profile-btn:hover {
+            background: #e2e8f0;
+        }
+        
+        .profile-btn:focus-visible {
+            box-shadow: 0 0 0 3px #bfdbfe;
+            border-color: #3B82F6;
+        }
+
+        .avatar {
+            width: 28px;
+            height: 28px;
+            background-color: #3B82F6;
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .user-name {
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: 0.9rem;
+            max-width: 120px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            width: 220px;
+            z-index: 20;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .dropdown-menu.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-header {
+            padding: 16px;
+        }
+
+        .dropdown-label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .dropdown-email {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            word-break: break-all;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: var(--border-color);
+        }
+
+        .dropdown-item {
+            width: 100%;
+            text-align: left;
+            padding: 12px 16px;
+            min-height: 44px;
+            background: none;
+            border: none;
+            color: var(--error-color);
+            font-weight: 500;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.95rem;
+            border-radius: 0 0 12px 12px;
+            transition: background 0.2s ease;
+            outline: none;
+        }
+
+        .dropdown-item:hover, .dropdown-item:focus-visible {
+            background: #fef2f2;
+        }
+
+        /* ==================================================
+           5. HEADER CONTENT
+           ================================================== */
+        .icon-container {
+            width: 64px;
+            height: 64px;
+            background-color: #e0f2fe;
+            color: #0284c7;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            animation: iconBounce 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+        }
+
+        .icon-container svg {
+            width: 32px;
+            height: 32px;
+        }
+
+        .page-title {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .page-subtitle {
+            text-align: center;
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        /* ==================================================
+           6. YEAR CARDS
+           ================================================== */
+        .cards-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .year-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 16px;
+            padding: 24px 30px;
+            color: #fff;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+            outline: none;
+            
+            /* Staggered entrance animation */
+            opacity: 0;
+            animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .year-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(rgba(255,255,255,0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .year-1 { background: var(--grad-1); animation-delay: 0.1s; }
+        .year-2 { background: var(--grad-2); animation-delay: 0.2s; }
+        .year-3 { background: var(--grad-3); animation-delay: 0.3s; }
+        .year-4 { background: var(--grad-4); animation-delay: 0.4s; }
+
+        .year-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .year-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .year-subtitle {
+            font-size: 0.95rem;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        .year-arrow {
+            opacity: 0.7;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Interactions */
+        .year-card:hover, .year-card:focus-visible {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-card-hover);
+        }
+
+        .year-card:hover::before, .year-card:focus-visible::before {
+            opacity: 1;
+        }
+
+        .year-card:hover .year-arrow, .year-card:focus-visible .year-arrow {
+            opacity: 1;
+            transform: translateX(4px);
+        }
+
+        .year-card:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .year-card:focus-visible {
+            outline: 3px solid #0f172a;
+            outline-offset: 4px;
+        }
+
+        /* ==================================================
+           7. BOTTOM BUTTON
+           ================================================== */
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 30px;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: color 0.3s ease;
+            padding: 8px 16px;
+            min-height: 44px;
+            border-radius: 8px;
+            outline: none;
+        }
+
+        .btn-back:hover, .btn-back:focus-visible {
+            color: var(--text-primary);
+            background: #f1f5f9;
+        }
+        
+        .btn-back:focus-visible {
+            box-shadow: 0 0 0 2px #cbd5e1;
+        }
+
+        /* ==================================================
+           8. ANIMATIONS
+           ================================================== */
+        @keyframes elegantFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUpFade {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes iconBounce {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* ==================================================
+           9. RESPONSIVE
+           ================================================== */
+        @media (max-width: 480px) {
+            .page-container {
+                padding: 24px 16px;
+            }
+            .main-card {
+                padding: 24px 20px 30px;
+                border-radius: 20px;
+            }
+            .year-card {
+                padding: 20px 24px;
+            }
+            .year-title {
+                font-size: 1.35rem;
+            }
+            .card-header {
+                margin-bottom: 0;
+            }
+            .icon-container {
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. LOADING STATE -->
+    <div id="loader">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- 2. MAIN CONTENT -->
+    <div id="main-content" class="page-container" style="display: none;">
+        
+        <div class="main-card">
+            
+            <!-- User Profile (Top Right) -->
+            <div class="card-header">
+                <div class="user-profile">
+                    <button id="profile-btn" class="profile-btn" aria-haspopup="true" aria-expanded="false" aria-label="User profile menu">
+                        <span class="avatar" id="user-avatar">?</span>
+                        <span class="user-name" id="user-name">Loading...</span>
+                    </button>
+                    
+                    <div id="dropdown-menu" class="dropdown-menu" role="menu">
+                        <div class="dropdown-header">
+                            <span class="dropdown-label">Signed in as:</span>
+                            <strong id="dropdown-email" class="dropdown-email">user@email.com</strong>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <button id="btn-logout" class="dropdown-item" role="menuitem">Logout</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Heading & Icon -->
+            <div class="icon-container">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                    <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+                </svg>
+            </div>
+            
+            <h1 class="page-title">Choose Your Path</h1>
+            <p class="page-subtitle">Select your academic year.</p>
+
+            <!-- Year Cards -->
+            <div class="cards-list" role="navigation" aria-label="Academic Years">
+                <a href="first-year.html" class="year-card year-1">
+                    <div class="year-content">
+                        <h3 class="year-title">1st Year</h3>
+                        <span class="year-subtitle">Engineering</span>
+                    </div>
+                    <div class="year-arrow" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 12h14M12 5l7 7-7 7"></path>
+                        </svg>
+                    </div>
+                </a>
+
+                <a href="second-year.html" class="year-card year-2">
+                    <div class="year-content">
+                        <h3 class="year-title">2nd Year</h3>
+                        <span class="year-subtitle">Engineering</span>
+                    </div>
+                    <div class="year-arrow" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 12h14M12 5l7 7-7 7"></path>
+                        </svg>
+                    </div>
+                </a>
+
+                <a href="third-year.html" class="year-card year-3">
+                    <div class="year-content">
+                        <h3 class="year-title">3rd Year</h3>
+                        <span class="year-subtitle">Engineering</span>
+                    </div>
+                    <div class="year-arrow" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 12h14M12 5l7 7-7 7"></path>
+                        </svg>
+                    </div>
+                </a>
+
+                <a href="fourth-year.html" class="year-card year-4">
+                    <div class="year-content">
+                        <h3 class="year-title">4th Year</h3>
+                        <span class="year-subtitle">Engineering</span>
+                    </div>
+                    <div class="year-arrow" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 12h14M12 5l7 7-7 7"></path>
+                        </svg>
+                    </div>
+                </a>
+            </div>
+            
+        </div>
+
+        <!-- Back Button -->
+        <a href="login.html" class="btn-back">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M19 12H5M12 19l-7-7 7-7"></path>
+            </svg>
+            Back
+        </a>
+
+    </div>
+
+    <!-- ==================================================
+         SCRIPT
+         ================================================== -->
+    <script type="module">
+        import { auth, onAuthStateChanged, signOut } from "./firebase-config.js";
+
+        // 2. AUTH STATE LISTENER
+        onAuthStateChanged(auth, (user) => {
+            window.dispatchEvent(new Event("study-auth-ready"));
+            const loader = document.getElementById('loader');
+            const mainContent = document.getElementById('main-content');
+            
+            if (user) {
+                // Determine user display name
+                let displayName = user.displayName;
+                if (!displayName && user.email) {
+                    displayName = user.email.split('@')[0];
+                }
+                if (!displayName) displayName = "User";
+
+                // Update UI
+                document.getElementById('user-name').textContent = displayName;
+                document.getElementById('user-avatar').textContent = displayName.charAt(0).toUpperCase();
+                document.getElementById('dropdown-email').textContent = user.email || 'Anonymous';
+
+                // Reveal content
+                loader.style.display = 'none';
+                mainContent.style.display = 'flex';
+            } else {
+                // Not authenticated, redirect
+                window.location.href = "login.html";
+            }
+        });
+
+        // 3. DROPDOWN LOGIC
+        const profileBtn = document.getElementById('profile-btn');
+        const dropdown = document.getElementById('dropdown-menu');
+
+        profileBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isActive = dropdown.classList.contains('active');
+            dropdown.classList.toggle('active');
+            profileBtn.setAttribute('aria-expanded', !isActive);
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!profileBtn.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.classList.remove('active');
+                profileBtn.setAttribute('aria-expanded', 'false');
+            }
+        });
+
+        // 4. LOGOUT LOGIC
+        document.getElementById('btn-logout').addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                // The onAuthStateChanged listener will handle redirect
+            } catch (error) {
+                console.error("Logout error:", error);
+                alert("Failed to log out. Please try again.");
+            }
+        });
+
+        // 5. PAGE NAVIGATION TRANSITION
+        document.querySelectorAll('.year-card, .btn-back').forEach(el => {
+            el.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = el.getAttribute('href');
+                
+                // Fade out page
+                document.body.style.opacity = '0';
+                
+                setTimeout(() => {
+                    window.location.href = target;
+                }, 400); // Matches the body transition duration
+            });
+        });
+    </script>
+</body>
+</html>

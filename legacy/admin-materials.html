@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STUDY - Manage Materials</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-base: #0c0e14;
+            --bg-surface: #141722;
+            --bg-surface-elevated: #1b1f2e;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-light: rgba(255, 255, 255, 0.04);
+            --primary: #4f46e5;
+            --primary-light: #6366f1;
+            --primary-glow: rgba(99, 102, 241, 0.25);
+            --accent-teal: #10b981;
+            --accent-rose: #f43f5e;
+            --radius-lg: 20px;
+            --radius-md: 14px;
+            --radius-sm: 10px;
+            --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            font-family: 'Outfit', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            background-image:
+                radial-gradient(circle at 10% 20%, rgba(79,70,229,0.07) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(16,185,129,0.05) 0%, transparent 40%);
+        }
+
+        #auth-loader {
+            position: fixed; inset: 0; background: var(--bg-base);
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center; z-index: 99999; transition: opacity 0.4s ease;
+        }
+        .auth-spinner {
+            width: 48px; height: 48px; border: 4px solid rgba(255,255,255,0.1);
+            border-top-color: var(--primary-light); border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* HEADER */
+        .admin-header {
+            height: 72px; background: rgba(20,23,34,0.8); backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-color);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 32px; position: sticky; top: 0; z-index: 100;
+        }
+        .brand-section { display: flex; align-items: center; gap: 12px; }
+        .brand-logo {
+            width: 38px; height: 38px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 10px; display: flex; align-items: center; justify-content: center;
+            color: #fff; font-weight: 700; font-size: 1.2rem; box-shadow: 0 4px 14px var(--primary-glow);
+        }
+        .brand-title { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.5px; color: #fff; }
+        .admin-badge {
+            background: rgba(99,102,241,0.15); color: var(--primary-light);
+            border: 1px solid rgba(99,102,241,0.3); font-size: 0.72rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.8px; padding: 3px 8px; border-radius: 6px;
+        }
+        .nav-links { display: flex; align-items: center; gap: 8px; }
+        .nav-item {
+            display: flex; align-items: center; gap: 8px; padding: 8px 16px;
+            border-radius: var(--radius-sm); color: var(--text-secondary);
+            text-decoration: none; font-size: 0.92rem; font-weight: 500; transition: all 0.2s ease;
+        }
+        .nav-item:hover { color: #fff; background: rgba(255,255,255,0.05); }
+        .nav-item.active { color: #fff; background: var(--primary); box-shadow: 0 4px 14px var(--primary-glow); }
+        .user-section { display: flex; align-items: center; gap: 16px; }
+        .admin-user-info { display: flex; align-items: center; gap: 10px; }
+        .admin-avatar {
+            width: 36px; height: 36px; border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: #fff; display: flex; align-items: center; justify-content: center;
+            font-weight: 600; font-size: 0.9rem; border: 1px solid rgba(255,255,255,0.2);
+        }
+        .admin-details { display: flex; flex-direction: column; text-align: right; }
+        .admin-name { font-size: 0.88rem; font-weight: 600; color: var(--text-primary); }
+        .admin-email { font-size: 0.75rem; color: var(--text-muted); }
+        .btn-logout {
+            display: flex; align-items: center; gap: 6px;
+            background: rgba(244,63,94,0.1); color: var(--accent-rose);
+            border: 1px solid rgba(244,63,94,0.25); padding: 8px 14px;
+            border-radius: var(--radius-sm); font-size: 0.85rem; font-weight: 600;
+            cursor: pointer; transition: all 0.2s ease; font-family: inherit;
+        }
+        .btn-logout:hover { background: var(--accent-rose); color: #fff; box-shadow: 0 4px 14px rgba(244,63,94,0.3); }
+
+        /* CONTAINER */
+        .materials-container {
+            max-width: 1280px; width: 100%; margin: 0 auto;
+            padding: 36px 24px; display: flex; flex-direction: column; gap: 28px;
+        }
+        .page-header-row {
+            display: flex; justify-content: space-between; align-items: center;
+            flex-wrap: wrap; gap: 16px;
+        }
+        .page-intro h1 { font-size: 1.8rem; font-weight: 700; letter-spacing: -0.5px; }
+        .page-intro p { color: var(--text-secondary); font-size: 0.95rem; margin-top: 4px; }
+        .btn-add-new {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: var(--primary); color: #fff; text-decoration: none;
+            padding: 12px 20px; border-radius: var(--radius-md); font-size: 0.92rem; font-weight: 600;
+            min-height: 44px; justify-content: center;
+            transition: all 0.3s ease; box-shadow: 0 4px 14px var(--primary-glow);
+        }
+        .btn-add-new:hover { background: var(--primary-light); transform: translateY(-2px); }
+
+        /* FILTERS */
+        .filters-card {
+            background: var(--bg-surface); border: 1px solid var(--border-color);
+            border-radius: var(--radius-md); padding: 20px;
+            display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 16px;
+            align-items: center; box-shadow: var(--shadow-card);
+        }
+        .search-wrapper { position: relative; }
+        .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+        .search-input {
+            width: 100%; padding: 13px 16px 13px 42px;
+            background: rgba(0,0,0,0.25); border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm); color: #fff; font-size: 0.9rem; outline: none;
+            font-family: inherit; transition: border-color 0.2s;
+        }
+        .search-input:focus { border-color: var(--primary-light); }
+        .filter-select {
+            width: 100%; padding: 13px 14px; background: rgba(0,0,0,0.25);
+            border: 1px solid var(--border-color); border-radius: var(--radius-sm);
+            color: #fff; font-size: 0.9rem; outline: none; font-family: inherit;
+        }
+        .filter-select option { background: #181b24; }
+
+        /* TABLE */
+        .table-card {
+            background: var(--bg-surface); border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-card);
+        }
+        .table-wrapper { overflow-x: auto; }
+        .materials-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; }
+        .materials-table th {
+            padding: 16px 20px; background: rgba(255,255,255,0.02);
+            color: var(--text-muted); font-weight: 600; font-size: 0.8rem;
+            text-transform: uppercase; letter-spacing: 0.6px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .materials-table td {
+            padding: 16px 20px; color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-light); vertical-align: middle;
+        }
+        .materials-table tr:hover td { background: rgba(255,255,255,0.02); color: var(--text-primary); }
+        .materials-table tr:last-child td { border-bottom: none; }
+
+        .mat-title { font-weight: 600; color: #fff; display: block; margin-bottom: 3px; }
+        .mat-meta  { font-size: 0.78rem; color: var(--text-muted); }
+
+        .tag {
+            display: inline-block; padding: 4px 10px; border-radius: 6px;
+            font-size: 0.75rem; font-weight: 600;
+        }
+        .tag-year-1 { background: rgba(245,158,11,0.15); color: #fbbf24; }
+        .tag-year-2 { background: rgba(59,130,246,0.15); color: #60a5fa; }
+        .tag-year-3 { background: rgba(20,184,166,0.15); color: #2dd4bf; }
+        .tag-year-4 { background: rgba(234,88,12,0.15);  color: #fb923c; }
+        .type-badge { background: rgba(255,255,255,0.06); color: var(--text-primary); padding: 4px 8px; border-radius: 6px; font-size: 0.78rem; }
+
+        .action-btns { display: flex; align-items: center; gap: 8px; }
+        .btn-icon {
+            width: 32px; height: 32px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            border: 1px solid var(--border-color); background: rgba(255,255,255,0.03);
+            color: var(--text-secondary); cursor: pointer; transition: all 0.2s ease; text-decoration: none;
+        }
+        .btn-icon:hover { color: #fff; background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); }
+        .btn-icon.edit:hover { background: rgba(99,102,241,0.15); color: var(--primary-light); border-color: rgba(99,102,241,0.3); }
+        .btn-icon.delete:hover { background: rgba(244,63,94,0.15); color: var(--accent-rose); border-color: rgba(244,63,94,0.3); }
+
+        /* EMPTY STATE */
+        .empty-state { padding: 60px 20px; text-align: center; display: none; }
+        .empty-state-icon { font-size: 2.5rem; margin-bottom: 12px; color: var(--text-muted); }
+        .empty-state h3 { color: var(--text-primary); margin-bottom: 6px; }
+        .empty-state p { color: var(--text-muted); font-size: 0.9rem; }
+
+        /* LOADING STATE */
+        .loading-state { padding: 60px 20px; text-align: center; display: none; }
+        .loading-ring {
+            width: 36px; height: 36px; border: 3px solid rgba(255,255,255,0.1);
+            border-top-color: var(--primary-light); border-radius: 50%;
+            animation: spin 0.8s linear infinite; margin: 0 auto 14px;
+        }
+        .loading-state p { color: var(--text-muted); font-size: 0.9rem; }
+
+        /* COUNT BADGE */
+        .count-badge {
+            background: rgba(99,102,241,0.12); color: var(--primary-light);
+            border: 1px solid rgba(99,102,241,0.25); padding: 3px 10px;
+            border-radius: 20px; font-size: 0.78rem; font-weight: 600;
+        }
+
+        /* ================================================== 
+           EDIT MODAL
+           ================================================== */
+        .modal-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
+            z-index: 1000; align-items: center; justify-content: center; padding: 20px;
+        }
+        .modal-overlay.active { display: flex; animation: fadeIn 0.2s ease; }
+        .modal-box {
+            background: var(--bg-surface-elevated); border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg); padding: 32px; width: 100%;
+            max-width: 520px; box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+            animation: slideUp 0.25s ease;
+        }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .modal-header h3 { font-size: 1.2rem; font-weight: 700; }
+        .modal-close { background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 4px; font-size: 1.4rem; line-height: 1; }
+        .modal-close:hover { color: #fff; }
+        .modal-form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; }
+        .modal-form-group label { font-size: 0.88rem; color: var(--text-secondary); font-weight: 500; }
+        .modal-input, .modal-textarea {
+            width: 100%; padding: 12px 14px; background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border-color); border-radius: var(--radius-sm);
+            color: #fff; font-family: inherit; font-size: 0.92rem; outline: none;
+            transition: border-color 0.2s;
+        }
+        .modal-input:focus, .modal-textarea:focus { border-color: var(--primary-light); }
+        .modal-textarea { min-height: 80px; resize: vertical; }
+        .modal-actions { display: flex; gap: 12px; margin-top: 24px; justify-content: flex-end; }
+        .btn-modal-cancel {
+            padding: 10px 20px; background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border-color); border-radius: var(--radius-sm);
+            color: var(--text-secondary); font-family: inherit; font-size: 0.92rem;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .btn-modal-cancel:hover { color: #fff; background: rgba(255,255,255,0.1); }
+        .btn-modal-save {
+            padding: 10px 24px; background: var(--primary); border: none;
+            border-radius: var(--radius-sm); color: #fff; font-family: inherit;
+            font-size: 0.92rem; font-weight: 600; cursor: pointer; transition: all 0.2s;
+        }
+        .btn-modal-save:hover { background: var(--primary-light); }
+        .btn-modal-save:disabled { opacity: 0.6; cursor: not-allowed; }
+        .modal-msg { font-size: 0.85rem; margin-top: 12px; padding: 8px 12px; border-radius: 8px; display: none; }
+        .modal-msg.error { background: rgba(244,63,94,0.12); color: #fb7185; }
+        .modal-msg.success { background: rgba(16,185,129,0.12); color: #34d399; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        @media (max-width: 900px) {
+            .admin-header { padding: 0 16px; }
+            .nav-links { display: none; }
+            .filters-card { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 768px) {
+            .dashboard-container { padding: 24px 16px; }
+            .section-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+            .btn-add-new { width: 100%; }
+        }
+        @media (max-width: 480px) {
+            .table-card { padding: 16px 12px; }
+            .filters-card { padding: 16px; }
+        }
+    </style>
+    <script src="auth-status.js" defer></script>
+</head>
+<body>
+
+    <div id="auth-loader">
+        <div class="auth-spinner"></div>
+        <p style="color:#94a3b8; margin-top:18px; font-weight:500;">Verifying Admin Privileges...</p>
+    </div>
+
+    <div id="admin-content" style="display:none;">
+
+        <header class="admin-header">
+            <div class="brand-section">
+                <div class="brand-logo">S</div>
+                <div class="brand-title">STUDY</div>
+                <span class="admin-badge">Admin Portal</span>
+            </div>
+            <nav class="nav-links">
+                <a href="admin-dashboard.html" class="nav-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                    Dashboard
+                </a>
+                <a href="admin-upload.html" class="nav-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                    Upload Materials
+                </a>
+                <a href="admin-materials.html" class="nav-item active">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                    Manage Materials
+                </a>
+            </nav>
+            <div class="user-section">
+                <div class="admin-user-info">
+                    <div class="admin-avatar" id="admin-avatar-initial">A</div>
+                    <div class="admin-details">
+                        <span class="admin-name" id="admin-display-name">Admin</span>
+                        <span class="admin-email" id="admin-display-email">admin@study.edu</span>
+                    </div>
+                </div>
+                <button class="btn-logout" id="btn-admin-logout">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                    Logout
+                </button>
+            </div>
+        </header>
+
+        <main class="materials-container">
+            <div class="page-header-row">
+                <div class="page-intro">
+                    <h1>Curriculum Materials Repository</h1>
+                    <p>Search, filter, preview, edit metadata, and delete materials. Changes are live in real-time.</p>
+                </div>
+                <a href="admin-upload.html" class="btn-add-new">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    Upload New Resource
+                </a>
+            </div>
+
+            <section class="filters-card">
+                <div class="search-wrapper">
+                    <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" id="search-query" class="search-input" placeholder="Search by title, subject, or type...">
+                </div>
+                <select id="filter-year" class="filter-select">
+                    <option value="all">All Years</option>
+                    <option value="year-1">1st Year</option>
+                    <option value="year-2">2nd Year</option>
+                    <option value="year-3">3rd Year</option>
+                    <option value="year-4">4th Year</option>
+                </select>
+                <select id="filter-group" class="filter-select">
+                    <option value="all">All Groups</option>
+                    <option value="group-a">Group A</option>
+                    <option value="group-b">Group B</option>
+                    <option value="cse">CSE</option>
+                    <option value="it">IT</option>
+                    <option value="ds">DS</option>
+                    <option value="ecs">ECS</option>
+                </select>
+                <select id="filter-type" class="filter-select">
+                    <option value="all">All Types</option>
+                    <option value="Lecture Notes">Lecture Notes</option>
+                    <option value="Question Paper (PYQ)">Question Papers (PYQ)</option>
+                    <option value="Question Bank">Question Bank</option>
+                    <option value="Lab Manual">Lab Manual</option>
+                    <option value="Syllabus Scheme">Syllabus Scheme</option>
+                    <option value="Reference Book">Reference Book</option>
+                </select>
+            </section>
+
+            <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+                <span id="count-label" class="count-badge">Loading...</span>
+            </div>
+
+            <section class="table-card">
+                <div class="table-wrapper">
+                    <table class="materials-table">
+                        <thead>
+                            <tr>
+                                <th>Resource</th>
+                                <th>Year / Group</th>
+                                <th>Subject &amp; Type</th>
+                                <th>Date Added</th>
+                                <th>Uploaded By</th>
+                                <th style="text-align:right;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="materials-tbody"></tbody>
+                    </table>
+                </div>
+                <div class="loading-state" id="loading-state">
+                    <div class="loading-ring"></div>
+                    <p>Loading materials from Firestore...</p>
+                </div>
+                <div class="empty-state" id="empty-state">
+                    <div class="empty-state-icon">📚</div>
+                    <h3>No study materials found</h3>
+                    <p>Try adjusting your search or filters, or upload your first resource.</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- EDIT MODAL -->
+    <div class="modal-overlay" id="edit-modal" role="dialog" aria-modal="true" aria-label="Edit Material">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>Edit Material Metadata</h3>
+                <button class="modal-close" id="modal-close-btn" aria-label="Close">✕</button>
+            </div>
+            <input type="hidden" id="edit-material-id">
+            <input type="hidden" id="edit-original-uploaded-by">
+            <div class="modal-form-group">
+                <label for="edit-title">Title <span style="color:#fb7185;">*</span></label>
+                <input type="text" id="edit-title" class="modal-input" maxlength="500">
+            </div>
+            <div class="modal-form-group">
+                <label for="edit-description">Description</label>
+                <textarea id="edit-description" class="modal-textarea"></textarea>
+            </div>
+            <div class="modal-form-group">
+                <label for="edit-subject">Subject</label>
+                <input type="text" id="edit-subject" class="modal-input" maxlength="200">
+            </div>
+            <div class="modal-msg" id="modal-msg"></div>
+            <div class="modal-actions">
+                <button class="btn-modal-cancel" id="modal-cancel-btn">Cancel</button>
+                <button class="btn-modal-save" id="modal-save-btn">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { safeMaterialURL } from "./material-utils.js";
+        import { connectMaterialLinks, deleteMaterialFile, supabasePath } from './supabase-storage.js';
+        connectMaterialLinks();
+        import {
+            auth, db, storage,
+            isUserAdmin,
+            onAuthStateChanged,
+            signOut,
+            doc, getDoc, deleteDoc, updateDoc,
+            collection,
+            query, orderBy, onSnapshot,
+            serverTimestamp,
+            ref, deleteObject
+        } from "./firebase-config.js";
+
+        import { YEAR_GROUP_MAP, getYearLabel, getGroupLabel } from "./year-group-config.js";
+
+        let currentAdminUser  = null;
+        let allMaterials      = [];
+        let unsubscribeListener = null;
+
+        // --------------------------------------------------
+        // AUTH GUARD
+        // --------------------------------------------------
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.replace("admin-login.html");
+                return;
+            }
+            try {
+                if (isUserAdmin(user)) {
+                    currentAdminUser = user;
+                    let data = {};
+                    try {
+                        const snap = await getDoc(doc(db, "admins", user.uid));
+                        if (snap.exists()) data = snap.data();
+                    } catch(_) {}
+                    populateAdminUI(user, data);
+                    document.getElementById('auth-loader').style.display = 'none';
+                    document.getElementById('admin-content').style.display = 'block';
+                    startListening();
+                    return;
+                }
+            } catch(err) {
+                console.error("Admin verification error:", err);
+            }
+            window.location.replace("choose-path.html");
+        });
+
+        function populateAdminUI(user, data) {
+            const name = user.displayName || data.name || (user.email?.split('@')[0]) || "Admin";
+            document.getElementById('admin-display-name').textContent = name;
+            document.getElementById('admin-display-email').textContent = user.email || '';
+            document.getElementById('admin-avatar-initial').textContent = name.charAt(0).toUpperCase();
+        }
+
+        document.getElementById('btn-admin-logout').addEventListener('click', async () => {
+            if (unsubscribeListener) unsubscribeListener();
+            await signOut(auth);
+            window.location.replace("admin-login.html");
+        });
+
+        // Clean up listener on page unload
+        window.addEventListener('beforeunload', () => {
+            if (unsubscribeListener) unsubscribeListener();
+        });
+
+        // --------------------------------------------------
+        // REALTIME LISTENER
+        // --------------------------------------------------
+        function startListening() {
+            const loadingState = document.getElementById('loading-state');
+            loadingState.style.display = 'block';
+
+            const q = query(
+                collection(db, "materials"),
+                orderBy("createdAt", "desc")
+            );
+
+            unsubscribeListener = onSnapshot(q, (snapshot) => {
+                allMaterials = [];
+                snapshot.forEach(docSnap => {
+                    const d = docSnap.data();
+                    allMaterials.push({ id: docSnap.id, ...d });
+                });
+                loadingState.style.display = 'none';
+                renderMaterials();
+            }, (error) => {
+                console.error("Firestore snapshot error:", error);
+                loadingState.style.display = 'none';
+                document.getElementById('empty-state').style.display = 'block';
+                document.getElementById('empty-state').querySelector('p').textContent = 
+                    'Error loading materials: ' + (error.message || 'Check your admin permissions.');
+            });
+        }
+
+        // --------------------------------------------------
+        // RENDER
+        // --------------------------------------------------
+        const yearTagClass = {
+            'year-1': 'tag-year-1', 'year-2': 'tag-year-2',
+            'year-3': 'tag-year-3', 'year-4': 'tag-year-4'
+        };
+
+        function renderMaterials() {
+            const tbody      = document.getElementById('materials-tbody');
+            const emptyState = document.getElementById('empty-state');
+            const countLabel = document.getElementById('count-label');
+
+            const searchQ   = document.getElementById('search-query').value.toLowerCase().trim();
+            const yearF     = document.getElementById('filter-year').value;
+            const groupF    = document.getElementById('filter-group').value;
+            const typeF     = document.getElementById('filter-type').value;
+
+            const filtered = allMaterials.filter(m => {
+                const matchSearch = !searchQ ||
+                    (m.title   && m.title.toLowerCase().includes(searchQ)) ||
+                    (m.subject && m.subject.toLowerCase().includes(searchQ)) ||
+                    (m.type    && m.type.toLowerCase().includes(searchQ));
+                const matchYear  = yearF  === 'all' || m.yearId  === yearF;
+                const matchGroup = groupF === 'all' || m.groupId === groupF;
+                const matchType  = typeF  === 'all' || m.type    === typeF;
+                return matchSearch && matchYear && matchGroup && matchType;
+            });
+
+            countLabel.textContent = `${filtered.length} of ${allMaterials.length} materials`;
+
+            tbody.innerHTML = '';
+            if (filtered.length === 0) {
+                emptyState.style.display = 'block';
+                return;
+            }
+            emptyState.style.display = 'none';
+
+            filtered.forEach(m => {
+                const yearLabel  = getYearLabel(m.yearId  || '');
+                const groupLabel = m.groupId ? (m.groupId.toUpperCase()) : '';
+                const tagCls     = yearTagClass[m.yearId] || 'tag-year-1';
+                const dateStr    = m.createdAt?.seconds
+                    ? new Date(m.createdAt.seconds * 1000).toLocaleDateString('en-IN', { year:'numeric', month:'short', day:'numeric' })
+                    : 'Recent';
+                const uploaderEmail = m.uploaderEmail ? m.uploaderEmail.split('@')[0] : (m.uploadedBy?.slice(0,8) || '—');
+
+                const tr = document.createElement('tr');
+                tr.dataset.id = m.id;
+                tr.innerHTML = `
+                    <td>
+                        <span class="mat-title">${escHtml(m.title)}</span>
+                        <span class="mat-meta">${escHtml(m.unit || 'Full Subject')} · ${escHtml(m.semester || '')}</span>
+                    </td>
+                    <td>
+                        <span class="tag ${tagCls}">${escHtml(yearLabel)}</span>
+                        ${groupLabel ? `<br><small style="color:var(--text-muted);font-size:0.75rem;">${escHtml(groupLabel)}</small>` : ''}
+                    </td>
+                    <td>
+                        <div style="color:#fff;font-size:0.88rem;font-weight:500;">${escHtml(m.subject || '—')}</div>
+                        <span class="type-badge">${escHtml(m.type || '—')}</span>
+                    </td>
+                    <td style="white-space:nowrap;">${escHtml(dateStr)}</td>
+                    <td style="font-size:0.82rem;color:var(--text-muted);">${escHtml(uploaderEmail)}</td>
+                    <td>
+                        <div class="action-btns" style="justify-content:flex-end;">
+                            ${safeMaterialURL(m.downloadURL) ? `<a href="${escHtml(m.downloadURL)}" target="_blank" rel="noopener" class="btn-icon" title="View / Download">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                            </a>` : ''}
+                            <button type="button" class="btn-icon edit" data-id="${m.id}" title="Edit Metadata">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            </button>
+                            <button type="button" class="btn-icon delete" data-id="${m.id}" data-path="${escHtml(m.storagePath || '')}" title="Delete">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            </button>
+                        </div>
+                    </td>`;
+                tbody.appendChild(tr);
+            });
+
+            // Wire up action buttons
+            tbody.querySelectorAll('.btn-icon.edit').forEach(btn => {
+                btn.addEventListener('click', () => openEditModal(btn.dataset.id));
+            });
+            tbody.querySelectorAll('.btn-icon.delete').forEach(btn => {
+                btn.addEventListener('click', () => confirmDelete(btn.dataset.id, btn.dataset.path));
+            });
+        }
+
+        // --------------------------------------------------
+        // FILTER EVENTS
+        // --------------------------------------------------
+        ['search-query','filter-year','filter-group','filter-type'].forEach(id => {
+            document.getElementById(id).addEventListener(id === 'search-query' ? 'input' : 'change', renderMaterials);
+        });
+
+        // --------------------------------------------------
+        // DELETE — removes Storage object + Firestore doc
+        // --------------------------------------------------
+        const pendingDeletes = new Set();
+        async function confirmDelete(materialId, storagePath) {
+            if (pendingDeletes.has(materialId)) return;
+            if (!confirm('Permanently delete this material? This will remove the file from Storage and its metadata. This cannot be undone.')) return;
+
+            pendingDeletes.add(materialId);
+            let storageOk  = false;
+            let firestoreOk = false;
+            const errors   = [];
+
+            // 1. Delete from Storage (if a storage path exists)
+            if (storagePath) {
+                try {
+                    const material = allMaterials.find(item => item.id === materialId);
+                    if (material && supabasePath(material.downloadURL || '')) {
+                        await deleteMaterialFile(storagePath);
+                    } else {
+                        await deleteObject(ref(storage, storagePath));
+                    }
+                    storageOk = true;
+                } catch (storageErr) {
+                    // 404 = file already gone, treat as ok
+                    if (storageErr.code === 'storage/object-not-found') {
+                        storageOk = true;
+                    } else {
+                        errors.push('Storage: ' + storageErr.message);
+                    }
+                }
+            } else {
+                storageOk = true; // No storage path to delete
+            }
+
+            if (!storageOk) {
+                pendingDeletes.delete(materialId);
+                alert('File deletion failed. The material record is retained so you can retry.\n' + errors.join('\n'));
+                return;
+            }
+            // 2. Delete Firestore doc only after the file is removed.
+            try {
+                await deleteDoc(doc(db, "materials", materialId));
+                firestoreOk = true;
+            } catch (fsErr) {
+                errors.push('Firestore: ' + fsErr.message);
+            }
+
+            if (!firestoreOk) {
+                alert('Failed to delete material metadata.\n' + errors.join('\n') + '\nPlease try again.');
+            } else if (!storageOk) {
+                alert('Metadata deleted, but the file in Storage could not be removed.\n' + errors.join('\n') + '\nYou may need to delete it manually from Firebase Console.');
+            }
+            pendingDeletes.delete(materialId);
+            // onSnapshot will auto-update the table
+        }
+
+        // --------------------------------------------------
+        // EDIT MODAL
+        // --------------------------------------------------
+        function openEditModal(materialId) {
+            const mat = allMaterials.find(m => m.id === materialId);
+            if (!mat) return;
+
+            document.getElementById('edit-material-id').value = materialId;
+            document.getElementById('edit-original-uploaded-by').value = mat.uploadedBy || '';
+            document.getElementById('edit-title').value = mat.title || '';
+            document.getElementById('edit-description').value = mat.description || '';
+            document.getElementById('edit-subject').value = mat.subject || '';
+
+            const msgEl = document.getElementById('modal-msg');
+            msgEl.style.display = 'none';
+            msgEl.className = 'modal-msg';
+
+            document.getElementById('modal-save-btn').disabled = false;
+            document.getElementById('edit-modal').classList.add('active');
+            document.getElementById('edit-title').focus();
+        }
+
+        function closeEditModal() {
+            document.getElementById('edit-modal').classList.remove('active');
+        }
+
+        document.getElementById('modal-close-btn').addEventListener('click', closeEditModal);
+        document.getElementById('modal-cancel-btn').addEventListener('click', closeEditModal);
+        document.getElementById('edit-modal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('edit-modal')) closeEditModal();
+        });
+
+        document.getElementById('modal-save-btn').addEventListener('click', async () => {
+            const materialId = document.getElementById('edit-material-id').value;
+            const title      = document.getElementById('edit-title').value.trim();
+            const description= document.getElementById('edit-description').value.trim();
+            const subject    = document.getElementById('edit-subject').value.trim();
+            const msgEl      = document.getElementById('modal-msg');
+            const saveBtn    = document.getElementById('modal-save-btn');
+
+            if (!title || title.length > 500 || description.length > 5000 || !subject || subject.length > 200) {
+                msgEl.textContent = 'Provide a title (max 500), subject (max 200), and description (max 5000 characters).';
+                msgEl.className = 'modal-msg error';
+                msgEl.style.display = 'block';
+                return;
+            }
+
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Saving...';
+            msgEl.style.display = 'none';
+
+            try {
+                await updateDoc(doc(db, "materials", materialId), {
+                    title,
+                    description,
+                    subject,
+                    // Preserve original uploadedBy; track who edited
+                    updatedBy: currentAdminUser.uid,
+                    updatedAt: serverTimestamp()
+                });
+                msgEl.textContent = 'Saved successfully!';
+                msgEl.className = 'modal-msg success';
+                msgEl.style.display = 'block';
+                setTimeout(closeEditModal, 1200);
+            } catch(err) {
+                console.error("Update error:", err);
+                msgEl.textContent = 'Failed to save: ' + (err.message || 'Unknown error');
+                msgEl.className = 'modal-msg error';
+                msgEl.style.display = 'block';
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Save Changes';
+            }
+        });
+
+        // --------------------------------------------------
+        // UTILITIES
+        // --------------------------------------------------
+        function escHtml(text) {
+            if (!text) return '';
+            return String(text).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+        }
+    </script>
+</body>
+</html>

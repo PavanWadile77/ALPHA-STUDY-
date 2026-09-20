@@ -1,0 +1,3309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBATU CSE 2nd Year - STUDY</title>
+    <meta name="description" content="Premium academic resource hub for DBATU Computer Science & Engineering 2nd Year students. Access Notes, PYQs, Syllabus, and Exam Sprint Mode.">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* ==================================================
+           1. THEME VARIABLES & CORE SYSTEM
+           ================================================== */
+        :root {
+            /* Semester III Palette (Royal Indigo / Deep Blue) */
+            --theme-primary: #2563eb;
+            --theme-primary-hover: #1d4ed8;
+            --theme-secondary: #4f46e5;
+            --theme-accent: #38bdf8;
+            --theme-glow: rgba(37, 99, 235, 0.22);
+            --theme-hero-gradient: linear-gradient(135deg, #1d4ed8 0%, #4338ca 60%, #312e81 100%);
+            --theme-badge-bg: rgba(255, 255, 255, 0.18);
+            --theme-badge-border: rgba(255, 255, 255, 0.3);
+
+            --bg-color: #f8fafc;
+            --bg-surface: #ffffff;
+            --bg-surface-elevated: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border-light: rgba(15, 23, 42, 0.08);
+            --border-glass: rgba(255, 255, 255, 0.6);
+            --glass-bg: rgba(255, 255, 255, 0.85);
+
+            --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.04);
+            --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.07);
+            --shadow-lg: 0 16px 36px rgba(15, 23, 42, 0.12);
+            --shadow-glow: 0 12px 32px var(--theme-glow);
+
+            --radius-xl: 24px;
+            --radius-lg: 18px;
+            --radius-md: 14px;
+            --radius-sm: 10px;
+
+            --transition-theme: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            --transition-smooth: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            --transition-fast: all 0.18s ease-out;
+
+            --max-width: 1160px;
+        }
+
+        /* Dynamic Semester IV Theme (Cyan / Emerald / Deep Teal) */
+        body.theme-sem-4 {
+            --theme-primary: #0284c7;
+            --theme-primary-hover: #0369a1;
+            --theme-secondary: #0d9488;
+            --theme-accent: #10b981;
+            --theme-glow: rgba(2, 132, 199, 0.22);
+            --theme-hero-gradient: linear-gradient(135deg, #0284c7 0%, #0f766e 60%, #115e59 100%);
+            --theme-badge-bg: rgba(255, 255, 255, 0.2);
+            --theme-badge-border: rgba(255, 255, 255, 0.35);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: background-color 0.4s ease;
+            position: relative;
+        }
+
+        /* Ambient animated blobs */
+        .ambient-blob {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(110px);
+            opacity: 0.42;
+            z-index: -1;
+            pointer-events: none;
+            transition: var(--transition-theme);
+        }
+        .blob-1 {
+            top: -12%;
+            left: -8%;
+            width: 480px;
+            height: 480px;
+            background: var(--theme-primary);
+        }
+        .blob-2 {
+            bottom: 5%;
+            right: -10%;
+            width: 540px;
+            height: 540px;
+            background: var(--theme-secondary);
+        }
+
+        button {
+            border: none;
+            background: none;
+            font-family: inherit;
+            cursor: pointer;
+            outline: none;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* Micro-interaction: Active Press Scale */
+        .interactive-tap {
+            transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .interactive-tap:active {
+            transform: scale(0.985);
+        }
+
+        /* ==================================================
+           2. APP CONTAINER & TOP APP BAR
+           ================================================== */
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding-bottom: 96px;
+        }
+
+        .top-app-bar {
+            position: sticky;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 68px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-light);
+            z-index: 80;
+            transition: var(--transition-smooth);
+        }
+
+        .bar-left, .bar-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .icon-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary);
+            background: rgba(15, 23, 42, 0.04);
+            border: 1px solid var(--border-light);
+            transition: var(--transition-fast);
+        }
+        .icon-btn:hover {
+            background: rgba(15, 23, 42, 0.08);
+            transform: translateY(-1px);
+        }
+
+        .brand-cluster {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .brand-wordmark {
+            font-size: 1.3rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, var(--text-primary), var(--theme-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .sem-indicator-pill {
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 100px;
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--theme-primary);
+            border: 1px solid rgba(37, 99, 235, 0.2);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: var(--transition-theme);
+        }
+
+        .cmd-trigger-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            background: #ffffff;
+            border: 1px solid var(--border-light);
+            border-radius: 100px;
+            box-shadow: var(--shadow-sm);
+            color: var(--text-secondary);
+            font-size: 0.88rem;
+            font-weight: 500;
+            transition: var(--transition-fast);
+        }
+        .cmd-trigger-btn:hover {
+            border-color: var(--theme-primary);
+            color: var(--text-primary);
+            box-shadow: var(--shadow-md);
+        }
+        .cmd-key {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            font-weight: 600;
+            background: #f1f5f9;
+            color: #64748b;
+            padding: 2px 6px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .avatar-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--theme-primary), var(--theme-secondary));
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 2px solid #ffffff;
+            box-shadow: var(--shadow-sm);
+        }
+        .avatar-btn img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* ==================================================
+           3. MAIN LAYOUT & HERO SECTION
+           ================================================== */
+        .main-content {
+            flex: 1;
+            width: 100%;
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 28px 24px 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        /* Hero Banner with Lattice & Spark Motifs */
+        .hero-banner {
+            position: relative;
+            background: var(--theme-hero-gradient);
+            border-radius: var(--radius-xl);
+            padding: 40px;
+            color: #ffffff;
+            overflow: hidden;
+            box-shadow: var(--shadow-glow);
+            transition: var(--transition-theme);
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* Academic lattice and code bracket overlay */
+        .hero-pattern {
+            position: absolute;
+            inset: 0;
+            opacity: 0.12;
+            pointer-events: none;
+            background-image: 
+                radial-gradient(rgba(255,255,255,0.3) 1px, transparent 1px),
+                url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 25 L12 40 L20 55 M60 25 L68 40 L60 55 M45 20 L35 60' stroke='%23ffffff' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-size: 24px 24px, 80px 80px;
+        }
+
+        .hero-spark-decor {
+            position: absolute;
+            top: 24px;
+            right: 32px;
+            width: 140px;
+            height: 140px;
+            opacity: 0.18;
+            pointer-events: none;
+            animation: pulseGlow 4s ease-in-out infinite alternate;
+        }
+        @keyframes pulseGlow {
+            0% { transform: rotate(0deg) scale(0.95); opacity: 0.15; }
+            100% { transform: rotate(15deg) scale(1.08); opacity: 0.28; }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 680px;
+        }
+
+        .hero-badge-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .hero-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            background: var(--theme-badge-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--theme-badge-border);
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+        }
+        .hero-pill-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #38bdf8;
+            box-shadow: 0 0 8px #38bdf8;
+        }
+
+        .hero-title {
+            font-size: clamp(2rem, 4.5vw, 2.75rem);
+            font-weight: 800;
+            letter-spacing: -1px;
+            line-height: 1.15;
+            margin-bottom: 12px;
+        }
+
+        .hero-desc {
+            font-size: 1.05rem;
+            opacity: 0.92;
+            line-height: 1.55;
+            font-weight: 400;
+        }
+
+        .hero-quick-actions {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 100px;
+            font-size: 0.92rem;
+            font-weight: 600;
+            transition: var(--transition-fast);
+        }
+        .hero-btn-primary {
+            background: #ffffff;
+            color: var(--text-primary);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        }
+        .hero-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+        }
+
+        .hero-btn-glass {
+            background: rgba(255, 255, 255, 0.16);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #ffffff;
+        }
+        .hero-btn-glass:hover {
+            background: rgba(255, 255, 255, 0.26);
+            transform: translateY(-2px);
+        }
+
+        /* ==================================================
+           4. FEATURE 5: SMART RESUME BANNER
+           ================================================== */
+        .smart-resume-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.9));
+            border: 1px solid rgba(37, 99, 235, 0.25);
+            border-radius: var(--radius-lg);
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            box-shadow: var(--shadow-sm);
+            animation: fadeInDown 0.4s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+        .smart-resume-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--theme-primary);
+            border-radius: 4px 0 0 4px;
+        }
+
+        .resume-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .resume-icon-badge {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--theme-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+        .resume-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .resume-tag {
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: var(--theme-primary);
+        }
+        .resume-title {
+            font-size: 0.98rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .resume-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .resume-action-btn {
+            background: var(--theme-primary);
+            color: #ffffff;
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition-fast);
+        }
+        .resume-action-btn:hover {
+            background: var(--theme-primary-hover);
+            transform: translateY(-1px);
+        }
+        .resume-dismiss-btn {
+            color: var(--text-muted);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition-fast);
+        }
+        .resume-dismiss-btn:hover {
+            background: #f1f5f9;
+            color: var(--text-primary);
+        }
+
+        /* ==================================================
+           5. FEATURE 8: DYNAMIC SEMESTER SELECTOR
+           ================================================== */
+        .controls-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .segmented-sem-control {
+            background: #e2e8f0;
+            border-radius: 100px;
+            padding: 5px;
+            display: inline-flex;
+            position: relative;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+        }
+        .seg-btn {
+            padding: 9px 26px;
+            border-radius: 100px;
+            font-weight: 700;
+            font-size: 0.92rem;
+            color: #64748b;
+            transition: var(--transition-smooth);
+            position: relative;
+            z-index: 2;
+            cursor: pointer;
+            user-select: none;
+        }
+        .seg-btn.active {
+            color: var(--theme-primary);
+        }
+        .seg-slider-pill {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            height: calc(100% - 10px);
+            background: #ffffff;
+            border-radius: 100px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+            transition: var(--transition-smooth);
+            z-index: 1;
+            width: calc(50% - 5px);
+        }
+
+        .view-mode-toggles {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .view-toggle-btn {
+            padding: 8px 14px;
+            border-radius: 100px;
+            background: #ffffff;
+            border: 1px solid var(--border-light);
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition-fast);
+        }
+        .view-toggle-btn.active, .view-toggle-btn:hover {
+            border-color: var(--theme-primary);
+            color: var(--theme-primary);
+            background: rgba(37, 99, 235, 0.04);
+        }
+
+        /* ==================================================
+           6. FEATURE 2: SUBJECT ORBIT VISUALIZATION
+           ================================================== */
+        .orbit-container {
+            background: #ffffff;
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border-light);
+            padding: 32px 20px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition-smooth);
+        }
+
+        .orbit-header {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            padding: 0 12px;
+        }
+        .orbit-title-group h3 {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .orbit-title-group p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .orbit-canvas-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 580px;
+            height: 380px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+        }
+
+        /* SVG Rings */
+        .orbit-svg-rings {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        /* Central Core */
+        .orbit-core {
+            position: absolute;
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #ffffff, #f1f5f9);
+            border: 2px solid var(--theme-primary);
+            box-shadow: 0 0 30px var(--theme-glow);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            z-index: 10;
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+        .orbit-core:hover {
+            transform: scale(1.06);
+            box-shadow: 0 0 45px var(--theme-glow);
+        }
+        .orbit-core-label {
+            font-size: 0.75rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            color: var(--theme-primary);
+        }
+        .orbit-core-sub {
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        /* Orbit Tracks & Rotating Ring */
+        .orbit-ring-track {
+            position: absolute;
+            border-radius: 50%;
+            border: 1px dashed rgba(37, 99, 235, 0.2);
+            pointer-events: none;
+        }
+        .ring-inner {
+            width: 220px;
+            height: 220px;
+        }
+        .ring-outer {
+            width: 330px;
+            height: 330px;
+        }
+
+        .orbit-rotating-stage {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            animation: spinOrbit 65s linear infinite;
+        }
+        .orbit-rotating-stage.paused {
+            animation-play-state: paused;
+        }
+        @keyframes spinOrbit {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Subject Node */
+        .orbit-node {
+            position: absolute;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 2px solid var(--node-color, var(--theme-primary));
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--node-color, var(--text-primary));
+            cursor: pointer;
+            transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.25s ease;
+            margin-left: -22px;
+            margin-top: -22px;
+        }
+        .orbit-node:hover {
+            transform: scale(1.28);
+            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.35);
+            z-index: 30;
+        }
+
+        /* Tooltip on Orbit Node */
+        .orbit-node-tooltip {
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%) scale(0.9);
+            background: #0f172a;
+            color: #ffffff;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            transition: var(--transition-fast);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+            z-index: 40;
+        }
+        .orbit-node:hover .orbit-node-tooltip {
+            opacity: 1;
+            transform: translateX(-50%) scale(1);
+        }
+
+        /* ==================================================
+           7. FEATURE 6: POCKET SHELF (PINNED SUBJECTS)
+           ================================================== */
+        .pocket-shelf-section {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .shelf-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .shelf-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .shelf-badge-count {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 100px;
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--theme-primary);
+        }
+
+        .shelf-carousel {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 14px;
+        }
+
+        .shelf-card {
+            background: #ffffff;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition-fast);
+            position: relative;
+            cursor: pointer;
+        }
+        .shelf-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--theme-primary);
+            box-shadow: var(--shadow-md);
+        }
+        .shelf-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            overflow: hidden;
+        }
+        .shelf-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: var(--card-bg, #eff6ff);
+            color: var(--card-color, var(--theme-primary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.05rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .shelf-text {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .shelf-sub-title {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .shelf-sub-code {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .shelf-unpin-btn {
+            color: var(--text-muted);
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition-fast);
+            flex-shrink: 0;
+        }
+        .shelf-unpin-btn:hover {
+            background: #fee2e2;
+            color: #ef4444;
+        }
+
+        /* Empty State for Pocket Shelf */
+        .shelf-empty-card {
+            background: #ffffff;
+            border: 1px dashed #cbd5e1;
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            text-align: left;
+            color: var(--text-secondary);
+        }
+        .shelf-empty-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            flex-shrink: 0;
+        }
+        .shelf-empty-text h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+        .shelf-empty-text p {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+        }
+
+        /* ==================================================
+           8. SUBJECTS GRID & SUBJECT CARDS (DNA + COMPASS)
+           ================================================== */
+        .subjects-section-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 8px;
+        }
+        .section-title-wrap h2 {
+            font-size: 1.45rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: var(--text-primary);
+        }
+        .section-title-wrap p {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+        }
+
+        .subjects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+            gap: 22px;
+        }
+
+        .subject-card {
+            background: #ffffff;
+            border-radius: var(--radius-lg);
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-light);
+            transition: var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        .subject-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+            border-color: rgba(37, 99, 235, 0.3);
+        }
+        .subject-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--card-color, var(--theme-primary));
+        }
+
+        .card-top-row {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+        }
+
+        .card-icon-title-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .sc-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--card-bg, #eff6ff);
+            color: var(--card-color, var(--theme-primary));
+            font-size: 1.3rem;
+            font-weight: 800;
+            flex-shrink: 0;
+            box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.04);
+        }
+
+        .card-badges {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .sc-badge {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+        .badge-cat {
+            background: var(--card-bg, #f1f5f9);
+            color: var(--card-color, var(--text-primary));
+        }
+        .badge-type {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            color: #64748b;
+        }
+
+        .card-pin-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition-fast);
+        }
+        .card-pin-btn:hover {
+            color: var(--theme-primary);
+            border-color: var(--theme-primary);
+            background: #ffffff;
+        }
+        .card-pin-btn.pinned {
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--theme-primary);
+            border-color: rgba(37, 99, 235, 0.3);
+            animation: bouncePop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes bouncePop {
+            0% { transform: scale(0.8); }
+            50% { transform: scale(1.25); }
+            100% { transform: scale(1); }
+        }
+
+        .sc-content {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .sc-title {
+            font-size: 1.18rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1.35;
+        }
+        .sc-code {
+            font-size: 0.8rem;
+            color: #64748b;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 500;
+        }
+
+        /* FEATURE 9: SUBJECT DNA CHIPS */
+        .subject-dna-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+            padding-top: 2px;
+        }
+        .dna-chip {
+            font-size: 0.68rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            padding: 3px 7px;
+            border-radius: 6px;
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+            letter-spacing: 0.3px;
+        }
+        .dna-credit {
+            background: rgba(37, 99, 235, 0.08);
+            color: var(--theme-primary);
+            border-color: rgba(37, 99, 235, 0.2);
+        }
+
+        /* FEATURE 4: STUDY COMPASS (Resource Availability Visual) */
+        .study-compass-bar {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid #f1f5f9;
+        }
+        .compass-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.76rem;
+            font-weight: 600;
+            color: #64748b;
+        }
+        .compass-dots {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .compass-pill {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.68rem;
+            font-weight: 700;
+            background: #e2e8f0;
+            color: #94a3b8;
+        }
+        .compass-pill.active {
+            background: rgba(16, 185, 129, 0.12);
+            color: #059669;
+        }
+        .compass-pill.active .c-dot {
+            background: #10b981;
+        }
+        .c-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: #94a3b8;
+        }
+
+        /* Card Footer */
+        .sc-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 6px;
+            margin-top: auto;
+            border-top: 1px solid #f8fafc;
+        }
+        .peek-btn {
+            font-size: 0.84rem;
+            font-weight: 600;
+            color: var(--theme-primary);
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 10px;
+            border-radius: 8px;
+            transition: var(--transition-fast);
+        }
+        .peek-btn:hover {
+            background: rgba(37, 99, 235, 0.08);
+        }
+
+        .sc-arrow-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            transition: var(--transition-smooth);
+        }
+        .subject-card:hover .sc-arrow-btn {
+            background: var(--card-bg, #eff6ff);
+            color: var(--card-color, var(--theme-primary));
+            transform: translateX(4px);
+        }
+
+        /* Color classes */
+        .color-blue { --card-color: #2563eb; --card-bg: #eff6ff; }
+        .color-cyan { --card-color: #0891b2; --card-bg: #ecfeff; }
+        .color-purple { --card-color: #9333ea; --card-bg: #faf5ff; }
+        .color-indigo { --card-color: #4f46e5; --card-bg: #eef2ff; }
+        .color-orange { --card-color: #ea580c; --card-bg: #fff7ed; }
+        .color-violet { --card-color: #7c3aed; --card-bg: #f5f3ff; }
+        .color-teal { --card-color: #0d9488; --card-bg: #f0fdfa; }
+        .color-rose { --card-color: #e11d48; --card-bg: #fff1f2; }
+        .color-yellow { --card-color: #d97706; --card-bg: #fefce8; }
+        .color-slate { --card-color: #475569; --card-bg: #f8fafc; }
+
+        /* ==================================================
+           9. FEATURE 3: SMART SUBJECT PEEK (BOTTOM SHEET)
+           ================================================== */
+        .peek-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 100;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .peek-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .peek-sheet {
+            width: 100%;
+            max-width: 620px;
+            background: #ffffff;
+            border-radius: 28px 28px 0 0;
+            padding: 24px 28px 40px;
+            box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.2);
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            max-height: 85vh;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .peek-overlay.open .peek-sheet {
+            transform: translateY(0);
+        }
+
+        .peek-drag-handle {
+            width: 44px;
+            height: 5px;
+            background: #cbd5e1;
+            border-radius: 100px;
+            margin: -8px auto 8px;
+            cursor: grab;
+        }
+
+        .peek-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+        }
+        .peek-title-group {
+            display: flex;
+            gap: 14px;
+            align-items: center;
+        }
+        .peek-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 16px;
+            background: #eff6ff;
+            color: var(--theme-primary);
+            font-size: 1.5rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .peek-title {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            line-height: 1.25;
+        }
+        .peek-code {
+            font-size: 0.85rem;
+            color: #64748b;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .peek-close-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #f1f5f9;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition-fast);
+        }
+        .peek-close-btn:hover {
+            background: #e2e8f0;
+            color: var(--text-primary);
+        }
+
+        .peek-resources-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        @media (max-width: 480px) {
+            .peek-resources-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .peek-resource-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: var(--radius-md);
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: var(--transition-fast);
+        }
+        .peek-resource-card:hover {
+            border-color: var(--theme-primary);
+            background: #ffffff;
+            box-shadow: var(--shadow-sm);
+        }
+        .pr-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: #ffffff;
+            color: var(--theme-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            font-size: 1rem;
+        }
+        .pr-info h5 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        .pr-info span {
+            font-size: 0.74rem;
+            color: #10b981;
+            font-weight: 600;
+        }
+        .pr-info span.pending {
+            color: #94a3b8;
+        }
+
+        .peek-actions-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 8px;
+        }
+        .peek-primary-btn {
+            flex: 1;
+            background: var(--theme-primary);
+            color: #ffffff;
+            padding: 14px 20px;
+            border-radius: 14px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition-fast);
+        }
+        .peek-primary-btn:hover {
+            background: var(--theme-primary-hover);
+            transform: translateY(-1px);
+        }
+        .peek-pin-action {
+            background: #f1f5f9;
+            color: #475569;
+            padding: 14px 18px;
+            border-radius: 14px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition-fast);
+        }
+        .peek-pin-action:hover {
+            background: #e2e8f0;
+            color: var(--text-primary);
+        }
+
+        /* ==================================================
+           10. FEATURE 1: COMMAND PALETTE (CTRL + K)
+           ================================================== */
+        .cmd-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 120;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 80px 20px 20px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+        }
+        .cmd-modal-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .cmd-dialog {
+            width: 100%;
+            max-width: 600px;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transform: scale(0.96) translateY(-10px);
+            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .cmd-modal-overlay.open .cmd-dialog {
+            transform: scale(1) translateY(0);
+        }
+
+        .cmd-search-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 18px 22px;
+            border-bottom: 1px solid #f1f5f9;
+            background: #ffffff;
+        }
+        .cmd-search-icon {
+            color: #94a3b8;
+            width: 22px;
+            height: 22px;
+        }
+        .cmd-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-family: inherit;
+            font-size: 1.05rem;
+            color: var(--text-primary);
+            background: transparent;
+        }
+        .cmd-input::placeholder {
+            color: #94a3b8;
+        }
+        .cmd-esc-chip {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            background: #f1f5f9;
+            color: #64748b;
+            padding: 3px 7px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .cmd-results-list {
+            max-height: 380px;
+            overflow-y: auto;
+            padding: 10px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .cmd-category-title {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            padding: 8px 12px 4px;
+        }
+
+        .cmd-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+        .cmd-item:hover, .cmd-item.selected {
+            background: rgba(37, 99, 235, 0.08);
+            color: var(--theme-primary);
+        }
+        .cmd-item-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .cmd-item-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: #f1f5f9;
+            color: #475569;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95rem;
+            font-weight: 700;
+        }
+        .cmd-item:hover .cmd-item-icon, .cmd-item.selected .cmd-item-icon {
+            background: var(--theme-primary);
+            color: #ffffff;
+        }
+        .cmd-item-text h4 {
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .cmd-item:hover .cmd-item-text h4, .cmd-item.selected .cmd-item-text h4 {
+            color: var(--theme-primary);
+        }
+        .cmd-item-text p {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+        .cmd-item-badge {
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 6px;
+            background: #f1f5f9;
+            color: #64748b;
+        }
+
+        .cmd-empty-state {
+            padding: 36px 20px;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+        .cmd-empty-state p {
+            font-size: 0.9rem;
+            margin-top: 6px;
+        }
+
+        .cmd-footer {
+            padding: 10px 20px;
+            border-top: 1px solid #f1f5f9;
+            background: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+        .cmd-footer-keys {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ==================================================
+           11. FEATURE 7: EXAM SPRINT MODE (FULLSCREEN FOCUS)
+           ================================================== */
+        .exam-sprint-overlay {
+            position: fixed;
+            inset: 0;
+            background: #080c16;
+            color: #f8fafc;
+            z-index: 150;
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.35s ease;
+            overflow-y: auto;
+        }
+        .exam-sprint-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .sprint-header {
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(8, 12, 22, 0.8);
+            backdrop-filter: blur(20px);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .sprint-logo-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .sprint-badge {
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            color: #ffffff;
+            font-size: 0.72rem;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: 6px;
+            letter-spacing: 0.5px;
+        }
+        .sprint-title {
+            font-size: 1.2rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .sprint-timer-widget {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 6px 16px;
+            border-radius: 100px;
+        }
+        .sprint-timer-display {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #38bdf8;
+            letter-spacing: 1px;
+        }
+        .sprint-timer-btn {
+            color: #f8fafc;
+            font-size: 0.8rem;
+            padding: 4px 8px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            transition: var(--transition-fast);
+        }
+        .sprint-timer-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .sprint-close-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #94a3b8;
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 8px 14px;
+            border-radius: 100px;
+            background: rgba(255, 255, 255, 0.05);
+            transition: var(--transition-fast);
+        }
+        .sprint-close-btn:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: #ffffff;
+        }
+
+        .sprint-body {
+            max-width: 1080px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 40px 24px 60px;
+            display: flex;
+            flex-direction: column;
+            gap: 36px;
+        }
+
+        .sprint-intro {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .sprint-intro h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+        }
+        .sprint-intro p {
+            color: #94a3b8;
+            font-size: 0.95rem;
+        }
+
+        .sprint-slots-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 18px;
+        }
+        .sprint-subject-card {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            transition: var(--transition-fast);
+        }
+        .sprint-subject-card:hover {
+            background: rgba(255, 255, 255, 0.07);
+            border-color: rgba(56, 189, 248, 0.3);
+            transform: translateY(-2px);
+        }
+        .ssc-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .ssc-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: rgba(56, 189, 248, 0.15);
+            color: #38bdf8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+        .ssc-tag {
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.08);
+            color: #94a3b8;
+        }
+        .ssc-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+        .ssc-links {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        .sprint-quick-link {
+            padding: 8px 10px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.06);
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: #cbd5e1;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition-fast);
+        }
+        .sprint-quick-link:hover {
+            background: #38bdf8;
+            color: #080c16;
+        }
+
+        /* ==================================================
+           12. FEATURE 10: QUICK ACTION DOCK (FLOATING MOBILE/DESKTOP)
+           ================================================== */
+        .quick-action-dock {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 23, 42, 0.88);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 100px;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+            z-index: 70;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+        }
+        .quick-action-dock.hidden-scroll {
+            transform: translateX(-50%) translateY(90px);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .dock-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #cbd5e1;
+            position: relative;
+            transition: var(--transition-fast);
+        }
+        .dock-btn:hover, .dock-btn.active {
+            background: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            transform: translateY(-2px);
+        }
+        .dock-btn-accent {
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            color: #ffffff;
+            box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4);
+        }
+        .dock-btn-accent:hover {
+            background: linear-gradient(135deg, #fbbf24, #f87171);
+            color: #ffffff;
+        }
+
+        .dock-tooltip {
+            position: absolute;
+            bottom: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%) scale(0.85);
+            background: #0f172a;
+            color: #ffffff;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            transition: var(--transition-fast);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .dock-btn:hover .dock-tooltip {
+            opacity: 1;
+            transform: translateX(-50%) scale(1);
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 16px 16px 40px;
+                gap: 24px;
+            }
+            .hero-banner {
+                padding: 28px 20px;
+            }
+            .hero-title {
+                font-size: 1.85rem;
+            }
+            .top-app-bar {
+                padding: 0 16px;
+            }
+            .cmd-trigger-btn .cmd-key {
+                display: none;
+            }
+            .orbit-canvas-wrapper {
+                height: 320px;
+            }
+            .ring-outer {
+                width: 280px;
+                height: 280px;
+            }
+            .ring-inner {
+                width: 190px;
+                height: 190px;
+            }
+        }
+    </style>
+<link rel="stylesheet" href="materials-view.css">
+</head>
+<body>
+
+    <!-- Ambient Blobs -->
+    <div class="ambient-blob blob-1"></div>
+    <div class="ambient-blob blob-2"></div>
+
+    <div class="app-container">
+
+        <!-- TOP APP BAR -->
+        <header class="top-app-bar">
+            <div class="bar-left">
+                <a href="second-year.html" class="icon-btn interactive-tap" aria-label="Go back to Branch Selection">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                </a>
+                <div class="brand-cluster">
+                    <div class="brand-wordmark">STUDY</div>
+                    <span class="sem-indicator-pill" id="bar-sem-pill">SEM III</span>
+                </div>
+            </div>
+
+            <div class="bar-right">
+                <!-- Command Palette Trigger -->
+                <button class="cmd-trigger-btn interactive-tap" id="cmd-open-btn" aria-label="Open Command Palette">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <span>Search</span>
+                    <span class="cmd-key">Ctrl+K</span>
+                </button>
+
+                <!-- Avatar -->
+                <div class="avatar-btn" id="top-avatar" title="Student Profile">?</div>
+            </div>
+        </header>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+
+            <!-- HERO SECTION -->
+            <section class="hero-banner">
+                <div class="hero-pattern"></div>
+                <svg class="hero-spark-decor" viewBox="0 0 100 100" fill="none" stroke="#ffffff" stroke-width="2">
+                    <polygon points="50 5, 63 38, 95 50, 63 62, 50 95, 37 62, 5 50, 37 38"></polygon>
+                </svg>
+
+                <div class="hero-content">
+                    <div class="hero-badge-row">
+                        <span class="hero-pill">
+                            <span class="hero-pill-dot"></span>
+                            DBATU CSE • 2nd Year
+                        </span>
+                        <span class="hero-pill" id="hero-curriculum-pill">12 Courses Available</span>
+                    </div>
+
+                    <h1 class="hero-title">Computer Science &amp; Engineering</h1>
+                    <p class="hero-desc">
+                        Official DBATU curriculum hub with high-yield Notes, University PYQs, Subject DNA blueprints, and distraction-free Exam Sprint mode.
+                    </p>
+                </div>
+
+                <div class="hero-quick-actions">
+                    <button class="hero-btn hero-btn-primary interactive-tap" id="hero-sprint-btn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                        </svg>
+                        <span>Launch Exam Sprint</span>
+                    </button>
+
+                    <button class="hero-btn hero-btn-glass interactive-tap" id="hero-orbit-btn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path d="M3 12a9 9 0 1 0 18 0 9 9 0 0 0-18 0"></path>
+                        </svg>
+                        <span id="orbit-toggle-text">Show Subject Orbit</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- FEATURE 5: SMART RESUME BANNER -->
+            <section class="smart-resume-card" id="smart-resume-banner" style="display: none;">
+                <div class="resume-left">
+                    <div class="resume-icon-badge" id="resume-icon">⎘</div>
+                    <div class="resume-meta">
+                        <span class="resume-tag">Jump Back In • Smart Resume</span>
+                        <h4 class="resume-title" id="resume-title">Data Structures (Semester III)</h4>
+                    </div>
+                </div>
+                <div class="resume-right">
+                    <a href="#" class="resume-action-btn interactive-tap" id="resume-continue-link">
+                        <span>Continue</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </a>
+                    <button class="resume-dismiss-btn" id="resume-dismiss-btn" aria-label="Dismiss smart resume">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+            </section>
+
+            <!-- CONTROLS TOOLBAR & DYNAMIC SEMESTER SWITCHER -->
+            <div class="controls-toolbar">
+                <div class="segmented-sem-control" id="semester-selector">
+                    <div class="seg-slider-pill" id="seg-slider"></div>
+                    <button class="seg-btn active interactive-tap" data-sem="3">Semester III</button>
+                    <button class="seg-btn interactive-tap" data-sem="4">Semester IV</button>
+                </div>
+
+                <div class="view-mode-toggles">
+                    <button class="view-toggle-btn active interactive-tap" id="btn-view-grid">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="14" width="7" height="7"></rect>
+                            <rect x="3" y="14" width="7" height="7"></rect>
+                        </svg>
+                        <span>Card Grid</span>
+                    </button>
+                    <button class="view-toggle-btn interactive-tap" id="btn-view-orbit">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <circle cx="19" cy="5" r="2"></circle>
+                            <circle cx="5" cy="19" r="2"></circle>
+                            <path d="M12 2a10 10 0 1 0 10 10"></path>
+                        </svg>
+                        <span>Orbit Map</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- FEATURE 2: SUBJECT ORBIT VISUALIZATION (COLLAPSIBLE / TOGGLEABLE) -->
+            <section class="orbit-container" id="orbit-section" style="display: none;">
+                <div class="orbit-header">
+                    <div class="orbit-title-group">
+                        <h3>
+                            <span>🪐</span>
+                            <span id="orbit-header-title">Semester III Academic Orbit</span>
+                        </h3>
+                        <p>Hover or tap any node to inspect resources and jump straight to study</p>
+                    </div>
+                    <button class="icon-btn interactive-tap" id="orbit-close-btn" title="Close Orbit View">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="orbit-canvas-wrapper" id="orbit-canvas">
+                    <!-- Concentric visual rings -->
+                    <div class="orbit-ring-track ring-inner"></div>
+                    <div class="orbit-ring-track ring-outer"></div>
+
+                    <!-- Center Core Node -->
+                    <div class="orbit-core interactive-tap" id="orbit-center-core" title="Click to view curriculum status">
+                        <div class="orbit-core-label" id="orbit-core-sem">SEM III</div>
+                        <div class="orbit-core-sub">DBATU</div>
+                    </div>
+
+                    <!-- Rotating Stage containing subject nodes -->
+                    <div class="orbit-rotating-stage" id="orbit-nodes-stage">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- FEATURE 6: POCKET SHELF (PINNED / QUICK ACCESS CAROUSEL) -->
+            <section class="pocket-shelf-section" id="pocket-shelf-container">
+                <div class="shelf-header">
+                    <div class="shelf-title">
+                        <span>📌</span>
+                        <span>Pocket Shelf</span>
+                        <span class="shelf-badge-count" id="shelf-count">0 / 4</span>
+                    </div>
+                </div>
+
+                <div class="shelf-carousel" id="shelf-items-list">
+                    <!-- Populated dynamically or displays empty state -->
+                </div>
+            </section>
+
+            <!-- SUBJECTS GRID & SUBJECT DNA -->
+            <section class="subjects-section-heading">
+                <div class="section-title-wrap">
+                    <h2 id="current-sem-heading">Semester III Subjects</h2>
+                    <p id="current-sem-subheading">Core engineering curriculum &amp; practical laboratories</p>
+                </div>
+            </section>
+
+            <section class="subjects-grid" id="subjects-container">
+                <!-- Dynamically populated -->
+            </section>
+
+        <section class="materials-live" data-materials-year="year-2" data-materials-group="cse"></section>
+</main>
+    </div>
+
+    <!-- ==================================================
+         FEATURE 3: SMART SUBJECT PEEK (BOTTOM SHEET)
+         ================================================== -->
+    <div class="peek-overlay" id="peek-modal" role="dialog" aria-modal="true" aria-hidden="true">
+        <div class="peek-sheet" id="peek-sheet-content">
+            <div class="peek-drag-handle"></div>
+
+            <div class="peek-header">
+                <div class="peek-title-group">
+                    <div class="peek-icon" id="peek-icon">∑</div>
+                    <div>
+                        <h3 class="peek-title" id="peek-title">Engineering Mathematics-III</h3>
+                        <div class="peek-code" id="peek-code">25AF1000BS301</div>
+                    </div>
+                </div>
+                <button class="peek-close-btn interactive-tap" id="peek-close-btn" aria-label="Close Subject Peek">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Subject DNA in Peek -->
+            <div class="subject-dna-row" id="peek-dna-row">
+                <!-- Dynamically populated -->
+            </div>
+
+            <!-- Resource quick shortcuts -->
+            <div class="peek-resources-grid" id="peek-resources-list">
+                <!-- Dynamically populated -->
+            </div>
+
+            <div class="peek-actions-row">
+                <a href="#" class="peek-primary-btn interactive-tap" id="peek-full-page-link">
+                    <span>Open Full Subject Page</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                </a>
+                <button class="peek-pin-action interactive-tap" id="peek-pin-toggle-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    <span id="peek-pin-text">Pin to Shelf</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================================================
+         FEATURE 1: STUDY COMMAND PALETTE (CTRL + K)
+         ================================================== -->
+    <div class="cmd-modal-overlay" id="cmd-modal" role="dialog" aria-modal="true" aria-hidden="true">
+        <div class="cmd-dialog">
+            <div class="cmd-search-bar">
+                <svg class="cmd-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" class="cmd-input" id="cmd-input" placeholder="Jump to a subject, resource or action..." autocomplete="off">
+                <span class="cmd-esc-chip">ESC</span>
+            </div>
+
+            <div class="cmd-results-list" id="cmd-results-list">
+                <!-- Dynamically filtered commands & subjects -->
+            </div>
+
+            <div class="cmd-footer">
+                <span>Navigate with keyboard</span>
+                <div class="cmd-footer-keys">
+                    <span><kbd class="cmd-esc-chip">↑</kbd> <kbd class="cmd-esc-chip">↓</kbd> to select</span>
+                    <span><kbd class="cmd-esc-chip">↵</kbd> to open</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================================================
+         FEATURE 7: EXAM SPRINT MODE (DISTRACTION FREE)
+         ================================================== -->
+    <div class="exam-sprint-overlay" id="exam-sprint-modal" role="dialog" aria-modal="true" aria-hidden="true">
+        <header class="sprint-header">
+            <div class="sprint-logo-group">
+                <span class="sprint-badge">FOCUS MODE</span>
+                <h3 class="sprint-title">DBATU Exam Sprint</h3>
+            </div>
+
+            <!-- Sprint Stopwatch / Focus Timer -->
+            <div class="sprint-timer-widget">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                <span class="sprint-timer-display" id="sprint-timer-text">25:00</span>
+                <button class="sprint-timer-btn" id="sprint-timer-toggle">Start</button>
+                <button class="sprint-timer-btn" id="sprint-timer-reset">Reset</button>
+            </div>
+
+            <button class="sprint-close-btn interactive-tap" id="sprint-exit-btn">
+                <span>Exit Sprint</span>
+                <kbd class="cmd-esc-chip" style="background: rgba(255,255,255,0.15); color: #fff; border: none;">ESC</kbd>
+            </button>
+        </header>
+
+        <div class="sprint-body">
+            <div class="sprint-intro">
+                <h2>High-Yield Exam Prep Deck</h2>
+                <p>Curated 2024-25 high weightage formulas, solved previous year questions, and rapid revision packs for your immediate sprint.</p>
+            </div>
+
+            <div class="sprint-slots-grid" id="sprint-subjects-grid">
+                <!-- Dynamically populated high yield subjects -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================================================
+         FEATURE 10: QUICK ACTION DOCK (FLOATING)
+         ================================================== -->
+    <nav class="quick-action-dock" id="quick-action-dock" aria-label="Quick Actions">
+        <button class="dock-btn interactive-tap" id="dock-cmd-btn" aria-label="Search Subjects">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <span class="dock-tooltip">Search (Ctrl+K)</span>
+        </button>
+
+        <button class="dock-btn interactive-tap" id="dock-orbit-btn" aria-label="Toggle Orbit View">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M3 12a9 9 0 1 0 18 0 9 9 0 0 0-18 0"></path>
+            </svg>
+            <span class="dock-tooltip">Academic Orbit</span>
+        </button>
+
+        <button class="dock-btn interactive-tap" id="dock-shelf-btn" aria-label="Jump to Pocket Shelf">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+            </svg>
+            <span class="dock-tooltip">Pocket Shelf</span>
+        </button>
+
+        <button class="dock-btn dock-btn-accent interactive-tap" id="dock-sprint-btn" aria-label="Exam Sprint Mode">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+            </svg>
+            <span class="dock-tooltip">Exam Sprint</span>
+        </button>
+
+        <button class="dock-btn interactive-tap" id="dock-sem-toggle-btn" aria-label="Switch Semester">
+            <span style="font-size: 0.76rem; font-weight: 800; font-family: 'JetBrains Mono', monospace;" id="dock-sem-label">S4</span>
+            <span class="dock-tooltip" id="dock-sem-tooltip">Switch to Sem IV</span>
+        </button>
+    </nav>
+
+    <!-- ==================================================
+         SCRIPTS: FIREBASE + 14 SIGNATURE FEATURES
+         ================================================== -->
+    <script type="module">
+        import { auth, onAuthStateChanged } from "./firebase-config.js";
+
+        onAuthStateChanged(auth, (user) => {
+            window.dispatchEvent(new Event("study-auth-ready"));
+            if (user) {
+                let displayName = user.displayName;
+                if (!displayName && user.email) displayName = user.email.split('@')[0];
+                if (!displayName) displayName = "Student";
+
+                const topAvatar = document.getElementById('top-avatar');
+                if (user.photoURL) {
+                    topAvatar.innerHTML = `<img src="${user.photoURL}" alt="${displayName}">`;
+                } else {
+                    topAvatar.textContent = displayName.charAt(0).toUpperCase();
+                }
+            } else {
+                // If not logged in, redirect
+                window.location.replace("login.html");
+            }
+        });
+
+        /* ==================================================
+           DATA STORE: OFFICIAL DBATU CSE SUBJECTS & RESOURCES
+           ================================================== */
+        const subjects = [
+            // Semester III
+            {
+                title: "Engineering Mathematics-III",
+                code: "25AF1000BS301",
+                category: "BSC",
+                type: "Theory",
+                semester: 3,
+                branch: "cse",
+                slug: "engineering-mathematics-3",
+                colorClass: "color-blue",
+                icon: "∑",
+                orbitAbbr: "M-III",
+                credits: "4 Credits",
+                dna: ["[ CORE ]", "[ APPLIED MATH ]", "[ 60M ENDSEM • 40M CA ]"],
+                resources: { notes: true, pyq: true, syllabus: true, bank: true }
+            },
+            {
+                title: "Data Structures",
+                code: "25AF1245PC302",
+                category: "PCC",
+                type: "Theory",
+                semester: 3,
+                branch: "cse",
+                slug: "data-structures",
+                colorClass: "color-cyan",
+                icon: "⎘",
+                orbitAbbr: "DS",
+                credits: "3 Credits",
+                dna: ["[ CORE ]", "[ CODE ]", "[ 60M ENDSEM • 40M CA ]"],
+                resources: { notes: true, pyq: true, syllabus: true, bank: true }
+            },
+            {
+                title: "Discrete Mathematics",
+                code: "25AF1245PC303",
+                category: "PCC",
+                type: "Theory",
+                semester: 3,
+                branch: "cse",
+                slug: "discrete-mathematics",
+                colorClass: "color-purple",
+                icon: "∩",
+                orbitAbbr: "DM",
+                credits: "3 Credits",
+                dna: ["[ CORE ]", "[ LOGIC ]", "[ 60M ENDSEM • 40M CA ]"],
+                resources: { notes: true, pyq: true, syllabus: true, bank: true }
+            },
+            {
+                title: "Object-Oriented Programming",
+                code: "25AF1245PC304",
+                category: "PCC",
+                type: "Theory",
+                semester: 3,
+                branch: "cse",
+                slug: "object-oriented-programming",
+                colorClass: "color-indigo",
+                icon: "{}",
+                orbitAbbr: "OOP",
+                credits: "3 Credits",
+                dna: ["[ CORE ]", "[ JAVA/C++ ]", "[ 60M ENDSEM • 40M CA ]"],
+                resources: { notes: true, pyq: true, syllabus: true, bank: true }
+            },
+            {
+                title: "Digital Electronics",
+                code: "25AF1245PC305",
+                category: "PCC",
+                type: "Theory",
+                semester: 3,
+                branch: "cse",
+                slug: "digital-electronics",
+                colorClass: "color-orange",
+                icon: "⍾",
+                orbitAbbr: "DE",
+                credits: "3 Credits",
+                dna: ["[ CORE ]", "[ HARDWARE ]", "[ 60M ENDSEM • 40M CA ]"],
+                resources: { notes: true, pyq: true, syllabus: true, bank: true }
+            },
+            {
+                title: "Multi-Disciplinary Minor* Bucket",
+                code: "25AF1245MD306",
+                category: "MDM",
+                type: "Minor / Bucket",
+                semester: 3,
+                branch: "cse",
+                slug: "minor-bucket",
+                colorClass: "color-violet",
+                icon: "★",
+                orbitAbbr: "MDM",
+                credits: "3 Credits",
+                dna: ["[ ELECTIVE ]", "[ INTERDISCIPLINARY ]", "[ 60M ENDSEM • 40M CA ]"],
+                resources: { notes: true, pyq: false, syllabus: true, bank: false }
+            },
+            {
+                title: "Any Course from OE Bucket",
+                code: "25AF1245OE307",
+                category: "OE-I",
+                type: "Open Elective",
+                semester: 3,
+                branch: "cse",
+                slug: "open-elective",
+                colorClass: "color-teal",
+                icon: "⚲",
+                orbitAbbr: "OE-I",
+                credits: "3 Credits",
+                dna: ["[ OPEN ELECTIVE ]", "[ GENERAL ]", "[ 60M ENDSEM • 40M CA ]"],
+                resources: { notes: true, pyq: false, syllabus: true, bank: false }
+            },
+            {
+                title: "Life of Chhatrapati Shivaji Maharaj",
+                code: "25AF1000VE308A",
+                category: "VSEC",
+                type: "Value Education",
+                semester: 3,
+                branch: "cse",
+                slug: "shivaji-maharaj",
+                colorClass: "color-rose",
+                icon: "⚔",
+                orbitAbbr: "LCSM",
+                credits: "2 Credits",
+                dna: ["[ VALUE ]", "[ HISTORY & ETHICS ]", "[ CA 50M ]"],
+                resources: { notes: true, pyq: true, syllabus: true, bank: false }
+            },
+            {
+                title: "Data Structures Laboratory",
+                code: "25AF1245PCL309",
+                category: "PCC Lab",
+                type: "Laboratory",
+                semester: 3,
+                branch: "cse",
+                slug: "data-structures-lab",
+                colorClass: "color-cyan",
+                icon: "⌨",
+                orbitAbbr: "DS-Lab",
+                credits: "1 Credit",
+                dna: ["[ PRACTICAL ]", "[ C/C++ LAB ]", "[ PR/OR 25M • CA 25M ]"],
+                resources: { notes: true, pyq: false, syllabus: true, bank: true }
+            },
+            {
+                title: "Universal Human Values - II",
+                code: "25AF1000VE310",
+                category: "VSEC",
+                type: "Theory",
+                semester: 3,
+                branch: "cse",
+                slug: "uhv-2",
+                colorClass: "color-rose",
+                icon: "♥",
+                orbitAbbr: "UHV",
+                credits: "2 Credits",
+                dna: ["[ VALUE ]", "[ HUMANITIES ]", "[ CA 50M ]"],
+                resources: { notes: true, pyq: true, syllabus: true, bank: false }
+            },
+            {
+                title: "Object-Oriented Programming in Java Laboratory",
+                code: "25AF1245PCL311",
+                category: "PCC Lab",
+                type: "Laboratory",
+                semester: 3,
+                branch: "cse",
+                slug: "oop-java-lab",
+                colorClass: "color-indigo",
+                icon: "⌨",
+                orbitAbbr: "OOP-Lab",
+                credits: "1 Credit",
+                dna: ["[ PRACTICAL ]", "[ JAVA LAB ]", "[ PR/OR 25M • CA 25M ]"],
+                resources: { notes: true, pyq: false, syllabus: true, bank: true }
+            },
+            {
+                title: "Digital Electronics Laboratory",
+                code: "25AF1245PCL312",
+                category: "PCC Lab",
+                type: "Laboratory",
+                semester: 3,
+                branch: "cse",
+                slug: "digital-electronics-lab",
+                colorClass: "color-orange",
+                icon: "⌨",
+                orbitAbbr: "DE-Lab",
+                credits: "1 Credit",
+                dna: ["[ PRACTICAL ]", "[ CIRCUITS LAB ]", "[ PR/OR 25M • CA 25M ]"],
+                resources: { notes: true, pyq: false, syllabus: true, bank: true }
+            },
+
+            // Semester IV
+            {
+                title: "Design and Analysis of Algorithms",
+                code: "25AF1245PC401",
+                category: "PCC",
+                type: "Theory",
+                semester: 4,
+                branch: "cse",
+                slug: "design-and-analysis-of-algorithms",
+                colorClass: "color-blue",
+                icon: "⎔",
+                orbitAbbr: "DAA",
+                credits: "4 Credits",
+                dna: ["[ CORE ]", "[ ALGORITHMS ]", "[ 60M ENDSEM • 40M CA ]"],
+                resources: { notes: true, pyq: true, syllabus: true, bank: true }
+            },
+            {
+                title: "Probability and Statistics",
+                code: "25AF1000BS402",
+                category: "BSC",
+                type: "Theory",
+                semester: 4,
+                branch: "cse",
+                slug: "probability-and-statistics",
+                colorClass: "color-teal",
+                icon: "⚄",
+                orbitAbbr: "P&S",
+                credits: "3 Credits",
+                dna: ["[ CORE ]", "[ APPLIED MATH ]", "[ 60M ENDSEM • 40M CA ]"],
+                resources: { notes: true, pyq: true, syllabus: true, bank: true }
+            },
+            {
+                title: "Computer Architecture and Organisation",
+                code: "25AF1245PC403",
+                category: "PCC",
+                type: "Theory",
+                semester: 4,
+                branch: "cse",
+                slug: "computer-architecture-and-organisation",
+                colorClass: "color-slate",
+                icon: "⚙",
+                orbitAbbr: "CAO",
+                credits: "3 Credits",
+                dna: ["[ CORE ]", "[ HARDWARE ARCH ]", "[ 60M ENDSEM • 40M CA ]"],
+                resources: { notes: true, pyq: true, syllabus: true, bank: false }
+            },
+            {
+                title: "Python Programming",
+                code: "25AF1245PC404",
+                category: "PCC",
+                type: "Theory / Practical",
+                semester: 4,
+                branch: "cse",
+                slug: "python-programming",
+                colorClass: "color-yellow",
+                icon: "⌘",
+                orbitAbbr: "PY",
+                credits: "3 Credits",
+                dna: ["[ CORE ]", "[ PYTHON ]", "[ 60M ENDSEM • 40M CA ]"],
+                resources: { notes: true, pyq: true, syllabus: true, bank: true }
+            },
+            {
+                title: "Database Management Systems",
+                code: "25AF1245PC405",
+                category: "PCC",
+                type: "Theory",
+                semester: 4,
+                branch: "cse",
+                slug: "database-management-systems",
+                colorClass: "color-indigo",
+                icon: "🗄️",
+                orbitAbbr: "DBMS",
+                credits: "3 Credits",
+                dna: ["[ CORE ]", "[ SQL & DATA ]", "[ 60M ENDSEM • 40M CA ]"],
+                resources: { notes: true, pyq: true, syllabus: true, bank: true }
+            },
+            {
+                title: "Environmental Studies",
+                code: "25AF1000MC406",
+                category: "MC",
+                type: "Audit / Mandatory",
+                semester: 4,
+                branch: "cse",
+                slug: "environmental-studies",
+                colorClass: "color-teal",
+                icon: "🌱",
+                orbitAbbr: "EVS",
+                credits: "0 Credits",
+                dna: ["[ MANDATORY ]", "[ ECOLOGY ]", "[ GRADE AUDIT ]"],
+                resources: { notes: true, pyq: false, syllabus: true, bank: false }
+            },
+            {
+                title: "Algorithms Laboratory",
+                code: "25AF1245PCL407",
+                category: "PCC Lab",
+                type: "Laboratory",
+                semester: 4,
+                branch: "cse",
+                slug: "algorithms-lab",
+                colorClass: "color-blue",
+                icon: "⌨",
+                orbitAbbr: "DAA-Lab",
+                credits: "1 Credit",
+                dna: ["[ PRACTICAL ]", "[ LAB ]", "[ PR/OR 25M • CA 25M ]"],
+                resources: { notes: true, pyq: false, syllabus: true, bank: true }
+            },
+            {
+                title: "Python Programming Laboratory",
+                code: "25AF1245PCL408",
+                category: "PCC Lab",
+                type: "Laboratory",
+                semester: 4,
+                branch: "cse",
+                slug: "python-lab",
+                colorClass: "color-yellow",
+                icon: "⌨",
+                orbitAbbr: "PY-Lab",
+                credits: "1 Credit",
+                dna: ["[ PRACTICAL ]", "[ LAB ]", "[ PR/OR 25M • CA 25M ]"],
+                resources: { notes: true, pyq: false, syllabus: true, bank: true }
+            },
+            {
+                title: "Database Management Systems Laboratory",
+                code: "25AF1245PCL409",
+                category: "PCC Lab",
+                type: "Laboratory",
+                semester: 4,
+                branch: "cse",
+                slug: "dbms-lab",
+                colorClass: "color-indigo",
+                icon: "⌨",
+                orbitAbbr: "DBMS-Lab",
+                credits: "1 Credit",
+                dna: ["[ PRACTICAL ]", "[ SQL LAB ]", "[ PR/OR 25M • CA 25M ]"],
+                resources: { notes: true, pyq: false, syllabus: true, bank: true }
+            }
+        ];
+
+        /* Current State */
+        let currentSemester = 3;
+        let pinnedSlugs = JSON.parse(localStorage.getItem('study_pocket_shelf') || '[]');
+
+        /* ==================================================
+           FEATURE 5: SMART RESUME INITIALIZATION
+           ================================================== */
+        function checkSmartResume() {
+            const resumeData = localStorage.getItem('study_last_resume');
+            if (!resumeData) return;
+
+            try {
+                const parsed = JSON.parse(resumeData);
+                const sub = subjects.find(s => s.slug === parsed.slug);
+                if (sub) {
+                    const banner = document.getElementById('smart-resume-banner');
+                    document.getElementById('resume-icon').textContent = sub.icon;
+                    document.getElementById('resume-title').textContent = `${sub.title} (Semester ${sub.semester === 3 ? 'III' : 'IV'})`;
+                    document.getElementById('resume-continue-link').href = `subject.html?branch=cse&semester=${sub.semester}&subject=${sub.slug}`;
+                    banner.style.display = 'flex';
+                }
+            } catch (e) {
+                console.error("Resume parse error", e);
+            }
+        }
+
+        document.getElementById('resume-dismiss-btn').addEventListener('click', () => {
+            document.getElementById('smart-resume-banner').style.display = 'none';
+        });
+
+        function trackResume(slug) {
+            localStorage.setItem('study_last_resume', JSON.stringify({ slug, timestamp: Date.now() }));
+        }
+
+        /* ==================================================
+           FEATURE 6: POCKET SHELF (PINNED SUBJECTS)
+           ================================================== */
+        function renderPocketShelf() {
+            const shelfList = document.getElementById('shelf-items-list');
+            const shelfCount = document.getElementById('shelf-count');
+            shelfList.innerHTML = '';
+
+            const pinnedSubjects = subjects.filter(s => pinnedSlugs.includes(s.slug));
+            shelfCount.textContent = `${pinnedSubjects.length} / 4`;
+
+            if (pinnedSubjects.length === 0) {
+                shelfList.innerHTML = `
+                    <div class="shelf-empty-card" style="grid-column: 1 / -1;">
+                        <div class="shelf-empty-icon">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                            </svg>
+                        </div>
+                        <div class="shelf-empty-text">
+                            <h4>Pocket Shelf is Empty</h4>
+                            <p>Pin up to 4 priority subjects using the bookmark icon on any card for instant 1-tap study access.</p>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            pinnedSubjects.forEach(sub => {
+                const card = document.createElement('div');
+                card.className = `shelf-card ${sub.colorClass} interactive-tap`;
+                card.innerHTML = `
+                    <div class="shelf-left" onclick="window.location.href='subject.html?branch=cse&semester=${sub.semester}&subject=${sub.slug}'">
+                        <div class="shelf-icon">${sub.icon}</div>
+                        <div class="shelf-text">
+                            <div class="shelf-sub-title">${sub.title}</div>
+                            <div class="shelf-sub-code">Sem ${sub.semester === 3 ? 'III' : 'IV'} • ${sub.code}</div>
+                        </div>
+                    </div>
+                    <button class="shelf-unpin-btn" data-slug="${sub.slug}" title="Unpin from Shelf" aria-label="Unpin ${sub.title}">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                `;
+                shelfList.appendChild(card);
+            });
+
+            // Add unpin event listeners
+            shelfList.querySelectorAll('.shelf-unpin-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const slug = btn.getAttribute('data-slug');
+                    togglePin(slug);
+                });
+            });
+        }
+
+        function togglePin(slug) {
+            const index = pinnedSlugs.indexOf(slug);
+            if (index > -1) {
+                pinnedSlugs.splice(index, 1);
+            } else {
+                if (pinnedSlugs.length >= 4) {
+                    alert("Pocket Shelf can hold up to 4 pinned subjects. Unpin one to add another.");
+                    return;
+                }
+                pinnedSlugs.push(slug);
+            }
+            localStorage.setItem('study_pocket_shelf', JSON.stringify(pinnedSlugs));
+            renderPocketShelf();
+            renderSubjects(currentSemester);
+            updatePeekPinState(slug);
+        }
+
+        /* ==================================================
+           FEATURE 4 & 9: RENDER SUBJECT CARDS (DNA + COMPASS)
+           ================================================== */
+        const container = document.getElementById('subjects-container');
+
+        function renderSubjects(semester) {
+            container.innerHTML = '';
+            const filtered = subjects.filter(s => s.semester === semester);
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align:center; padding: 60px 20px; color: #64748b;">
+                        <h3>Curriculum Confirmed</h3>
+                        <p style="margin-top: 6px; font-size: 0.9rem;">Materials are being curated for this semester.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            filtered.forEach(sub => {
+                const isPinned = pinnedSlugs.includes(sub.slug);
+
+                // Build Compass Indicators
+                const res = sub.resources;
+                const activeCount = (res.notes ? 1 : 0) + (res.pyq ? 1 : 0) + (res.syllabus ? 1 : 0) + (res.bank ? 1 : 0);
+
+                const card = document.createElement('div');
+                card.className = `subject-card ${sub.colorClass} interactive-tap`;
+                card.setAttribute('data-slug', sub.slug);
+
+                card.innerHTML = `
+                    <div class="card-top-row">
+                        <div class="card-icon-title-group">
+                            <div class="sc-icon">${sub.icon}</div>
+                            <div class="card-badges">
+                                <span class="sc-badge badge-cat">${sub.category}</span>
+                                <span class="sc-badge badge-type">${sub.type}</span>
+                            </div>
+                        </div>
+                        <button class="card-pin-btn ${isPinned ? 'pinned' : ''}" data-slug="${sub.slug}" title="${isPinned ? 'Pinned to Shelf' : 'Pin to Pocket Shelf'}" aria-label="Pin ${sub.title}">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="${isPinned ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="sc-content">
+                        <h3 class="sc-title">${sub.title}</h3>
+                        <div class="sc-code">${sub.code}</div>
+                    </div>
+
+                    <!-- FEATURE 9: SUBJECT DNA -->
+                    <div class="subject-dna-row">
+                        <span class="dna-chip dna-credit">${sub.credits}</span>
+                        ${sub.dna.map(chip => `<span class="dna-chip">${chip}</span>`).join('')}
+                    </div>
+
+                    <!-- FEATURE 4: STUDY COMPASS -->
+                    <div class="study-compass-bar" title="${activeCount} of 4 Resource Pillars Ready">
+                        <div class="compass-label">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+                            </svg>
+                            <span>Compass (${activeCount}/4)</span>
+                        </div>
+                        <div class="compass-dots">
+                            <span class="compass-pill ${res.notes ? 'active' : ''}"><span class="c-dot"></span>Notes</span>
+                            <span class="compass-pill ${res.pyq ? 'active' : ''}"><span class="c-dot"></span>PYQ</span>
+                            <span class="compass-pill ${res.syllabus ? 'active' : ''}"><span class="c-dot"></span>Syllabus</span>
+                            <span class="compass-pill ${res.bank ? 'active' : ''}"><span class="c-dot"></span>Bank</span>
+                        </div>
+                    </div>
+
+                    <div class="sc-footer">
+                        <button class="peek-btn" data-slug="${sub.slug}">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                            <span>Quick Peek</span>
+                        </button>
+                        <div class="sc-arrow-btn">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                <polyline points="12 5 19 12 12 19"></polyline>
+                            </svg>
+                        </div>
+                    </div>
+                `;
+
+                // Main card click -> navigate and save resume
+                card.addEventListener('click', (e) => {
+                    // Avoid trigger if clicking pin button or peek button
+                    if (e.target.closest('.card-pin-btn') || e.target.closest('.peek-btn')) return;
+                    trackResume(sub.slug);
+                    window.location.href = `subject.html?branch=cse&semester=${sub.semester}&subject=${sub.slug}`;
+                });
+
+                // Pin click
+                const pinBtn = card.querySelector('.card-pin-btn');
+                pinBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    togglePin(sub.slug);
+                });
+
+                // Peek click
+                const peekBtn = card.querySelector('.peek-btn');
+                peekBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    openSmartPeek(sub);
+                });
+
+                container.appendChild(card);
+            });
+        }
+
+        /* ==================================================
+           FEATURE 8: DYNAMIC SEMESTER SWITCHER (0 RELOAD)
+           ================================================== */
+        const segBtns = document.querySelectorAll('.seg-btn');
+        const slider = document.getElementById('seg-slider');
+
+        function setSemester(sem) {
+            currentSemester = sem;
+            const isSem4 = (sem === 4);
+
+            // Toggle body theme class for CSS variables
+            if (isSem4) {
+                document.body.classList.add('theme-sem-4');
+                document.getElementById('bar-sem-pill').textContent = "SEM IV";
+                document.getElementById('current-sem-heading').textContent = "Semester IV Subjects";
+                document.getElementById('current-sem-subheading').textContent = "Advanced computing paradigms & specialized core labs";
+                document.getElementById('hero-curriculum-pill').textContent = "9 Courses Available";
+                document.getElementById('dock-sem-label').textContent = "S3";
+                document.getElementById('dock-sem-tooltip').textContent = "Switch to Sem III";
+                slider.style.left = 'calc(50% + 5px)';
+            } else {
+                document.body.classList.remove('theme-sem-4');
+                document.getElementById('bar-sem-pill').textContent = "SEM III";
+                document.getElementById('current-sem-heading').textContent = "Semester III Subjects";
+                document.getElementById('current-sem-subheading').textContent = "Core engineering curriculum & practical laboratories";
+                document.getElementById('hero-curriculum-pill').textContent = "12 Courses Available";
+                document.getElementById('dock-sem-label').textContent = "S4";
+                document.getElementById('dock-sem-tooltip').textContent = "Switch to Sem IV";
+                slider.style.left = '5px';
+            }
+
+            segBtns.forEach(b => {
+                b.classList.toggle('active', parseInt(b.getAttribute('data-sem')) === sem);
+            });
+
+            renderSubjects(sem);
+            renderOrbit(sem);
+        }
+
+        segBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const sem = parseInt(btn.getAttribute('data-sem'));
+                setSemester(sem);
+            });
+        });
+
+        /* ==================================================
+           FEATURE 2: SUBJECT ORBIT VISUALIZATION
+           ================================================== */
+        const orbitStage = document.getElementById('orbit-nodes-stage');
+        const orbitSection = document.getElementById('orbit-section');
+        const orbitToggleText = document.getElementById('orbit-toggle-text');
+
+        function renderOrbit(semester) {
+            orbitStage.innerHTML = '';
+            document.getElementById('orbit-header-title').textContent = `Semester ${semester === 3 ? 'III' : 'IV'} Academic Orbit`;
+            document.getElementById('orbit-core-sem').textContent = `SEM ${semester === 3 ? 'III' : 'IV'}`;
+
+            const filtered = subjects.filter(s => s.semester === semester);
+            const total = filtered.length;
+            const radius = window.innerWidth < 768 ? 130 : 155;
+            const centerX = (window.innerWidth < 768 ? 290 : 290);
+            const centerY = 190;
+
+            filtered.forEach((sub, i) => {
+                const angle = (i / total) * 2 * Math.PI;
+                const x = centerX + radius * Math.cos(angle);
+                const y = centerY + radius * Math.sin(angle);
+
+                const node = document.createElement('div');
+                node.className = 'orbit-node interactive-tap';
+                node.style.left = `${x}px`;
+                node.style.top = `${y}px`;
+                node.style.setProperty('--node-color', sub.colorClass.includes('cyan') ? '#0891b2' : sub.colorClass.includes('orange') ? '#ea580c' : '#2563eb');
+                node.textContent = sub.orbitAbbr;
+
+                node.innerHTML += `
+                    <div class="orbit-node-tooltip">
+                        <strong>${sub.title}</strong><br>
+                        <span style="font-size: 0.68rem; color: #94a3b8;">${sub.code || 'DBATU CSE'} • Click to Peek</span>
+                    </div>
+                `;
+
+                // Pause rotation on hover
+                node.addEventListener('mouseenter', () => orbitStage.classList.add('paused'));
+                node.addEventListener('mouseleave', () => orbitStage.classList.remove('paused'));
+
+                // Click opens Smart Peek
+                node.addEventListener('click', () => {
+                    openSmartPeek(sub);
+                });
+
+                orbitStage.appendChild(node);
+            });
+        }
+
+        function toggleOrbitView(show) {
+            const isVisible = (orbitSection.style.display !== 'none');
+            const targetState = (show !== undefined) ? show : !isVisible;
+
+            if (targetState) {
+                orbitSection.style.display = 'flex';
+                orbitToggleText.textContent = "Hide Subject Orbit";
+                document.getElementById('btn-view-orbit').classList.add('active');
+                document.getElementById('btn-view-grid').classList.remove('active');
+                renderOrbit(currentSemester);
+                orbitSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                orbitSection.style.display = 'none';
+                orbitToggleText.textContent = "Show Subject Orbit";
+                document.getElementById('btn-view-orbit').classList.remove('active');
+                document.getElementById('btn-view-grid').classList.add('active');
+            }
+        }
+
+        document.getElementById('hero-orbit-btn').addEventListener('click', () => toggleOrbitView());
+        document.getElementById('orbit-close-btn').addEventListener('click', () => toggleOrbitView(false));
+        document.getElementById('btn-view-orbit').addEventListener('click', () => toggleOrbitView(true));
+        document.getElementById('btn-view-grid').addEventListener('click', () => toggleOrbitView(false));
+
+        /* ==================================================
+           FEATURE 3: SMART SUBJECT PEEK
+           ================================================== */
+        const peekModal = document.getElementById('peek-modal');
+        const peekCloseBtn = document.getElementById('peek-close-btn');
+        let activePeekSub = null;
+
+        function openSmartPeek(sub) {
+            activePeekSub = sub;
+            trackResume(sub.slug);
+
+            document.getElementById('peek-icon').textContent = sub.icon;
+            document.getElementById('peek-title').textContent = sub.title;
+            document.getElementById('peek-code').textContent = `${sub.code} • Semester ${sub.semester === 3 ? 'III' : 'IV'}`;
+            document.getElementById('peek-full-page-link').href = `subject.html?branch=cse&semester=${sub.semester}&subject=${sub.slug}`;
+
+            // Populate DNA chips
+            const dnaRow = document.getElementById('peek-dna-row');
+            dnaRow.innerHTML = `
+                <span class="dna-chip dna-credit">${sub.credits}</span>
+                ${sub.dna.map(c => `<span class="dna-chip">${c}</span>`).join('')}
+            `;
+
+            // Populate resource grid
+            const res = sub.resources;
+            const resGrid = document.getElementById('peek-resources-list');
+            resGrid.innerHTML = `
+                <a href="subject.html?branch=cse&semester=${sub.semester}&subject=${sub.slug}#notes" class="peek-resource-card">
+                    <div class="pr-icon">📘</div>
+                    <div class="pr-info">
+                        <h5>Theory Notes</h5>
+                        <span class="${res.notes ? '' : 'pending'}">${res.notes ? 'Available • 5 Units' : 'Compiling'}</span>
+                    </div>
+                </a>
+                <a href="subject.html?branch=cse&semester=${sub.semester}&subject=${sub.slug}#pyq" class="peek-resource-card">
+                    <div class="pr-icon">📜</div>
+                    <div class="pr-info">
+                        <h5>University PYQs</h5>
+                        <span class="${res.pyq ? '' : 'pending'}">${res.pyq ? '2022 - 2024 Papers' : 'Coming Soon'}</span>
+                    </div>
+                </a>
+                <a href="subject.html?branch=cse&semester=${sub.semester}&subject=${sub.slug}#syllabus" class="peek-resource-card">
+                    <div class="pr-icon">📑</div>
+                    <div class="pr-info">
+                        <h5>Official Syllabus</h5>
+                        <span class="${res.syllabus ? '' : 'pending'}">${res.syllabus ? 'Verified DBATU' : 'Pending'}</span>
+                    </div>
+                </a>
+                <a href="subject.html?branch=cse&semester=${sub.semester}&subject=${sub.slug}#bank" class="peek-resource-card">
+                    <div class="pr-icon">🧪</div>
+                    <div class="pr-info">
+                        <h5>Question Bank &amp; Lab</h5>
+                        <span class="${res.bank ? '' : 'pending'}">${res.bank ? 'High-Yield Bank' : 'N/A'}</span>
+                    </div>
+                </a>
+            `;
+
+            updatePeekPinState(sub.slug);
+
+            peekModal.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeSmartPeek() {
+            peekModal.classList.remove('open');
+            document.body.style.overflow = '';
+            activePeekSub = null;
+        }
+
+        function updatePeekPinState(slug) {
+            if (!activePeekSub || activePeekSub.slug !== slug) return;
+            const isPinned = pinnedSlugs.includes(slug);
+            const btn = document.getElementById('peek-pin-toggle-btn');
+            const label = document.getElementById('peek-pin-text');
+            if (isPinned) {
+                label.textContent = "Unpin from Shelf";
+                btn.style.color = "#ef4444";
+            } else {
+                label.textContent = "Pin to Shelf";
+                btn.style.color = "";
+            }
+        }
+
+        document.getElementById('peek-pin-toggle-btn').addEventListener('click', () => {
+            if (activePeekSub) {
+                togglePin(activePeekSub.slug);
+            }
+        });
+
+        peekCloseBtn.addEventListener('click', closeSmartPeek);
+        peekModal.addEventListener('click', (e) => {
+            if (e.target === peekModal) closeSmartPeek();
+        });
+
+        /* ==================================================
+           FEATURE 1: STUDY COMMAND PALETTE
+           ================================================== */
+        const cmdModal = document.getElementById('cmd-modal');
+        const cmdInput = document.getElementById('cmd-input');
+        const cmdList = document.getElementById('cmd-results-list');
+        let selectedCmdIndex = 0;
+
+        const quickActions = [
+            { title: "Switch to Semester III", desc: "View all 12 Sem 3 core subjects & labs", action: () => setSemester(3), badge: "THEME" },
+            { title: "Switch to Semester IV", desc: "View all 9 Sem 4 subjects & practicals", action: () => setSemester(4), badge: "THEME" },
+            { title: "Launch Exam Sprint Mode", desc: "Full-screen focus timer and revision pack", action: () => openExamSprint(), badge: "FOCUS" },
+            { title: "Open Academic Orbit Map", desc: "Interactive circular curriculum visualizer", action: () => toggleOrbitView(true), badge: "MAP" },
+            { title: "View Pocket Shelf", desc: "Jump to your bookmarked priority courses", action: () => { document.getElementById('pocket-shelf-container').scrollIntoView({ behavior: 'smooth' }); }, badge: "SHELF" }
+        ];
+
+        function openCommandPalette() {
+            cmdModal.classList.add('open');
+            cmdInput.value = '';
+            filterCommands('');
+            setTimeout(() => cmdInput.focus(), 50);
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeCommandPalette() {
+            cmdModal.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        function filterCommands(query) {
+            cmdList.innerHTML = '';
+            selectedCmdIndex = 0;
+            const q = query.toLowerCase().trim();
+
+            const matchedActions = quickActions.filter(a => a.title.toLowerCase().includes(q) || a.desc.toLowerCase().includes(q));
+            const matchedSubjects = subjects.filter(s => 
+                s.title.toLowerCase().includes(q) || 
+                s.code.toLowerCase().includes(q) || 
+                s.category.toLowerCase().includes(q) ||
+                (q === 'notes' && s.resources.notes) ||
+                (q === 'pyq' && s.resources.pyq)
+            );
+
+            if (matchedActions.length === 0 && matchedSubjects.length === 0) {
+                cmdList.innerHTML = `
+                    <div class="cmd-empty-state">
+                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto;">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <p>No results found for "${query}". Try searching "Data Structures", "Sem 4", or "PYQ".</p>
+                    </div>
+                `;
+                return;
+            }
+
+            if (matchedActions.length > 0) {
+                const actHeader = document.createElement('div');
+                actHeader.className = 'cmd-category-title';
+                actHeader.textContent = "Quick Actions";
+                cmdList.appendChild(actHeader);
+
+                matchedActions.forEach(act => {
+                    const item = document.createElement('div');
+                    item.className = 'cmd-item interactive-tap';
+                    item.innerHTML = `
+                        <div class="cmd-item-left">
+                            <div class="cmd-item-icon">⚡</div>
+                            <div class="cmd-item-text">
+                                <h4>${act.title}</h4>
+                                <p>${act.desc}</p>
+                            </div>
+                        </div>
+                        <span class="cmd-item-badge">${act.badge}</span>
+                    `;
+                    item.addEventListener('click', () => {
+                        closeCommandPalette();
+                        act.action();
+                    });
+                    cmdList.appendChild(item);
+                });
+            }
+
+            if (matchedSubjects.length > 0) {
+                const subHeader = document.createElement('div');
+                subHeader.className = 'cmd-category-title';
+                subHeader.textContent = "Curriculum Subjects";
+                cmdList.appendChild(subHeader);
+
+                matchedSubjects.forEach(sub => {
+                    const item = document.createElement('div');
+                    item.className = 'cmd-item interactive-tap';
+                    item.innerHTML = `
+                        <div class="cmd-item-left">
+                            <div class="cmd-item-icon">${sub.icon}</div>
+                            <div class="cmd-item-text">
+                                <h4>${sub.title}</h4>
+                                <p>Sem ${sub.semester === 3 ? 'III' : 'IV'} • ${sub.code} • ${sub.category}</p>
+                            </div>
+                        </div>
+                        <span class="cmd-item-badge">${sub.credits}</span>
+                    `;
+                    item.addEventListener('click', () => {
+                        closeCommandPalette();
+                        openSmartPeek(sub);
+                    });
+                    cmdList.appendChild(item);
+                });
+            }
+
+            highlightSelectedCmd();
+        }
+
+        function highlightSelectedCmd() {
+            const items = cmdList.querySelectorAll('.cmd-item');
+            items.forEach((it, idx) => {
+                it.classList.toggle('selected', idx === selectedCmdIndex);
+            });
+            if (items[selectedCmdIndex]) {
+                items[selectedCmdIndex].scrollIntoView({ block: 'nearest' });
+            }
+        }
+
+        cmdInput.addEventListener('input', (e) => {
+            filterCommands(e.target.value);
+        });
+
+        // Keyboard navigation for Command Palette
+        window.addEventListener('keydown', (e) => {
+            // Ctrl + K or Cmd + K
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+                e.preventDefault();
+                if (cmdModal.classList.contains('open')) {
+                    closeCommandPalette();
+                } else {
+                    openCommandPalette();
+                }
+                return;
+            }
+
+            // Escape key closes modals
+            if (e.key === 'Escape') {
+                if (cmdModal.classList.contains('open')) closeCommandPalette();
+                if (peekModal.classList.contains('open')) closeSmartPeek();
+                if (document.getElementById('exam-sprint-modal').classList.contains('open')) closeExamSprint();
+                return;
+            }
+
+            // Up / Down / Enter inside Command Palette
+            if (cmdModal.classList.contains('open')) {
+                const items = cmdList.querySelectorAll('.cmd-item');
+                if (items.length === 0) return;
+
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    selectedCmdIndex = (selectedCmdIndex + 1) % items.length;
+                    highlightSelectedCmd();
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    selectedCmdIndex = (selectedCmdIndex - 1 + items.length) % items.length;
+                    highlightSelectedCmd();
+                } else if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (items[selectedCmdIndex]) {
+                        items[selectedCmdIndex].click();
+                    }
+                }
+            }
+        });
+
+        document.getElementById('cmd-open-btn').addEventListener('click', openCommandPalette);
+        cmdModal.addEventListener('click', (e) => {
+            if (e.target === cmdModal) closeCommandPalette();
+        });
+
+        /* ==================================================
+           FEATURE 7: EXAM SPRINT MODE
+           ================================================== */
+        const sprintModal = document.getElementById('exam-sprint-modal');
+        const sprintExitBtn = document.getElementById('sprint-exit-btn');
+        let sprintInterval = null;
+        let sprintSeconds = 25 * 60;
+        let isSprintRunning = false;
+
+        function openExamSprint() {
+            sprintModal.classList.add('open');
+            document.body.style.overflow = 'hidden';
+            renderSprintSubjects();
+        }
+
+        function closeExamSprint() {
+            sprintModal.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        function renderSprintSubjects() {
+            const grid = document.getElementById('sprint-subjects-grid');
+            grid.innerHTML = '';
+
+            // High-yield priority theory subjects
+            const sprintPicks = subjects.filter(s => s.type === 'Theory').slice(0, 6);
+
+            sprintPicks.forEach(sub => {
+                const card = document.createElement('div');
+                card.className = 'sprint-subject-card';
+                card.innerHTML = `
+                    <div class="ssc-header">
+                        <div class="ssc-icon">${sub.icon}</div>
+                        <span class="ssc-tag">${sub.credits} • ${sub.category}</span>
+                    </div>
+                    <h4 class="ssc-title">${sub.title}</h4>
+                    <div class="ssc-links">
+                        <a href="subject.html?branch=cse&semester=${sub.semester}&subject=${sub.slug}#formulas" class="sprint-quick-link">
+                            <span>⚡</span> Formulas
+                        </a>
+                        <a href="subject.html?branch=cse&semester=${sub.semester}&subject=${sub.slug}#pyq" class="sprint-quick-link">
+                            <span>🎯</span> 5-Yr PYQ
+                        </a>
+                        <a href="subject.html?branch=cse&semester=${sub.semester}&subject=${sub.slug}#revision" class="sprint-quick-link">
+                            <span>⏱️</span> Summary
+                        </a>
+                        <a href="subject.html?branch=cse&semester=${sub.semester}&subject=${sub.slug}#code" class="sprint-quick-link">
+                            <span>💻</span> Code/Proofs
+                        </a>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function updateSprintTimer() {
+            const m = Math.floor(sprintSeconds / 60).toString().padStart(2, '0');
+            const s = (sprintSeconds % 60).toString().padStart(2, '0');
+            document.getElementById('sprint-timer-text').textContent = `${m}:${s}`;
+        }
+
+        document.getElementById('sprint-timer-toggle').addEventListener('click', () => {
+            const btn = document.getElementById('sprint-timer-toggle');
+            if (isSprintRunning) {
+                clearInterval(sprintInterval);
+                isSprintRunning = false;
+                btn.textContent = "Start";
+            } else {
+                isSprintRunning = true;
+                btn.textContent = "Pause";
+                sprintInterval = setInterval(() => {
+                    if (sprintSeconds > 0) {
+                        sprintSeconds--;
+                        updateSprintTimer();
+                    } else {
+                        clearInterval(sprintInterval);
+                        isSprintRunning = false;
+                        btn.textContent = "Start";
+                        alert("Sprint Session Complete! Take a 5-minute break.");
+                    }
+                }, 1000);
+            }
+        });
+
+        document.getElementById('sprint-timer-reset').addEventListener('click', () => {
+            clearInterval(sprintInterval);
+            isSprintRunning = false;
+            sprintSeconds = 25 * 60;
+            document.getElementById('sprint-timer-toggle').textContent = "Start";
+            updateSprintTimer();
+        });
+
+        document.getElementById('hero-sprint-btn').addEventListener('click', openExamSprint);
+        sprintExitBtn.addEventListener('click', closeExamSprint);
+
+        /* ==================================================
+           FEATURE 10: QUICK ACTION DOCK (FLOATING)
+           ================================================== */
+        const dock = document.getElementById('quick-action-dock');
+        let lastScrollY = window.scrollY;
+
+        window.addEventListener('scroll', () => {
+            const currentY = window.scrollY;
+            if (currentY > lastScrollY && currentY > 150) {
+                // Scrolling down -> hide dock smoothly
+                dock.classList.add('hidden-scroll');
+            } else {
+                // Scrolling up -> show dock
+                dock.classList.remove('hidden-scroll');
+            }
+            lastScrollY = currentY;
+        }, { passive: true });
+
+        document.getElementById('dock-cmd-btn').addEventListener('click', openCommandPalette);
+        document.getElementById('dock-orbit-btn').addEventListener('click', () => toggleOrbitView());
+        document.getElementById('dock-shelf-btn').addEventListener('click', () => {
+            document.getElementById('pocket-shelf-container').scrollIntoView({ behavior: 'smooth' });
+        });
+        document.getElementById('dock-sprint-btn').addEventListener('click', openExamSprint);
+        document.getElementById('dock-sem-toggle-btn').addEventListener('click', () => {
+            const nextSem = (currentSemester === 3) ? 4 : 3;
+            setSemester(nextSem);
+        });
+
+        /* ==================================================
+           INITIAL LOAD
+           ================================================== */
+        renderSubjects(3);
+        renderPocketShelf();
+        checkSmartResume();
+
+    </script>
+<script type="module" src="materials-view.js"></script>
+</body>
+</html>

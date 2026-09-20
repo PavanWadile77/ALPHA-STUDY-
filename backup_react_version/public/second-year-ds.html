@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>DS 2nd Year - STUDY</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* DS "Data Intelligence" Theme */
+            --primary: #0F766E;
+            --primary-hover: #0d655e;
+            --secondary: #059669;
+            --accent: #2DD4BF;
+            --supporting-blue: #0EA5E9;
+            
+            --bg-color: #f4f8f7; /* Very subtle teal tint for background */
+            --surface-color: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border-color: rgba(15, 118, 110, 0.1);
+            --glass-bg: rgba(255, 255, 255, 0.85);
+
+            --shadow-sm: 0 2px 8px rgba(15, 118, 110, 0.04);
+            --shadow-md: 0 8px 24px rgba(15, 118, 110, 0.08);
+            --shadow-glow: 0 16px 40px rgba(15, 118, 110, 0.2);
+
+            --radius-lg: 20px;
+            --radius-md: 16px;
+            --radius-sm: 12px;
+
+            --transition-smooth: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            --transition-fast: all 0.2s ease-out;
+            --max-width: 1180px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            -webkit-font-smoothing: antialiased;
+            min-height: 100dvh;
+            padding-bottom: 90px;
+            overflow-x: hidden;
+        }
+
+        button { border: none; background: none; font-family: inherit; cursor: pointer; outline: none; }
+        a { text-decoration: none; color: inherit; }
+
+        .interactive-tap { transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .interactive-tap:active { transform: scale(0.985); }
+
+        /* Background Elements */
+        .ambient-blob {
+            position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.25; z-index: -1; pointer-events: none;
+        }
+        .blob-1 { top: -5%; left: -5%; width: 450px; height: 450px; background: var(--primary); }
+        .blob-2 { bottom: 5%; right: -5%; width: 500px; height: 500px; background: var(--accent); }
+
+        /* Matrix grid */
+        body::before {
+            content: ''; position: fixed; inset: 0; z-index: -2; pointer-events: none; opacity: 0.3;
+            background-image: linear-gradient(rgba(15, 118, 110, 0.05) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(15, 118, 110, 0.05) 1px, transparent 1px);
+            background-size: 32px 32px;
+        }
+
+        /* Top App Bar */
+        .top-app-bar {
+            position: sticky; top: 0; left: 0; right: 0; height: 64px;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 20px; background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            z-index: 50; border-bottom: 1px solid var(--border-color);
+        }
+        .back-btn {
+            width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            color: var(--text-primary); background: rgba(0,0,0,0.03); transition: var(--transition-fast);
+        }
+        .back-btn:hover { background: rgba(0,0,0,0.06); }
+        .brand-logo { font-size: 1.2rem; font-weight: 800; letter-spacing: -0.5px; color: var(--text-primary); }
+        .avatar-btn {
+            width: 36px; height: 36px; border-radius: 50%; background: var(--primary); color: #fff;
+            font-weight: 700; display: flex; align-items: center; justify-content: center;
+            overflow: hidden; border: 2px solid #fff; box-shadow: var(--shadow-sm); cursor: pointer;
+        }
+        .avatar-btn img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* Main Content */
+        .main-content {
+            width: 100%; max-width: var(--max-width); margin: 0 auto;
+            padding: 24px 20px 40px; display: flex; flex-direction: column; gap: 32px;
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Hero */
+        .hero-card {
+            position: relative; background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: var(--radius-lg); padding: 32px 24px; color: #fff; overflow: hidden;
+            box-shadow: var(--shadow-glow); display: flex; justify-content: space-between; align-items: center;
+        }
+        .hero-pattern {
+            position: absolute; inset: 0; opacity: 0.2; pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 60 L30 40 L50 50 L70 20' stroke='%23ffffff' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='70' cy='20' r='2' fill='%23ffffff'/%3E%3Ccircle cx='10' cy='60' r='2' fill='%23ffffff'/%3E%3C/svg%3E");
+            background-size: 80px 80px;
+        }
+        .hero-content { position: relative; z-index: 2; flex: 1; }
+        .hero-badge {
+            display: inline-flex; padding: 6px 12px; background: rgba(255,255,255,0.2); backdrop-filter: blur(8px);
+            border-radius: 100px; font-size: 0.75rem; font-weight: 700; margin-bottom: 12px;
+            border: 1px solid rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .hero-title { font-size: 2.1rem; font-weight: 800; line-height: 1.15; margin-bottom: 8px; letter-spacing: -0.5px; }
+        .hero-subtitle { font-size: 0.95rem; opacity: 0.9; max-width: 280px; line-height: 1.5; }
+        
+        .hero-visual { width: 100px; height: 100px; position: relative; z-index: 2; flex-shrink: 0; margin-left: 16px; display: flex; justify-content: flex-end; }
+        .hero-visual svg { width: 100%; height: 100%; max-width: 120px; }
+        
+        @media (max-width: 480px) {
+            .hero-card { flex-direction: column; align-items: flex-start; gap: 20px; padding: 28px 20px; }
+            .hero-visual { position: absolute; right: -10px; bottom: 0px; opacity: 0.4; width: 140px; height: 140px; }
+        }
+
+        /* Semester Selector */
+        .semester-selector-wrapper { display: flex; justify-content: flex-start; }
+        .segmented-control {
+            background: rgba(15, 118, 110, 0.08); border-radius: 100px; padding: 6px; display: inline-flex;
+            position: relative; border: 1px solid rgba(15, 118, 110, 0.1);
+        }
+        .seg-btn {
+            padding: 8px 20px; border-radius: 100px; font-weight: 600; font-size: 0.9rem;
+            color: var(--text-secondary); transition: var(--transition-smooth); position: relative; z-index: 2;
+        }
+        .seg-btn.active { color: var(--primary); }
+        .seg-slider {
+            position: absolute; top: 6px; left: 6px; height: calc(100% - 12px);
+            background: var(--surface-color); border-radius: 100px; box-shadow: var(--shadow-sm);
+            transition: var(--transition-smooth); z-index: 1; width: calc(50% - 6px);
+        }
+
+        /* Search */
+        .search-container { position: relative; width: 100%; max-width: 600px; }
+        .search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted); width: 20px; height: 20px; pointer-events: none; }
+        .search-input {
+            width: 100%; padding: 14px 40px 14px 44px; border-radius: 100px;
+            border: 1px solid var(--border-color); background: var(--surface-color);
+            font-family: inherit; font-size: 0.95rem; color: var(--text-primary);
+            box-shadow: var(--shadow-sm); transition: var(--transition-smooth); outline: none;
+        }
+        .search-input:focus { border-color: var(--accent); box-shadow: 0 4px 20px rgba(45, 212, 191, 0.15); }
+        .search-clear {
+            position: absolute; right: 16px; top: 50%; transform: translateY(-50%);
+            color: var(--text-muted); width: 20px; height: 20px; cursor: pointer; display: none;
+        }
+
+        /* Data Lens & Quick Resources */
+        .section-label { font-size: 0.9rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .section-label::before { content: ''; display: inline-block; width: 6px; height: 18px; background: var(--primary); border-radius: 4px; }
+        
+        .scrollable-row {
+            display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none;
+            -ms-overflow-style: none; margin: 0 -20px; padding-left: 20px; padding-right: 20px;
+        }
+        .scrollable-row::-webkit-scrollbar { display: none; }
+        
+        .chip {
+            white-space: nowrap; padding: 8px 16px; border-radius: 100px; font-size: 0.85rem; font-weight: 600;
+            background: var(--surface-color); color: var(--text-secondary); border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm); transition: var(--transition-fast); display: flex; align-items: center; gap: 6px;
+        }
+        .chip:hover { border-color: var(--primary); color: var(--primary); transform: translateY(-1px); }
+        .chip.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+        .resource-chip {
+            background: rgba(15, 118, 110, 0.05); color: var(--primary); border-color: rgba(15, 118, 110, 0.15);
+        }
+        .resource-chip:hover { background: rgba(15, 118, 110, 0.1); }
+
+        /* Subjects Grid */
+        .subjects-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+        @media (min-width: 768px) { .subjects-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; } }
+        @media (min-width: 1024px) { .subjects-grid { grid-template-columns: repeat(3, 1fr); } }
+
+        .subject-card {
+            background: var(--surface-color); border-radius: var(--radius-md); padding: 20px;
+            display: flex; flex-direction: column; gap: 16px; position: relative; overflow: hidden;
+            box-shadow: var(--shadow-sm); border: 1px solid var(--border-color);
+            transition: var(--transition-smooth); animation: cardEnter 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+        }
+        @keyframes cardEnter { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .subject-card:hover {
+            transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: rgba(45, 212, 191, 0.4);
+        }
+
+        /* Top thin teal accent */
+        .subject-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+            background: var(--card-accent, var(--primary)); opacity: 0.8;
+            transition: var(--transition-smooth); transform: scaleX(0); transform-origin: left;
+        }
+        .subject-card:hover::before { transform: scaleX(1); }
+        
+        /* Tiny data-point decorations */
+        .subject-card::after {
+            content: ''; position: absolute; bottom: 20px; right: 20px; width: 40px; height: 40px;
+            background-image: radial-gradient(var(--card-accent) 2px, transparent 2px);
+            background-size: 10px 10px; opacity: 0.1; transition: var(--transition-smooth); pointer-events: none;
+        }
+        .subject-card:hover::after { opacity: 0.2; transform: translateY(-5px); }
+
+        .sc-header { display: flex; justify-content: space-between; align-items: flex-start; z-index: 2; }
+        .sc-icon {
+            width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
+            background: var(--card-bg); color: var(--card-accent); transition: var(--transition-fast);
+        }
+        .subject-card:hover .sc-icon { transform: scale(1.05) rotate(-3deg); }
+        .sc-icon svg { width: 22px; height: 22px; stroke-width: 2; }
+        
+        .sc-title { font-size: 1.15rem; font-weight: 700; color: var(--text-primary); line-height: 1.3; margin-top: 4px; z-index: 2; }
+        .sc-code { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; font-family: monospace; letter-spacing: 0.5px; }
+
+        .sc-footer { display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto; z-index: 2; }
+        .sc-badges { display: flex; flex-direction: column; gap: 6px; }
+        .sc-badge-row { display: flex; gap: 6px; flex-wrap: wrap; }
+        .sc-badge {
+            font-size: 0.7rem; font-weight: 700; padding: 4px 8px; border-radius: 6px;
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .badge-type { background: #f1f5f9; color: var(--text-secondary); border: 1px solid #e2e8f0; }
+        .badge-cat { background: var(--card-bg); color: var(--card-accent); }
+        .badge-sem { background: rgba(15, 118, 110, 0.08); color: var(--primary); }
+
+        .sc-arrow {
+            width: 36px; height: 36px; border-radius: 50%; background: #f8fafc;
+            display: flex; align-items: center; justify-content: center; color: var(--text-muted);
+            transition: var(--transition-smooth); border: 1px solid #e2e8f0;
+        }
+        .subject-card:hover .sc-arrow {
+            background: var(--card-accent); color: #fff; border-color: transparent; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .sc-arrow svg { width: 18px; height: 18px; transition: var(--transition-smooth); }
+        .subject-card:hover .sc-arrow svg { transform: translateX(2px); }
+
+        /* Specific Subject Colors */
+        .color-blue-indigo { --card-accent: #3730A3; --card-bg: #EEF2FF; }
+        .color-rose { --card-accent: #E11D48; --card-bg: #FFF1F2; }
+        .color-violet { --card-accent: #7C3AED; --card-bg: #F5F3FF; }
+        .color-cyan { --card-accent: #0891B2; --card-bg: #ECFEFF; }
+        .color-indigo { --card-accent: #4F46E5; --card-bg: #EEF2FF; }
+        .color-teal { --card-accent: #0D9488; --card-bg: #F0FDFA; }
+
+        /* Empty State */
+        .empty-state {
+            grid-column: 1/-1; padding: 48px 20px; text-align: center; background: var(--surface-color);
+            border-radius: var(--radius-md); border: 1px dashed var(--border-color); color: var(--text-secondary);
+        }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border-radius: 100px; padding: 8px 16px; display: flex; gap: 8px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.4); z-index: 100;
+        }
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            width: 60px; height: 50px; border-radius: 16px; color: var(--text-muted);
+            transition: var(--transition-fast); gap: 4px;
+        }
+        .nav-item.active { color: var(--primary); background: rgba(15, 118, 110, 0.08); }
+        .nav-item:hover:not(.active) { color: var(--text-primary); background: rgba(0,0,0,0.03); }
+        .nav-item svg { width: 20px; height: 20px; }
+        .nav-item span { font-size: 0.65rem; font-weight: 700; }
+
+        @media (min-width: 768px) {
+            .bottom-nav { display: none; }
+            body { padding-bottom: 40px; }
+        }
+
+    </style>
+<link rel="stylesheet" href="materials-view.css">
+</head>
+<body>
+    <div class="ambient-blob blob-1"></div>
+    <div class="ambient-blob blob-2"></div>
+
+    <div class="app-container">
+        <header class="top-app-bar">
+            <button class="back-btn interactive-tap" onclick="window.location.href='second-year.html'" aria-label="Go back">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+            </button>
+            <div class="brand-logo">STUDY</div>
+            <div class="avatar-btn interactive-tap" id="top-avatar">?</div>
+        </header>
+
+        <main class="main-content">
+            <!-- Hero Section -->
+            <section class="hero-card">
+                <div class="hero-pattern"></div>
+                <div class="hero-content">
+                    <div class="hero-badge">DS • Data Intelligence</div>
+                    <h1 class="hero-title">Data Science<br>Engineering</h1>
+                    <p class="hero-subtitle">Transform data into insight and intelligence.</p>
+                </div>
+                <div class="hero-visual">
+                    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="50" cy="50" r="40" stroke="rgba(255,255,255,0.4)" stroke-width="2" stroke-dasharray="6 6"/>
+                        <circle cx="50" cy="50" r="20" stroke="rgba(255,255,255,0.7)" stroke-width="2"/>
+                        <circle cx="50" cy="50" r="8" fill="rgba(255,255,255,0.9)"/>
+                        <path d="M50 10 L50 30 M50 70 L50 90 M10 50 L30 50 M70 50 L90 50" stroke="rgba(255,255,255,0.8)" stroke-width="2" stroke-linecap="round"/>
+                        <circle cx="78" cy="22" r="5" fill="rgba(255,255,255,0.5)"/>
+                        <circle cx="22" cy="78" r="5" fill="rgba(255,255,255,0.5)"/>
+                        <path d="M63 37 L74 26" stroke="rgba(255,255,255,0.4)" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M37 63 L26 74" stroke="rgba(255,255,255,0.4)" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </div>
+            </section>
+
+            <!-- Semester & Search Controls -->
+            <div class="semester-selector-wrapper">
+                <div class="segmented-control" id="semester-selector">
+                    <div class="seg-slider" id="seg-slider"></div>
+                    <button class="seg-btn active interactive-tap" data-sem="3">Semester III</button>
+                    <button class="seg-btn interactive-tap" data-sem="4">Semester IV</button>
+                </div>
+            </div>
+
+            <div class="search-container">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" id="search-input" class="search-input" placeholder="Search Data Science subjects..." autocomplete="off">
+                <svg class="search-clear" id="search-clear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </div>
+
+            <!-- Data Lens & Quick Resources -->
+            <div>
+                <h2 class="section-label">Data Lens</h2>
+                <div class="scrollable-row" id="ds-stack">
+                    <button class="chip interactive-tap" data-filter="all">All Data</button>
+                    <button class="chip interactive-tap" data-filter="math">Mathematics</button>
+                    <button class="chip interactive-tap" data-filter="data">Data Structures</button>
+                    <button class="chip interactive-tap" data-filter="ai">AI</button>
+                    <button class="chip interactive-tap" data-filter="prompt">Prompt Engineering</button>
+                    <button class="chip interactive-tap" data-filter="logic">Logic</button>
+                    <button class="chip interactive-tap" data-filter="values">Human Values</button>
+                </div>
+            </div>
+
+            <div>
+                <h2 class="section-label">Quick Resources</h2>
+                <div class="scrollable-row">
+                    <a href="#" class="chip resource-chip interactive-tap">Notes</a>
+                    <a href="#" class="chip resource-chip interactive-tap">PPTs</a>
+                    <a href="#" class="chip resource-chip interactive-tap">PYQs</a>
+                    <a href="#" class="chip resource-chip interactive-tap">MCQs</a>
+                    <a href="#" class="chip resource-chip interactive-tap">Syllabus</a>
+                    <a href="#" class="chip resource-chip interactive-tap">Downloads</a>
+                </div>
+            </div>
+
+            <!-- Subjects Grid -->
+            <div>
+                <h2 class="section-label">Your Subjects</h2>
+                <div class="subjects-grid" id="subjects-container">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        <section class="materials-live" data-materials-year="year-2" data-materials-group="ds"></section>
+</main>
+        
+        <!-- Bottom Nav -->
+        <nav class="bottom-nav">
+            <a href="index.html" class="nav-item interactive-tap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                <span>Home</span>
+            </a>
+            <a href="#" class="nav-item active interactive-tap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                <span>Subjects</span>
+            </a>
+            <a href="downloads.html" class="nav-item interactive-tap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                <span>Downloads</span>
+            </a>
+            <a href="profile.html" class="nav-item interactive-tap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                <span>Profile</span>
+            </a>
+        </nav>
+    </div>
+
+    <script type="module">
+        import { auth, onAuthStateChanged, signOut } from "./firebase-config.js";
+
+        onAuthStateChanged(auth, (user) => {
+            window.dispatchEvent(new Event("study-auth-ready"));
+            if (user) {
+                let displayName = user.displayName || (user.email ? user.email.split('@')[0] : "Student");
+                const topAvatar = document.getElementById('top-avatar');
+                if (user.photoURL) {
+                    topAvatar.innerHTML = `<img src="${user.photoURL}" alt="Avatar">`;
+                } else {
+                    topAvatar.textContent = displayName.charAt(0).toUpperCase();
+                }
+                topAvatar.addEventListener('click', () => {
+                    if(confirm(`Signed in as ${user.email}\nDo you want to log out?`)) {
+                        signOut(auth).then(() => window.location.replace("login.html"));
+                    }
+                });
+            } else {
+                window.location.replace("login.html");
+            }
+        });
+
+        const dsSubjects = [
+            { 
+                title: "Engineering Mathematics-III", type: "Theory", semester: 3, branch: "ds", slug: "engineering-mathematics-3", 
+                colorClass: "color-blue-indigo", category: "math", catLabel: "Math",
+                icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path><path d="M10 8h4"></path><path d="M12 6v4"></path><path d="M10 14h4"></path></svg>`
+            },
+            { 
+                title: "Universal Human Values-II", type: "Theory / VSEC", semester: 3, branch: "ds", slug: "universal-human-values-2", 
+                colorClass: "color-rose", category: "values", catLabel: "Values",
+                icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>`
+            },
+            { 
+                title: "Prompt Engineering", type: "Theory / Practical", semester: 3, branch: "ds", slug: "prompt-engineering", 
+                colorClass: "color-violet", category: "prompt", catLabel: "Prompt",
+                icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>`
+            },
+            { 
+                title: "Data Structures", type: "Theory", semester: 3, branch: "ds", slug: "data-structures", 
+                colorClass: "color-cyan", category: "data", catLabel: "Data",
+                icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="18" cy="18" r="3"></circle><circle cx="6" cy="6" r="3"></circle><circle cx="18" cy="6" r="3"></circle><path d="M13 18H8a2 2 0 0 1-2-2V9"></path><line x1="12" y1="6" x2="15" y2="6"></line></svg>`
+            },
+            { 
+                title: "Discrete Mathematics", type: "Theory", semester: 3, branch: "ds", slug: "discrete-mathematics", 
+                colorClass: "color-indigo", category: "logic", catLabel: "Logic",
+                icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="5" cy="5" r="2"></circle><circle cx="19" cy="5" r="2"></circle><circle cx="5" cy="19" r="2"></circle><circle cx="19" cy="19" r="2"></circle><line x1="5" y1="7" x2="5" y2="17"></line><line x1="19" y1="7" x2="19" y2="17"></line><line x1="7" y1="5" x2="17" y2="5"></line><line x1="7" y1="19" x2="17" y2="19"></line></svg>`
+            },
+            { 
+                title: "AI in Data Science", type: "Theory", semester: 3, branch: "ds", slug: "ai-in-data-science", 
+                colorClass: "color-teal", category: "ai", catLabel: "AI",
+                icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="10" rx="2"></rect><circle cx="12" cy="5" r="2"></circle><path d="M12 7v4"></path><line x1="8" y1="16" x2="8" y2="16"></line><line x1="16" y1="16" x2="16" y2="16"></line></svg>`
+            }
+        ];
+
+        let currentSem = 3;
+        let searchQuery = "";
+        let activeFilter = "all";
+
+        const container = document.getElementById('subjects-container');
+        const searchInput = document.getElementById('search-input');
+        const searchClear = document.getElementById('search-clear');
+        const stackChips = document.querySelectorAll('#ds-stack .chip');
+
+        function renderSubjects() {
+            container.innerHTML = '';
+            
+            const semFiltered = dsSubjects.filter(s => s.semester === currentSem);
+            
+            if (semFiltered.length === 0) {
+                container.innerHTML = '<div class="empty-state">Semester IV subjects will be added soon.</div>';
+                return;
+            }
+
+            const query = searchQuery.toLowerCase().trim();
+            const filtered = semFiltered.filter(s => {
+                const matchSearch = s.title.toLowerCase().includes(query) || (s.code && s.code.toLowerCase().includes(query));
+                const matchFilter = activeFilter === "all" || s.category === activeFilter;
+                return matchSearch && matchFilter;
+            });
+
+            if (filtered.length === 0) {
+                container.innerHTML = '<div class="empty-state">No subjects found matching your criteria.</div>';
+                return;
+            }
+
+            filtered.forEach((sub, index) => {
+                const a = document.createElement('a');
+                a.href = `subject.html?year=year-2&group=${sub.branch}&semester=${sub.semester}&subject=${encodeURIComponent(sub.title)}`;
+                a.className = `subject-card ${sub.colorClass} interactive-tap`;
+                a.style.animationDelay = `${index * 0.05}s`;
+                
+                a.innerHTML = `
+                    <div class="sc-header">
+                        <div class="sc-icon">${sub.icon}</div>
+                        <div class="sc-badge-row">
+                            <span class="sc-badge badge-sem">Sem ${sub.semester === 3 ? 'III' : 'IV'}</span>
+                            <span class="sc-badge badge-type">${sub.type}</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="sc-title">${sub.title}</h3>
+                        ${sub.code ? `<div class="sc-code">${sub.code}</div>` : ''}
+                    </div>
+                    <div class="sc-footer">
+                        <div class="sc-badges">
+                             <span class="sc-badge badge-cat">${sub.catLabel}</span>
+                        </div>
+                        <div class="sc-arrow">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline>
+                            </svg>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(a);
+            });
+        }
+
+        // Init
+        stackChips[0].classList.add('active');
+        renderSubjects();
+
+        // Search logic
+        searchInput.addEventListener('input', (e) => {
+            searchQuery = e.target.value;
+            searchClear.style.display = searchQuery.length > 0 ? 'block' : 'none';
+            renderSubjects();
+        });
+        searchClear.addEventListener('click', () => {
+            searchInput.value = '';
+            searchQuery = '';
+            searchClear.style.display = 'none';
+            searchInput.focus();
+            renderSubjects();
+        });
+
+        // Filter Logic
+        stackChips.forEach(chip => {
+            chip.addEventListener('click', () => {
+                stackChips.forEach(c => c.classList.remove('active'));
+                chip.classList.add('active');
+                activeFilter = chip.getAttribute('data-filter');
+                renderSubjects();
+            });
+        });
+
+        // Segmented Control Logic
+        const segBtns = document.querySelectorAll('.seg-btn');
+        const slider = document.getElementById('seg-slider');
+
+        segBtns.forEach((btn, index) => {
+            btn.addEventListener('click', () => {
+                segBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                slider.style.left = index === 0 ? '6px' : 'calc(50% + 6px)';
+                
+                currentSem = parseInt(btn.getAttribute('data-sem'));
+                renderSubjects();
+            });
+        });
+    </script>
+<script type="module" src="materials-view.js"></script>
+</body>
+</html>

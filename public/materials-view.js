@@ -38,6 +38,11 @@ if (host) {
   const searchInput = host.querySelector('.materials-search-input');
   const gridEl = host.querySelector('.materials-grid');
   
+  const initialFilter = new URLSearchParams(window.location.search).get('filter');
+  if (initialFilter) {
+      searchInput.value = initialFilter;
+  }
+  
   for (const group of getGroupsForYear(year)) {
       const o = document.createElement('option');
       o.value = group.id;

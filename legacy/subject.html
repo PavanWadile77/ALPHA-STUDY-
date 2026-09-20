@@ -895,115 +895,34 @@
 
         <main class="main-content">
             
-            <!-- 4. HERO SECTION -->
-            <section class="hero-section">
+            <!-- 4. SUBJECT HERO -->
+            <section class="hero-section" id="subject-hero">
                 <div class="hero-bg-visual">
-                    <!-- Abstract geometric / tech pattern -->
                     <svg viewBox="0 0 100 100" fill="none" stroke="white" stroke-width="1.5">
                         <circle cx="50" cy="50" r="40" stroke-dasharray="4 4" />
                         <circle cx="50" cy="50" r="25" />
-                        <path d="M10 50 L90 50 M50 10 L50 90" stroke-dasharray="2 6" />
-                        <path d="M22 22 L78 78 M22 78 L78 22" stroke-dasharray="2 6" opacity="0.5"/>
                     </svg>
                 </div>
                 <div class="hero-content">
-                    <div class="hero-badge">NEP Curriculum</div>
-                    <span class="hero-label">DBATU • B.Tech</span>
-                    <h1 class="hero-title">1st Year<br>Engineering</h1>
-                    <p class="hero-subtitle">Learn smarter. Everything for your first year in one place.</p>
+                    <div class="hero-badge" id="subject-badge">Loading...</div>
+                    <span class="hero-label" id="subject-code">...</span>
+                    <h1 class="hero-title" id="subject-title">Loading Subject</h1>
+                    <p class="hero-subtitle">Study materials, notes, and previous year questions.</p>
                 </div>
             </section>
 
-            <!-- 5. CONTROLS & SEARCH -->
-            <section class="controls-row">
-                <div class="smart-selectors">
-                    <div class="segmented-control group-selector" id="group-selector" data-active="A">
-                        <div class="segmented-indicator"></div>
-                        <button class="seg-btn active" data-val="A">Group A</button>
-                        <button class="seg-btn" data-val="B">Group B</button>
-                    </div>
-                    <div class="segmented-control sem-selector" id="sem-selector" data-active="1">
-                        <div class="segmented-indicator"></div>
-                        <button class="seg-btn active" data-val="1">Sem I</button>
-                        <button class="seg-btn" data-val="2">Sem II</button>
-                    </div>
-                </div>
-
-                <div class="search-container">
-                    <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                    <input type="text" class="search-input" id="search-input" placeholder="Search subjects, code or resources...">
-                </div>
-            </section>
-
-            <!-- 6. QUICK ACTIONS -->
-            <section>
+            <!-- 5. MATERIALS VIEW -->
+            <section class="materials-live" id="live-subject-materials">
                 <div class="section-header">
-                    <h2 class="section-title">Quick Actions</h2>
+                    <h2 class="section-title">Study Materials</h2>
+                    <span class="section-meta" id="materials-count">0 Items</span>
                 </div>
-            <div class="quick-actions">
-                <a href="?filter=Lecture+Notes#materials-view" class="qa-card">
-                    <div class="qa-icon qa-notes"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg></div>
-                    <span class="qa-text">Notes</span>
-                </a>
-                <a href="?filter=Question+Paper+(PYQ)#materials-view" class="qa-card">
-                    <div class="qa-icon qa-pyq"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>
-                    <span class="qa-text">PYQ</span>
-                </a>
-                <a href="?filter=Syllabus+Scheme#materials-view" class="qa-card">
-                    <div class="qa-icon qa-syllabus"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg></div>
-                    <span class="qa-text">Syllabus</span>
-                </a>
-                <a href="?filter=Reference+Book#materials-view" class="qa-card">
-                    <div class="qa-icon qa-books"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg></div>
-                    <span class="qa-text">Books</span>
-                </a>
-                <a href="?filter=Question+Bank#materials-view" class="qa-card">
-                    <div class="qa-icon qa-mcq"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg></div>
-                    <span class="qa-text">MCQ</span>
-                </a>
-                <a href="#materials-view" class="qa-card">
-                    <div class="qa-icon qa-down"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></div>
-                    <span class="qa-text">Downloads</span>
-                </a>
-            </div>
-        </section>
-
-            <!-- 7. CONTINUE STUDYING -->
-            <section>
-                <div class="section-header">
-                    <h2 class="section-title">Continue Studying</h2>
-                </div>
-                <div class="continue-grid">
-                    <a href="subject.html?subject=engineering-mathematics-1" class="continue-card">
-                        <div class="continue-info">
-                            <span class="c-title">Engineering Mathematics – I</span>
-                            <span class="c-subtitle">Unit 2 <span class="c-progress-bar"><span class="c-progress-fill" style="width: 40%;"></span></span></span>
-                        </div>
-                        <div class="c-action">Continue <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"></path></svg></div>
-                    </a>
-                    <a href="subject.html?subject=programming-for-problem-solving" class="continue-card">
-                        <div class="continue-info">
-                            <span class="c-title">Programming for Problem Solving</span>
-                            <span class="c-subtitle">Basics <span class="c-progress-bar"><span class="c-progress-fill" style="width: 15%;"></span></span></span>
-                        </div>
-                        <div class="c-action">Continue <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"></path></svg></div>
-                    </a>
+                <div class="subjects-grid" id="materials-container" style="grid-template-columns: 1fr;">
+                    <div style="text-align:center; padding: 40px; color: var(--text-tertiary);">Loading materials...</div>
                 </div>
             </section>
 
-            <!-- 8. SUBJECTS -->
-            <section>
-                <div class="section-header">
-                    <h2 class="section-title">Your Subjects</h2>
-                    <span class="section-meta" id="subject-count-badge">0 Subjects</span>
-                </div>
-                <div class="subjects-grid" id="subjects-container">
-                    <!-- Dynamic Tiles -->
-                </div>
-            </section>
-
-        <section id="materials-view" class="materials-live" data-materials-year="year-1" data-materials-group=""></section>
-</main>
+        </main>
 
         <!-- 9. BOTTOM NAVIGATION -->
         <nav class="bottom-nav">
@@ -1031,16 +950,28 @@
          SCRIPTS
          ================================================== -->
     <script type="module">
-        import { auth, onAuthStateChanged, signOut } from "./firebase-config.js";
+        import { auth, db, onAuthStateChanged, signOut, collection, getDocs, query, where, orderBy } from "./firebase-config.js";
 
-        // 2. AUTH STATE
+        import { isValidYearGroup, getYearLabel, getGroupLabel } from './year-group-config.js';
+        const parameters = new URLSearchParams(location.search);
+        const year = parameters.get('year') || (parameters.get('branch') ? 'year-2' : 'year-1');
+        const group = parameters.get('group') || parameters.get('branch') || (localStorage.getItem('dbatu_group') === 'B' ? 'group-b' : 'group-a');
+        const subject = parameters.get('subject') || '';
+        const host = document.getElementById('live-subject-materials');
+        if (isValidYearGroup(year, group)) {
+            host.dataset.materialsYear = year;
+            host.dataset.materialsGroup = group;
+            host.dataset.materialsSubject = subject;
+            document.getElementById('subject-title').textContent = subject ? subject.replace(/-/g, ' ') : getGroupLabel(year, group);
+            document.getElementById('subject-badge').textContent = getYearLabel(year);
+            document.getElementById('subject-code').textContent = getGroupLabel(year, group);
+            import('./materials-view.js').catch(() => { host.textContent = 'Unable to load materials. Please reload.'; });
+        } else { host.textContent = 'Invalid year or group. Please return to the year selection page.'; }
+        // GLOBAL AUTH STATE
         onAuthStateChanged(auth, (user) => {
             window.dispatchEvent(new Event("study-auth-ready"));
             if (user) {
-                let displayName = user.displayName;
-                if (!displayName && user.email) displayName = user.email.split('@')[0];
-                if (!displayName) displayName = "Student";
-
+                let displayName = user.displayName || (user.email ? user.email.split('@')[0] : "Student");
                 const topAvatar = document.getElementById('top-avatar');
                 const dAvatar = document.getElementById('drawer-avatar');
                 
@@ -1061,7 +992,6 @@
             }
         });
 
-        // 3. LOGOUT
         document.getElementById('btn-logout').addEventListener('click', async () => {
             try {
                 await signOut(auth);
@@ -1071,7 +1001,7 @@
             }
         });
 
-        // 4. DRAWER LOGIC
+        // DRAWER LOGIC
         const btnMenu = document.getElementById('btn-menu');
         const btnCloseDrawer = document.getElementById('btn-close-drawer');
         const drawer = document.getElementById('main-drawer');
@@ -1093,188 +1023,6 @@
         btnCloseDrawer.addEventListener('click', closeDrawer);
         drawerOverlay.addEventListener('click', closeDrawer);
 
-        // 5. DATA STRUCTURE
-        const subjectsData = [
-            // ==================== GROUP A - SEMESTER 1 ====================
-            { group: "A", semester: 1, title: "Engineering Mathematics – I", code: "24AF1000BS101", type: "Theory", category: "math", slug: "engineering-mathematics-1" },
-            { group: "A", semester: 1, title: "Engineering Chemistry", code: "24AF1CHEBS102", type: "Theory", category: "chem", slug: "engineering-chemistry" },
-            { group: "A", semester: 1, title: "Engineering Chemistry Lab", code: "24AF1CHEBS103L", type: "Lab", category: "chem", slug: "engineering-chemistry-lab" },
-            { group: "A", semester: 1, title: "Engineering Mechanics", code: "24AF1EMES104", type: "Theory", category: "mech", slug: "engineering-mechanics" },
-            { group: "A", semester: 1, title: "Engineering Mechanics Lab", code: "24AF1EMES105L", type: "Lab", category: "mech", slug: "engineering-mechanics-lab" },
-            { group: "A", semester: 1, title: "Programming for Problem Solving", code: "24AF1000ES106", type: "Theory", category: "prog", slug: "programming-for-problem-solving" },
-            { group: "A", semester: 1, title: "Programming for Problem Solving Lab", code: "24AF1000ES107L", type: "Lab", category: "prog", slug: "programming-for-problem-solving-lab" },
-            { group: "A", semester: 1, title: "Workshop Practices", code: "24AF1000VS108L", type: "Lab", category: "work", slug: "workshop-practices" },
-            { group: "A", semester: 1, title: "Communication Skills", code: "24AF1000VS109", type: "Theory", category: "comm", slug: "communication-skills" },
-            { group: "A", semester: 1, title: "Communication Skills Lab", code: "24AF1000VS110L", type: "Lab", category: "comm", slug: "communication-skills-lab" },
-            { group: "A", semester: 1, title: "Yoga Education / NSS-I / NCC", code: "24AF1000CC111A", type: "Activity", category: "gen", slug: "yoga-nss-ncc-1" },
-
-            // ==================== GROUP A - SEMESTER 2 ====================
-            { group: "A", semester: 2, title: "Engineering Mathematics – II", code: "24AF1000BS201", type: "Theory", category: "math", slug: "engineering-mathematics-2" },
-            { group: "A", semester: 2, title: "Engineering Physics", code: "24AF2PHYBS202", type: "Theory", category: "physics", slug: "engineering-physics" },
-            { group: "A", semester: 2, title: "Engineering Physics Lab", code: "24AF2PHYBS203L", type: "Lab", category: "physics", slug: "engineering-physics-lab" },
-            { group: "A", semester: 2, title: "Engineering Graphics", code: "24AF2EGRES204", type: "Theory", category: "graph", slug: "engineering-graphics" },
-            { group: "A", semester: 2, title: "Engineering Graphics Lab", code: "24AF2EGRES205L", type: "Lab", category: "graph", slug: "engineering-graphics-lab" },
-            { group: "A", semester: 2, title: "Basic Electrical & Electronics Engg.", code: "24AF1000ES206", type: "Theory", category: "elec", slug: "basic-electrical-electronics" },
-            { group: "A", semester: 2, title: "Basic Electrical & Electronics Engg. Lab", code: "24AF1000ES207L", type: "Lab", category: "elec", slug: "basic-electrical-electronics-lab" },
-            { group: "A", semester: 2, title: "Basic Civil and Mechanical Engg.", code: "24AF2CMEES208", type: "Theory", category: "mech", slug: "basic-civil-mechanical" },
-            { group: "A", semester: 2, title: "Energy and Environmental Engg.", code: "24AF1EEEES209", type: "Theory", category: "env", slug: "energy-environmental" },
-            { group: "A", semester: 2, title: "Indian Knowledge Systems", code: "24AF1000IK210", type: "Theory", category: "iks", slug: "indian-knowledge-systems" },
-            { group: "A", semester: 2, title: "Design Thinking", code: "24AF1000VS211", type: "Theory", category: "design", slug: "design-thinking" },
-            { group: "A", semester: 2, title: "Integrated Personality Dev. / NSS-II", code: "24AF1000CC212A", type: "Activity", category: "gen", slug: "personality-nss-health-2" },
-
-            // ==================== GROUP B - SEMESTER 1 ====================
-            { group: "B", semester: 1, title: "Engineering Mathematics – I", code: "24AF1000BS101", type: "Theory", category: "math", slug: "engineering-mathematics-1" },
-            { group: "B", semester: 1, title: "Engineering Physics", code: "24AF2PHYBS202", type: "Theory", category: "physics", slug: "engineering-physics" },
-            { group: "B", semester: 1, title: "Engineering Physics Lab", code: "24AF2PHYBS203L", type: "Lab", category: "physics", slug: "engineering-physics-lab" },
-            { group: "B", semester: 1, title: "Engineering Graphics", code: "24AF2EGRES204", type: "Theory", category: "graph", slug: "engineering-graphics" },
-            { group: "B", semester: 1, title: "Engineering Graphics Lab", code: "24AF2EGRES205L", type: "Lab", category: "graph", slug: "engineering-graphics-lab" },
-            { group: "B", semester: 1, title: "Basic Electrical & Electronics Engg.", code: "24AF1000ES206", type: "Theory", category: "elec", slug: "basic-electrical-electronics" },
-            { group: "B", semester: 1, title: "Basic Electrical & Electronics Engg. Lab", code: "24AF1000ES207L", type: "Lab", category: "elec", slug: "basic-electrical-electronics-lab" },
-            { group: "B", semester: 1, title: "Basic Civil and Mechanical Engg.", code: "24AF2CMEES208", type: "Theory", category: "mech", slug: "basic-civil-mechanical" },
-            { group: "B", semester: 1, title: "Energy and Environmental Engg.", code: "24AF1EEEES209", type: "Theory", category: "env", slug: "energy-environmental" },
-            { group: "B", semester: 1, title: "Indian Knowledge Systems", code: "24AF1000IK210", type: "Theory", category: "iks", slug: "indian-knowledge-systems" },
-            { group: "B", semester: 1, title: "Design Thinking", code: "24AF1000VS211", type: "Theory", category: "design", slug: "design-thinking" },
-            { group: "B", semester: 1, title: "Integrated Personality Dev. / NSS-II", code: "24AF1000CC212A", type: "Activity", category: "gen", slug: "personality-nss-health-2" },
-
-            // ==================== GROUP B - SEMESTER 2 ====================
-            { group: "B", semester: 2, title: "Engineering Mathematics – II", code: "24AF1000BS201", type: "Theory", category: "math", slug: "engineering-mathematics-2" },
-            { group: "B", semester: 2, title: "Engineering Chemistry", code: "24AF1CHEBS102", type: "Theory", category: "chem", slug: "engineering-chemistry" },
-            { group: "B", semester: 2, title: "Engineering Chemistry Lab", code: "24AF1CHEBS103L", type: "Lab", category: "chem", slug: "engineering-chemistry-lab" },
-            { group: "B", semester: 2, title: "Engineering Mechanics", code: "24AF1EMES104", type: "Theory", category: "mech", slug: "engineering-mechanics" },
-            { group: "B", semester: 2, title: "Engineering Mechanics Lab", code: "24AF1EMES105L", type: "Lab", category: "mech", slug: "engineering-mechanics-lab" },
-            { group: "B", semester: 2, title: "Programming for Problem Solving", code: "24AF1000ES106", type: "Theory", category: "prog", slug: "programming-for-problem-solving" },
-            { group: "B", semester: 2, title: "Programming for Problem Solving Lab", code: "24AF1000ES107L", type: "Lab", category: "prog", slug: "programming-for-problem-solving-lab" },
-            { group: "B", semester: 2, title: "Workshop Practices", code: "24AF1000VS108L", type: "Lab", category: "work", slug: "workshop-practices" },
-            { group: "B", semester: 2, title: "Communication Skills", code: "24AF1000VS109", type: "Theory", category: "comm", slug: "communication-skills" },
-            { group: "B", semester: 2, title: "Communication Skills Lab", code: "24AF1000VS110L", type: "Lab", category: "comm", slug: "communication-skills-lab" },
-            { group: "B", semester: 2, title: "Yoga Education / NSS-I / NCC", code: "24AF1000CC111A", type: "Activity", category: "gen", slug: "yoga-nss-ncc-1" },
-        ];
-
-        const categoryIcons = {
-            "math": "∑", "physics": "⚛", "chem": "⚗️", "prog": "💻", 
-            "mech": "⚙️", "elec": "⚡", "graph": "📐", "comm": "🗣️", 
-            "env": "🌿", "design": "💡", "work": "🛠️", "iks": "📜", "gen": "🛡️"
-        };
-
-        // 6. STATE & RENDER
-        let currentGroup = localStorage.getItem('dbatu_group') || 'A';
-        let currentSem = parseInt(localStorage.getItem('dbatu_sem')) || 1;
-        let searchQuery = "";
-
-        const groupSelector = document.getElementById('group-selector');
-        const semSelector = document.getElementById('sem-selector');
-        const searchInput = document.getElementById('search-input');
-        const subjectsContainer = document.getElementById('subjects-container');
-        const countBadge = document.getElementById('subject-count-badge');
-
-        function updateSelectorsUI() {
-            // Group UI Update
-            groupSelector.setAttribute('data-active', currentGroup);
-            groupSelector.querySelectorAll('.seg-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.val === currentGroup);
-            });
-            
-            // Sem UI Update
-            semSelector.setAttribute('data-active', currentSem);
-            semSelector.querySelectorAll('.seg-btn').forEach(btn => {
-                btn.classList.toggle('active', parseInt(btn.dataset.val) === currentSem);
-            });
-        }
-
-        function renderSubjects() {
-            subjectsContainer.innerHTML = '';
-            
-            let filtered = subjectsData.filter(s => s.group === currentGroup && s.semester === currentSem);
-            
-            if (searchQuery.trim() !== "") {
-                const q = searchQuery.toLowerCase();
-                filtered = filtered.filter(s => 
-                    s.title.toLowerCase().includes(q) || 
-                    s.code.toLowerCase().includes(q)
-                );
-            }
-
-            countBadge.textContent = `${filtered.length} Subjects`;
-
-            if (filtered.length === 0) {
-                subjectsContainer.innerHTML = `
-                    <div class="empty-state">
-                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom:12px; opacity:0.5;">
-                            <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                        </svg>
-                        <p>No subjects found for "${searchQuery}".</p>
-                    </div>`;
-                return;
-            }
-
-            filtered.forEach((sub, idx) => {
-                const icon = categoryIcons[sub.category] || "📘";
-                let badgeClass = "badge-theory";
-                if (sub.type === "Lab") badgeClass = "badge-lab";
-                if (sub.type === "Activity") badgeClass = "badge-theory";
-
-                const delay = Math.min(idx * 0.05, 0.5); // Stagger animation max limit
-
-                const card = document.createElement('a');
-                card.href = `subject.html?year=year-1&group=group-${currentGroup.toLowerCase()}&subject=${encodeURIComponent(sub.title)}&semester=${currentSem}`;
-                card.className = `subject-tile c-${sub.category}`;
-                card.style.animation = `slideUpFade 0.5s cubic-bezier(0.16, 1, 0.3, 1) ${delay}s forwards`;
-                card.style.opacity = "0";
-
-                card.innerHTML = `
-                    <div class="tile-accent"></div>
-                    <div class="tile-header">
-                        <div class="tile-icon">${icon}</div>
-                        <div class="tile-info">
-                            <h3 class="tile-title" title="${sub.title}">${sub.title}</h3>
-                            <span class="tile-code">${sub.code}</span>
-                        </div>
-                    </div>
-                    <div class="tile-footer">
-                        <div class="tile-badges">
-                            <span class="badge-type ${badgeClass}">${sub.type}</span>
-                        </div>
-                        <div class="tile-arrow">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <line x1="5" y1="12" x2="19" y2="12"></line>
-                                <polyline points="12 5 19 12 12 19"></polyline>
-                            </svg>
-                        </div>
-                    </div>
-                `;
-                subjectsContainer.appendChild(card);
-            });
-        }
-
-        // 7. EVENT LISTENERS
-        groupSelector.addEventListener('click', (e) => {
-            if (e.target.classList.contains('seg-btn')) {
-                currentGroup = e.target.dataset.val;
-                localStorage.setItem('dbatu_group', currentGroup);
-                updateSelectorsUI();
-                renderSubjects();
-            }
-        });
-
-        semSelector.addEventListener('click', (e) => {
-            if (e.target.classList.contains('seg-btn')) {
-                currentSem = parseInt(e.target.dataset.val);
-                localStorage.setItem('dbatu_sem', currentSem);
-                updateSelectorsUI();
-                renderSubjects();
-            }
-        });
-
-        searchInput.addEventListener('input', (e) => {
-            searchQuery = e.target.value;
-            renderSubjects();
-        });
-
-        // Initialize
-        updateSelectorsUI();
-        renderSubjects();
-
     </script>
-<script type="module" src="materials-view.js"></script>
 </body>
 </html>

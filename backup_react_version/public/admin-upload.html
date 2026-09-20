@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STUDY - Admin Upload Materials</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-base: #0c0e14;
+            --bg-surface: #141722;
+            --bg-surface-elevated: #1b1f2e;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-light: rgba(255, 255, 255, 0.04);
+            --primary: #4f46e5;
+            --primary-light: #6366f1;
+            --primary-glow: rgba(99, 102, 241, 0.25);
+            --accent-teal: #10b981;
+            --accent-amber: #f59e0b;
+            --accent-rose: #f43f5e;
+            --radius-lg: 20px;
+            --radius-md: 14px;
+            --radius-sm: 10px;
+            --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            font-family: 'Outfit', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            background-image:
+                radial-gradient(circle at 10% 20%, rgba(79, 70, 229, 0.07) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.05) 0%, transparent 40%);
+        }
+
+        /* AUTH LOADER */
+        #auth-loader {
+            position: fixed; inset: 0; background: var(--bg-base);
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center; z-index: 99999; transition: opacity 0.4s ease;
+        }
+        .auth-spinner {
+            width: 48px; height: 48px;
+            border: 4px solid rgba(255,255,255,0.1);
+            border-top-color: var(--primary-light);
+            border-radius: 50%; animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* HEADER */
+        .admin-header {
+            height: 72px; background: rgba(20,23,34,0.8);
+            backdrop-filter: blur(16px); border-bottom: 1px solid var(--border-color);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 32px; position: sticky; top: 0; z-index: 100;
+        }
+        .brand-section { display: flex; align-items: center; gap: 12px; }
+        .brand-logo {
+            width: 38px; height: 38px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 10px; display: flex; align-items: center; justify-content: center;
+            color: #fff; font-weight: 700; font-size: 1.2rem; box-shadow: 0 4px 14px var(--primary-glow);
+        }
+        .brand-title { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.5px; color: #fff; }
+        .admin-badge {
+            background: rgba(99,102,241,0.15); color: var(--primary-light);
+            border: 1px solid rgba(99,102,241,0.3); font-size: 0.72rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.8px; padding: 3px 8px; border-radius: 6px;
+        }
+        .nav-links { display: flex; align-items: center; gap: 8px; }
+        .nav-item {
+            display: flex; align-items: center; gap: 8px; padding: 8px 16px;
+            border-radius: var(--radius-sm); color: var(--text-secondary);
+            text-decoration: none; font-size: 0.92rem; font-weight: 500; transition: all 0.2s ease;
+        }
+        .nav-item:hover { color: #fff; background: rgba(255,255,255,0.05); }
+        .nav-item.active { color: #fff; background: var(--primary); box-shadow: 0 4px 14px var(--primary-glow); }
+        .user-section { display: flex; align-items: center; gap: 16px; }
+        .admin-user-info { display: flex; align-items: center; gap: 10px; }
+        .admin-avatar {
+            width: 36px; height: 36px; border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: #fff; display: flex; align-items: center; justify-content: center;
+            font-weight: 600; font-size: 0.9rem; border: 1px solid rgba(255,255,255,0.2);
+        }
+        .admin-details { display: flex; flex-direction: column; text-align: right; }
+        .admin-name { font-size: 0.88rem; font-weight: 600; color: var(--text-primary); }
+        .admin-email { font-size: 0.75rem; color: var(--text-muted); }
+        .btn-logout {
+            display: flex; align-items: center; gap: 6px;
+            background: rgba(244,63,94,0.1); color: var(--accent-rose);
+            border: 1px solid rgba(244,63,94,0.25); padding: 8px 14px;
+            border-radius: var(--radius-sm); font-size: 0.85rem; font-weight: 600;
+            cursor: pointer; transition: all 0.2s ease; font-family: inherit;
+        }
+        .btn-logout:hover { background: var(--accent-rose); color: #fff; box-shadow: 0 4px 14px rgba(244,63,94,0.3); }
+
+        /* UPLOAD CONTAINER */
+        .upload-container {
+            max-width: 900px; width: 100%; margin: 0 auto;
+            padding: 36px 24px; display: flex; flex-direction: column; gap: 28px;
+        }
+        .page-intro h1 { font-size: 1.8rem; font-weight: 700; letter-spacing: -0.5px; }
+        .page-intro p { color: var(--text-secondary); font-size: 0.95rem; margin-top: 6px; }
+
+        .form-card {
+            background: var(--bg-surface); border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg); padding: 36px; box-shadow: var(--shadow-card);
+        }
+        .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
+        .col-span-2 { grid-column: span 2; }
+
+        .form-group { display: flex; flex-direction: column; gap: 8px; }
+        .form-group label { font-size: 0.9rem; font-weight: 500; color: var(--text-secondary); }
+        .form-group label .required { color: var(--accent-rose); margin-left: 3px; }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%; padding: 13px 16px;
+            background: rgba(0,0,0,0.25); border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm); color: #fff; font-size: 0.95rem;
+            font-family: inherit; outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            border-color: var(--primary-light); box-shadow: 0 0 0 3px var(--primary-glow);
+        }
+        .form-input:disabled, .form-select:disabled {
+            opacity: 0.5; cursor: not-allowed;
+        }
+        .form-select option { background: #181b24; color: #fff; }
+        .form-textarea { min-height: 90px; resize: vertical; }
+
+        /* DROPZONE */
+        .dropzone {
+            border: 2px dashed rgba(255,255,255,0.15); border-radius: var(--radius-md);
+            padding: 36px 20px; text-align: center; background: rgba(0,0,0,0.12);
+            cursor: pointer; transition: all 0.3s ease;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+        }
+        .dropzone:hover, .dropzone.dragover {
+            border-color: var(--primary-light); background: rgba(99,102,241,0.06);
+        }
+        .dropzone-icon {
+            width: 52px; height: 52px; border-radius: 50%;
+            background: rgba(99,102,241,0.12); color: var(--primary-light);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .dropzone-text { font-size: 0.95rem; color: var(--text-primary); font-weight: 500; }
+        .dropzone-hint { font-size: 0.8rem; color: var(--text-muted); }
+        .selected-file-badge {
+            margin-top: 8px; display: none; align-items: center; gap: 8px;
+            background: rgba(16,185,129,0.15); color: var(--accent-teal);
+            border: 1px solid rgba(16,185,129,0.3); padding: 6px 14px;
+            border-radius: 8px; font-size: 0.85rem; font-weight: 500;
+        }
+
+        /* PROGRESS */
+        .upload-progress-wrap {
+            display: none; flex-direction: column; gap: 8px; margin-top: 14px;
+        }
+        .progress-bar-track {
+            height: 6px; background: rgba(255,255,255,0.08); border-radius: 99px; overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%; background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            border-radius: 99px; width: 0%; transition: width 0.3s ease;
+        }
+        .progress-label { font-size: 0.82rem; color: var(--text-muted); }
+
+        /* SUBMIT BUTTON */
+        .btn-submit {
+            margin-top: 28px; width: 100%; padding: 16px;
+            background: var(--primary); color: #fff; border: none;
+            border-radius: var(--radius-md); font-size: 1rem; font-weight: 600;
+            cursor: pointer; transition: all 0.3s ease;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            box-shadow: 0 4px 16px var(--primary-glow); font-family: inherit;
+        }
+        .btn-submit:hover:not(:disabled) {
+            background: var(--primary-light); transform: translateY(-2px);
+            box-shadow: 0 6px 22px var(--primary-glow);
+        }
+        .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+        /* ALERTS */
+        .alert-box {
+            padding: 14px 18px; border-radius: var(--radius-sm); font-size: 0.9rem;
+            display: none; align-items: center; gap: 10px; margin-bottom: 16px;
+            animation: fadeIn 0.3s ease;
+        }
+        .alert-success { background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); color: #34d399; }
+        .alert-error   { background: rgba(244,63,94,0.15);  border: 1px solid rgba(244,63,94,0.3);  color: #fb7185; }
+
+        .spinner-sm {
+            width: 18px; height: 18px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: #fff; border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .admin-header { padding: 0 16px; }
+            .nav-links { display: none; }
+            .form-grid { grid-template-columns: 1fr; }
+            .col-span-2 { grid-column: span 1; }
+            .form-card { padding: 24px 16px; }
+        }
+    </style>
+    <script src="auth-status.js" defer></script>
+</head>
+<body>
+
+    <div id="auth-loader">
+        <div class="auth-spinner"></div>
+        <p style="color:#94a3b8; margin-top:18px; font-weight:500;">Verifying Admin Privileges...</p>
+    </div>
+
+    <div id="admin-content" style="display:none;">
+
+        <header class="admin-header">
+            <div class="brand-section">
+                <div class="brand-logo">S</div>
+                <div class="brand-title">STUDY</div>
+                <span class="admin-badge">Admin Portal</span>
+            </div>
+            <nav class="nav-links">
+                <a href="admin-dashboard.html" class="nav-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                    Dashboard
+                </a>
+                <a href="admin-upload.html" class="nav-item active">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                    Upload Materials
+                </a>
+                <a href="admin-materials.html" class="nav-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                    Manage Materials
+                </a>
+            </nav>
+            <div class="user-section">
+                <div class="admin-user-info">
+                    <div class="admin-avatar" id="admin-avatar-initial">A</div>
+                    <div class="admin-details">
+                        <span class="admin-name" id="admin-display-name">Admin</span>
+                        <span class="admin-email" id="admin-display-email">admin@study.edu</span>
+                    </div>
+                </div>
+                <button class="btn-logout" id="btn-admin-logout" title="Sign out from Admin">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                    Logout
+                </button>
+            </div>
+        </header>
+
+        <main class="upload-container">
+            <div class="page-intro">
+                <h1>Upload Study Resource</h1>
+                <p>Add new lecture notes, previous year question papers, lab manuals, or syllabus schemes to the STUDY platform.</p>
+            </div>
+
+            <div class="alert-box alert-success" id="alert-success">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                <span id="success-message">Material uploaded successfully!</span>
+            </div>
+            <div class="alert-box alert-error" id="alert-error">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                <span id="error-message">Please fill in all required fields.</span>
+            </div>
+
+            <section class="form-card">
+<p style="color:var(--text-secondary);padding-bottom:16px">Upload a PDF, document, presentation, ZIP or text file up to 25 MB.</p>
+                <form id="upload-form" novalidate>
+                    <div class="form-grid">
+
+                        <!-- Year -->
+                        <div class="form-group">
+                            <label for="material-year">Target Year <span class="required">*</span></label>
+                            <select id="material-year" class="form-select" required>
+                                <option value="" disabled selected>Select Year</option>
+                                <option value="year-1">1st Year</option>
+                                <option value="year-2">2nd Year</option>
+                                <option value="year-3">3rd Year</option>
+                                <option value="year-4">4th Year</option>
+                            </select>
+                        </div>
+
+                        <!-- Group (dynamically populated) -->
+                        <div class="form-group">
+                            <label for="material-group">Branch / Group <span class="required">*</span></label>
+                            <select id="material-group" class="form-select" required disabled>
+                                <option value="" disabled selected>Select Year first</option>
+                            </select>
+                        </div>
+
+                        <!-- Semester -->
+                        <div class="form-group">
+                            <label for="material-semester">Semester <span class="required">*</span></label>
+                            <select id="material-semester" class="form-select" required>
+                                <option value="" disabled selected>Select Semester</option>
+                                <option value="sem-1">Semester 1</option>
+                                <option value="sem-2">Semester 2</option>
+                                <option value="sem-3">Semester 3</option>
+                                <option value="sem-4">Semester 4</option>
+                                <option value="sem-5">Semester 5</option>
+                                <option value="sem-6">Semester 6</option>
+                                <option value="sem-7">Semester 7</option>
+                                <option value="sem-8">Semester 8</option>
+                            </select>
+                        </div>
+
+                        <!-- Material Type -->
+                        <div class="form-group">
+                            <label for="material-type">Material Type <span class="required">*</span></label>
+                            <select id="material-type" class="form-select" required>
+                                <option value="" disabled selected>Select Type</option>
+                                <option value="Lecture Notes">Lecture Notes / Unit PPT</option>
+                                <option value="Question Paper (PYQ)">Previous Year Question Paper (PYQ)</option>
+                                <option value="Question Bank">Question Bank / Imp Questions</option>
+                                <option value="Lab Manual">Lab Manual &amp; Code</option>
+                                <option value="Syllabus Scheme">Syllabus &amp; Scheme</option>
+                                <option value="Reference Book">E-Book / Reference Text</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+
+                        <!-- Subject -->
+                        <div class="form-group">
+                            <label for="material-subject">Subject <span class="required">*</span></label>
+                            <input type="text" id="material-subject" class="form-input" placeholder="e.g. Data Structures &amp; Algorithms" required maxlength="200">
+                        </div>
+
+                        <!-- Unit / Module -->
+                        <div class="form-group">
+                            <label for="material-unit">Unit / Module</label>
+                            <select id="material-unit" class="form-select">
+                                <option value="Full Subject">Full Subject / All Units</option>
+                                <option value="Unit 1">Unit 1</option>
+                                <option value="Unit 2">Unit 2</option>
+                                <option value="Unit 3">Unit 3</option>
+                                <option value="Unit 4">Unit 4</option>
+                                <option value="Unit 5">Unit 5</option>
+                                <option value="Unit 6">Unit 6</option>
+                            </select>
+                        </div>
+
+                        <!-- Title -->
+                        <div class="form-group col-span-2">
+                            <label for="material-title">Resource Title <span class="required">*</span></label>
+                            <input type="text" id="material-title" class="form-input" placeholder="e.g. Unit 2 Stack &amp; Queues Detailed Notes" required maxlength="500">
+                        </div>
+
+                        <!-- Description -->
+                        <div class="form-group col-span-2">
+                            <label for="material-desc">Brief Description / Key Topics</label>
+                            <textarea id="material-desc" class="form-textarea" placeholder="Optional: notes, key topics covered, author, syllabus year..."></textarea>
+                        </div>
+
+                        <!-- File Upload -->
+                        <div class="form-group col-span-2">
+                            <label>Upload File <span class="required">*</span></label>
+                            <div class="dropzone" id="dropzone" role="button" tabindex="0" aria-label="Upload file area">
+                                <div class="dropzone-icon">
+                                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                                </div>
+                                <div>
+                                    <div class="dropzone-text">Click to choose file or drag &amp; drop</div>
+                                    <div class="dropzone-hint">PDF, DOCX, PPT, PPTX, ZIP — max 25 MB</div>
+                                </div>
+                                <input type="file" id="file-input" style="display:none;"
+                                       accept=".pdf,.doc,.docx,.ppt,.pptx,.zip,.txt">
+                                <div class="selected-file-badge" id="selected-file-badge">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path></svg>
+                                    <span id="file-name-text">filename.pdf</span>
+                                </div>
+                            </div>
+
+                            <!-- Upload progress -->
+                            <div class="upload-progress-wrap" id="upload-progress-wrap">
+                                <div class="progress-bar-track">
+                                    <div class="progress-bar-fill" id="progress-bar"></div>
+                                </div>
+                                <span class="progress-label" id="progress-label">Uploading... 0%</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <button type="submit" class="btn-submit" id="btn-submit-upload">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                        <span id="submit-label">Publish Study Resource</span>
+                    </button>
+                </form>
+            </section>
+        </main>
+    </div>
+
+    <script type="module">
+        import { contentTypeForFile } from "./material-utils.js";
+        import { uploadMaterial, deleteMaterialFile } from './supabase-storage.js';
+        import {
+            auth, db, storage,
+            isUserAdmin,
+            onAuthStateChanged,
+            signOut,
+            doc, getDoc,
+            collection, addDoc,
+            serverTimestamp,
+            ref, uploadBytesResumable, getDownloadURL, deleteObject
+        } from "./firebase-config.js";
+
+        import { YEAR_GROUP_MAP, getGroupsForYear, isValidYearGroup } from "./year-group-config.js";
+
+        let currentAdminUser = null;
+        let selectedFile = null;
+        let isSubmitting = false;
+
+        // -------------------------------------------------
+        // AUTH GUARD
+        // -------------------------------------------------
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.replace("admin-login.html");
+                return;
+            }
+            try {
+                if (isUserAdmin(user)) {
+                    currentAdminUser = user;
+                    let data = {};
+                    try {
+                        const snap = await getDoc(doc(db, "admins", user.uid));
+                        if (snap.exists()) data = snap.data();
+                    } catch(_) {}
+                    populateAdminUI(user, data);
+                    document.getElementById('auth-loader').style.display = 'none';
+                    document.getElementById('admin-content').style.display = 'block';
+                    return;
+                }
+            } catch(err) {
+                console.error("Admin verification error:", err);
+            }
+            window.location.replace("choose-path.html");
+        });
+
+        function populateAdminUI(user, data) {
+            const name = user.displayName || data.name || (user.email?.split('@')[0]) || "Admin";
+            document.getElementById('admin-display-name').textContent = name;
+            document.getElementById('admin-display-email').textContent = user.email || '';
+            document.getElementById('admin-avatar-initial').textContent = name.charAt(0).toUpperCase();
+        }
+
+        document.getElementById('btn-admin-logout').addEventListener('click', async () => {
+            await signOut(auth);
+            window.location.replace("admin-login.html");
+        });
+
+        // -------------------------------------------------
+        // YEAR → GROUP DYNAMIC POPULATION
+        // -------------------------------------------------
+        const yearSelect  = document.getElementById('material-year');
+        const groupSelect = document.getElementById('material-group');
+
+        yearSelect.addEventListener('change', () => {
+            const yearId = yearSelect.value;
+            const semesterSelect = document.getElementById('material-semester');
+            const yearNumber = Number(yearId.slice(-1));
+            for (const option of semesterSelect.options) {
+                if (!option.value) continue;
+                const n = Number(option.value.slice(-1));
+                option.disabled = n !== yearNumber * 2 - 1 && n !== yearNumber * 2;
+            }
+            semesterSelect.value = '';
+            // Clear group selection whenever year changes
+            groupSelect.innerHTML = '<option value="" disabled selected>Select Branch / Group</option>';
+            groupSelect.disabled = true;
+
+            const groups = getGroupsForYear(yearId);
+            if (groups.length === 0) return;
+
+            groups.forEach(g => {
+                const opt = document.createElement('option');
+                opt.value = g.id;
+                opt.textContent = g.label;
+                groupSelect.appendChild(opt);
+            });
+            groupSelect.disabled = false;
+            groupSelect.value = '';
+        });
+
+        // -------------------------------------------------
+        // FILE DROPZONE
+        // -------------------------------------------------
+        const dropzone   = document.getElementById('dropzone');
+        const fileInput  = document.getElementById('file-input');
+        const fileBadge  = document.getElementById('selected-file-badge');
+        const fileNameEl = document.getElementById('file-name-text');
+
+        const MAX_SIZE = 25 * 1024 * 1024; // 25 MB
+        const ALLOWED_TYPES = [
+            'application/pdf',
+            'application/msword',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'application/vnd.ms-powerpoint',
+            'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+            'application/zip','application/x-zip-compressed','text/plain'
+        ];
+
+        function handleSelectedFile(file) {
+            // Validate
+            if (file.size > MAX_SIZE) {
+                showAlert('error', `File too large (${(file.size/1024/1024).toFixed(1)} MB). Maximum allowed size is 25 MB.`);
+                return;
+            }
+            if (!contentTypeForFile(file)) {
+                showAlert('error', 'Unsupported file type. Please upload PDF, DOCX, PPT, PPTX, ZIP, or TXT.');
+                return;
+            }
+            selectedFile = file;
+            fileNameEl.textContent = file.name;
+            fileBadge.style.display = 'inline-flex';
+            // Auto-fill title from filename if empty
+            const titleInput = document.getElementById('material-title');
+            if (!titleInput.value) {
+                titleInput.value = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ');
+            }
+            hideAlerts();
+        }
+
+        dropzone.addEventListener('click', (e) => {
+            if (e.target === fileInput) return;
+            fileInput.click();
+        });
+        dropzone.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); }
+        });
+        dropzone.addEventListener('dragover',  (e) => { e.preventDefault(); dropzone.classList.add('dragover'); });
+        dropzone.addEventListener('dragleave', ()  => dropzone.classList.remove('dragover'));
+        dropzone.addEventListener('drop', (e) => {
+            e.preventDefault(); dropzone.classList.remove('dragover');
+            if (e.dataTransfer.files?.length) handleSelectedFile(e.dataTransfer.files[0]);
+        });
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files?.length) handleSelectedFile(e.target.files[0]);
+        });
+
+        // -------------------------------------------------
+        // ALERTS
+        // -------------------------------------------------
+        function showAlert(type, msg) {
+            const id  = type === 'success' ? 'alert-success' : 'alert-error';
+            const mid = type === 'success' ? 'success-message' : 'error-message';
+            document.getElementById(id).style.display = 'flex';
+            document.getElementById(mid).textContent = msg;
+            document.getElementById(type === 'success' ? 'alert-error' : 'alert-success').style.display = 'none';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        function hideAlerts() {
+            document.getElementById('alert-success').style.display = 'none';
+            document.getElementById('alert-error').style.display   = 'none';
+        }
+
+        // -------------------------------------------------
+        // FORM SUBMIT — Firebase Storage Upload
+        // -------------------------------------------------
+        const form      = document.getElementById('upload-form');
+        const btnSubmit = document.getElementById('btn-submit-upload');
+        const submitLbl = document.getElementById('submit-label');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (isSubmitting || !currentAdminUser) return;
+
+            hideAlerts();
+
+            const yearId     = document.getElementById('material-year').value;
+            const groupId    = document.getElementById('material-group').value;
+            const semester   = document.getElementById('material-semester').value;
+            const type       = document.getElementById('material-type').value;
+            const subject    = document.getElementById('material-subject').value.trim();
+            const unit       = document.getElementById('material-unit').value;
+            const title      = document.getElementById('material-title').value.trim();
+            const description= document.getElementById('material-desc').value.trim();
+
+            // Validation
+            if (!yearId)    return showAlert('error', 'Please select a year.');
+            if (!groupId)   return showAlert('error', 'Please select a branch / group.');
+            if (!isValidYearGroup(yearId, groupId)) return showAlert('error', 'Invalid year/group combination.');
+            if (semester && ![`sem-${Number(yearId.slice(-1))*2-1}`, `sem-${Number(yearId.slice(-1))*2}`].includes(semester)) return showAlert('error', 'Select a semester belonging to this year.');
+            if (!semester)  return showAlert('error', 'Please select a semester.');
+            if (!type)      return showAlert('error', 'Please select a material type.');
+            if (!subject)   return showAlert('error', 'Subject is required.');
+            if (!title)     return showAlert('error', 'Resource title is required.');
+            if (title.length > 500 || subject.length > 200 || description.length > 5000) return showAlert('error', 'Title, subject or description is too long.');
+            if (!selectedFile) return showAlert('error', 'Please choose a file to upload.');
+
+            if (!selectedFile.size || selectedFile.name.length > 255) return showAlert('error', 'Choose a non-empty file with a filename shorter than 256 characters.');
+            isSubmitting = true;
+            btnSubmit.disabled = true;
+            submitLbl.textContent = 'Uploading...';
+            btnSubmit.querySelector('svg').style.display = 'none';
+            const spinnerEl = document.createElement('span');
+            spinnerEl.className = 'spinner-sm';
+            btnSubmit.insertBefore(spinnerEl, btnSubmit.querySelector('#submit-label'));
+
+            // Show progress bar
+            const progressWrap = document.getElementById('upload-progress-wrap');
+            const progressBar  = document.getElementById('progress-bar');
+            const progressLbl  = document.getElementById('progress-label');
+            progressWrap.style.display = 'flex';
+
+            // Build unique Storage path
+            const ext = selectedFile.name.split('.').pop();
+            const uniqueName = `${Date.now()}_${currentAdminUser.uid.slice(-6)}_${Math.random().toString(36).slice(2,8)}.${ext}`;
+            const storagePath = `materials/${yearId}/${groupId}/${uniqueName}`;
+
+            let downloadURL = '';
+            try {
+                downloadURL = await uploadMaterial(storagePath, selectedFile, contentTypeForFile(selectedFile), pct => {
+                    progressBar.style.width = pct + '%';
+                    progressLbl.textContent = pct === 100 ? 'Finishing upload...' : `Uploading... ${pct}%`;
+                });
+
+            } catch (storageError) {
+                console.error("Storage upload error:", storageError);
+                showAlert('error', 'File upload failed: ' + (storageError.message || 'Unknown error. Check your admin permissions.'));
+                resetSubmitButton();
+                progressWrap.style.display = 'none';
+                return;
+            }
+
+            // Write Firestore metadata — only after storage succeeds
+            progressLbl.textContent = 'Saving metadata...';
+            try {
+                await addDoc(collection(db, "materials"), {
+                    title,
+                    published: true,
+                    description,
+                    yearId,
+                    groupId,
+                    semester,
+                    type,
+                    unit,
+                    subject,
+                    originalFileName: selectedFile.name,
+                    storagePath,
+                    downloadURL,
+                    contentType: contentTypeForFile(selectedFile),
+                    sizeBytes: selectedFile.size,
+                    uploadedBy: currentAdminUser.uid,
+                    uploaderEmail: currentAdminUser.email,
+                    createdAt: serverTimestamp()
+                });
+
+                showAlert('success', `"${title}" published successfully!`);
+                form.reset();
+                selectedFile = null;
+                fileBadge.style.display = 'none';
+                groupSelect.innerHTML = '<option value="" disabled selected>Select Year first</option>';
+                groupSelect.disabled = true;
+
+            } catch (firestoreError) {
+                console.error("Firestore metadata error:", firestoreError);
+
+                // Attempt to clean up the orphaned Storage object
+                let cleanupMsg = '';
+                try {
+                    await deleteMaterialFile(storagePath);
+                    cleanupMsg = ' The uploaded file was also removed to prevent orphaned storage.';
+                } catch (cleanupErr) {
+                    console.error("Storage cleanup failed:", cleanupErr);
+                    cleanupMsg = ` WARNING: The file was uploaded to Storage but metadata failed to save. Storage path: ${storagePath}`;
+                }
+                showAlert('error', 'Failed to save material metadata.' + cleanupMsg);
+            }
+
+            progressWrap.style.display = 'none';
+            resetSubmitButton();
+        });
+
+        function resetSubmitButton() {
+            isSubmitting = false;
+            btnSubmit.disabled = false;
+            submitLbl.textContent = 'Publish Study Resource';
+            const spinner = btnSubmit.querySelector('.spinner-sm');
+            if (spinner) spinner.remove();
+            const svg = btnSubmit.querySelector('svg');
+            if (svg) svg.style.display = '';
+        }
+    </script>
+</body>
+</html>

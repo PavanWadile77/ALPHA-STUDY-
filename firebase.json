@@ -3,7 +3,9 @@
     "public": "public",
     "ignore": [
       "**/.*",
-      "**/node_modules/**"
+      "**/node_modules/**",
+      "backup_react_version/**",
+      "legacy/**"
     ],
     "redirects": [
       {

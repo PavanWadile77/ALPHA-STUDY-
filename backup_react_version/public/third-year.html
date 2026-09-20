@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3rd Year Branches - STUDY</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f7f8fc;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --glass-bg: rgba(255, 255, 255, 0.75);
+            --transition-smooth: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            --max-width: 1100px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .ambient-blob {
+            position: fixed; border-radius: 50%; filter: blur(100px); opacity: 0.4; z-index: -1; pointer-events: none;
+        }
+        .blob-1 { top: -10%; left: -10%; width: 400px; height: 400px; background: rgba(15,118,110,0.15); }
+        .blob-2 { bottom: -10%; right: -10%; width: 500px; height: 500px; background: rgba(245,158,11,0.12); }
+
+        button { border: none; background: none; font-family: inherit; cursor: pointer; }
+        a { text-decoration: none; color: inherit; }
+
+        .app-container { display: flex; flex-direction: column; min-height: 100dvh; padding-bottom: 60px; }
+
+        .top-app-bar {
+            position: sticky; top: 0; height: 64px; display: flex; align-items: center;
+            justify-content: space-between; padding: 0 24px; background: var(--glass-bg);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            z-index: 40; border-bottom: 1px solid rgba(255,255,255,0.6);
+        }
+        .back-btn {
+            width: 44px; height: 44px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--text-primary); transition: var(--transition-smooth);
+        }
+        .back-btn:hover { background: rgba(0,0,0,0.05); }
+        .wordmark { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.5px; color: #0f172a; }
+        .avatar-btn {
+            width: 36px; height: 36px; border-radius: 50%; background: #e2e8f0;
+            color: #475569; font-weight: 600; display: flex; align-items: center;
+            justify-content: center; border: 2px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .main-content {
+            flex: 1; width: 100%; max-width: var(--max-width); margin: 0 auto;
+            padding: 32px 24px; display: flex; flex-direction: column; gap: 40px;
+            animation: elegantFadeIn 0.8s cubic-bezier(0.16,1,0.3,1) forwards;
+        }
+
+        .hero-section {
+            background: #fff; border-radius: 24px; padding: 40px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.03);
+        }
+        .hero-title { font-size: 2.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 12px; letter-spacing: -1px; }
+        .hero-subtitle { font-size: 1.1rem; color: var(--text-secondary); max-width: 400px; line-height: 1.5; }
+
+        .section-header { display: flex; flex-direction: column; gap: 8px; }
+        .sh-title { font-size: 1.75rem; font-weight: 700; letter-spacing: -0.5px; }
+        .sh-subtitle { font-size: 1rem; color: var(--text-secondary); }
+
+        .coming-soon-notice {
+            background: linear-gradient(135deg, rgba(15,118,110,0.08), rgba(245,158,11,0.05));
+            border: 1px solid rgba(15,118,110,0.2);
+            border-radius: 16px;
+            padding: 24px 28px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .coming-soon-notice .notice-icon {
+            font-size: 2rem; flex-shrink: 0;
+        }
+        .coming-soon-notice h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; color: #0f766e; }
+        .coming-soon-notice p { font-size: 0.92rem; color: var(--text-secondary); line-height: 1.5; }
+
+        .branches-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        @media (min-width: 800px) { .branches-grid { grid-template-columns: repeat(2, 1fr); } }
+
+        .branch-card {
+            position: relative; border-radius: 24px; padding: 28px;
+            display: flex; flex-direction: column; color: white;
+            overflow: hidden; min-height: 200px;
+            border: 1px solid rgba(255,255,255,0.1);
+            opacity: 0.6;
+        }
+        .branch-card.card-cse { background: linear-gradient(135deg, #2563EB, #1D4ED8); }
+        .branch-card.card-it  { background: linear-gradient(135deg, #7C3AED, #5B21B6); }
+        .branch-card.card-ds  { background: linear-gradient(135deg, #0F766E, #059669); }
+        .branch-card.card-ecs { background: linear-gradient(135deg, #F97316, #EA580C); }
+
+        .bc-badge {
+            display: inline-block;
+            background: rgba(0,0,0,0.2); backdrop-filter: blur(8px);
+            padding: 5px 12px; border-radius: 10px; font-size: 0.88rem;
+            font-weight: 700; letter-spacing: 1px;
+            border: 1px solid rgba(255,255,255,0.15);
+            margin-bottom: 14px; align-self: flex-start;
+        }
+        .bc-title { font-size: 1.35rem; font-weight: 700; margin-bottom: 8px; }
+        .bc-desc { font-size: 0.9rem; opacity: 0.8; line-height: 1.4; }
+        .coming-tag {
+            margin-top: auto; padding-top: 16px;
+            font-size: 0.8rem; font-weight: 700; opacity: 0.6;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+
+        @keyframes elegantFadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @media (max-width: 480px) {
+            .hero-section { padding: 28px 20px; }
+            .hero-title { font-size: 2rem; }
+        }
+    </style>
+<link rel="stylesheet" href="materials-view.css">
+</head>
+<body>
+    <div class="ambient-blob blob-1"></div>
+    <div class="ambient-blob blob-2"></div>
+
+    <div class="app-container">
+        <header class="top-app-bar">
+            <a href="choose-path.html" class="back-btn" aria-label="Go back">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+            </a>
+            <div class="wordmark">STUDY</div>
+            <div class="avatar-btn" id="top-avatar">?</div>
+        </header>
+
+        <main class="main-content">
+            <section class="hero-section">
+                <h1 class="hero-title">3rd Year<br>Engineering</h1>
+                <p class="hero-subtitle">Choose your branch to access third-year resources and study materials.</p>
+            </section>
+
+            
+
+            <section class="section-header">
+                <h2 class="sh-title">Available Branches</h2>
+                <p class="sh-subtitle">Materials will appear under your branch as they are uploaded.</p>
+            </section>
+
+            <section class="branches-grid">
+                <a class="branch-card card-cse" href="subject.html?year=year-3&group=cse">
+                    <span class="bc-badge">CSE</span>
+                    <h3 class="bc-title">Computer Science & Engineering</h3>
+                    <p class="bc-desc">Advanced algorithms, operating systems, networks, and software engineering.</p>
+                    <div class="coming-tag">View uploaded materials</div></a>
+                <a class="branch-card card-it" href="subject.html?year=year-3&group=it">
+                    <span class="bc-badge">IT</span>
+                    <h3 class="bc-title">Information Technology</h3>
+                    <p class="bc-desc">Web technologies, cloud computing, cyber security, and enterprise systems.</p>
+                    <div class="coming-tag">View uploaded materials</div></a>
+                <a class="branch-card card-ds" href="subject.html?year=year-3&group=ds">
+                    <span class="bc-badge">DS</span>
+                    <h3 class="bc-title">Data Science</h3>
+                    <p class="bc-desc">Machine learning, deep learning, big data analytics, and statistical modeling.</p>
+                    <div class="coming-tag">View uploaded materials</div></a>
+                <a class="branch-card card-ecs" href="subject.html?year=year-3&group=ecs">
+                    <span class="bc-badge">ECS</span>
+                    <h3 class="bc-title">Electronics & Computer Science</h3>
+                    <p class="bc-desc">Embedded systems, VLSI, digital signal processing, and IoT.</p>
+                    <div class="coming-tag">View uploaded materials</div></a>
+            </section>
+        <section class="materials-live" data-materials-year="year-3" data-materials-group=""></section>
+</main>
+    </div>
+
+    <script type="module">
+        import { auth, onAuthStateChanged } from "./firebase-config.js";
+        onAuthStateChanged(auth, (user) => {
+            window.dispatchEvent(new Event("study-auth-ready"));
+            if (user) {
+                let name = user.displayName || (user.email ? user.email.split('@')[0] : 'S');
+                document.getElementById('top-avatar').textContent = name.charAt(0).toUpperCase();
+            } else {
+                window.location.replace("login.html");
+            }
+        });
+    </script>
+<script type="module" src="materials-view.js"></script>
+</body>
+</html>

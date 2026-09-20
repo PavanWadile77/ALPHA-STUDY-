@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STUDY - Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-base: #0c0e14;
+            --bg-surface: #141722;
+            --bg-surface-elevated: #1b1f2e;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-light: rgba(255, 255, 255, 0.04);
+            --primary: #4f46e5;
+            --primary-light: #6366f1;
+            --primary-glow: rgba(99, 102, 241, 0.25);
+            --accent-teal: #10b981;
+            --accent-amber: #f59e0b;
+            --accent-rose: #f43f5e;
+            --radius-lg: 20px;
+            --radius-md: 14px;
+            --radius-sm: 10px;
+            --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            font-family: 'Outfit', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(79, 70, 229, 0.07) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.05) 0%, transparent 40%);
+        }
+
+        /* --------------------------------------------------
+           AUTH LOADER
+           -------------------------------------------------- */
+        #auth-loader {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-base);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+            transition: opacity 0.4s ease;
+        }
+
+        .auth-spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top-color: var(--primary-light);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* --------------------------------------------------
+           HEADER / NAVBAR
+           -------------------------------------------------- */
+        .admin-header {
+            height: 72px;
+            background: rgba(20, 23, 34, 0.8);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .brand-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-logo {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 14px var(--primary-glow);
+        }
+
+        .brand-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: #fff;
+        }
+
+        .admin-badge {
+            background: rgba(99, 102, 241, 0.15);
+            color: var(--primary-light);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            padding: 3px 8px;
+            border-radius: 6px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.92rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-item.active {
+            color: #fff;
+            background: var(--primary);
+            box-shadow: 0 4px 14px var(--primary-glow);
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .admin-user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .admin-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .admin-details {
+            display: flex;
+            flex-direction: column;
+            text-align: right;
+        }
+
+        .admin-name {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .admin-email {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .btn-logout {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            background: rgba(244, 63, 94, 0.1);
+            color: var(--accent-rose);
+            border: 1px solid rgba(244, 63, 94, 0.25);
+            padding: 8px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+            min-height: 44px;
+        }
+
+        .btn-logout:hover, .btn-logout:focus-visible {
+            background: var(--accent-rose);
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(244, 63, 94, 0.3);
+            outline: none;
+        }
+        
+        .btn-logout:focus-visible {
+            border-color: #fff;
+        }
+
+        /* --------------------------------------------------
+           MAIN CONTAINER
+           -------------------------------------------------- */
+        .dashboard-container {
+            max-width: 1280px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 36px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        /* Welcome Banner */
+        .welcome-banner {
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.15), rgba(20, 23, 34, 0.9));
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-card);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-banner::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .welcome-text h1 {
+            font-size: 1.85rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .welcome-text p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            max-width: 600px;
+        }
+
+        .banner-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-action-primary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: var(--primary);
+            color: #fff;
+            text-decoration: none;
+            padding: 12px 22px;
+            border-radius: var(--radius-md);
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px var(--primary-glow);
+            min-height: 44px;
+        }
+
+        .btn-action-primary:hover, .btn-action-primary:focus-visible {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px var(--primary-glow);
+            outline: none;
+        }
+        
+        .btn-action-primary:focus-visible {
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5), 0 6px 20px var(--primary-glow);
+        }
+
+        .btn-action-secondary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            text-decoration: none;
+            padding: 12px 20px;
+            border-radius: var(--radius-md);
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            min-height: 44px;
+        }
+
+        .btn-action-secondary:hover, .btn-action-secondary:focus-visible {
+            background: rgba(255, 255, 255, 0.1);
+            outline: none;
+        }
+        
+        .btn-action-secondary:focus-visible {
+            border-color: #fff;
+        }
+
+        /* --------------------------------------------------
+           STATS GRID
+           -------------------------------------------------- */
+        .stats-grid {
+            display: grid;
+            gap: 16px;
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        .stat-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 24px 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: var(--shadow-card);
+            transition: transform 0.2s ease, border-color 0.2s ease;
+            min-height: 92px;
+        }
+
+        .stat-card:hover, .stat-card:focus-within {
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .stat-icon-wrapper {
+            width: 52px;
+            height: 52px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .icon-indigo { background: rgba(79, 70, 229, 0.15); color: #818cf8; }
+        .icon-teal { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+        .icon-amber { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+        .icon-rose { background: rgba(244, 63, 94, 0.15); color: #fb7185; }
+
+        .stat-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 1.65rem;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: -0.5px;
+        }
+
+        .stat-subtext {
+            font-size: 0.75rem;
+            color: var(--accent-teal);
+            margin-top: 2px;
+            font-weight: 500;
+        }
+
+        /* --------------------------------------------------
+           QUICK ACTIONS & BRANCH SECTIONS
+           -------------------------------------------------- */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: -0.3px;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .action-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            box-shadow: var(--shadow-card);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-card:hover {
+            border-color: rgba(99, 102, 241, 0.4);
+            transform: translateY(-3px);
+        }
+
+        .action-card-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .action-badge {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-sm);
+            background: rgba(99, 102, 241, 0.12);
+            color: var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .action-card h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .action-card p {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .action-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--primary-light);
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-decoration: none;
+            margin-top: auto;
+            transition: gap 0.2s ease;
+        }
+
+        .action-link:hover {
+            gap: 10px;
+        }
+
+        /* --------------------------------------------------
+           RECENT REPOSITORY ACTIVITY TABLE
+           -------------------------------------------------- */
+        .table-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-card);
+            overflow-x: auto;
+        }
+
+        .activity-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        .activity-table th {
+            padding: 12px 16px;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .activity-table td {
+            padding: 16px;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .activity-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .activity-table tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+            color: var(--text-primary);
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .tag-blue { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+        .tag-purple { background: rgba(168, 85, 247, 0.15); color: #c084fc; }
+        .tag-teal { background: rgba(20, 184, 166, 0.15); color: #2dd4bf; }
+        .tag-emerald { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        
+        @media (max-width: 767px) {
+            .admin-header {
+                padding: 0 16px;
+                gap: 12px;
+            }
+            .dashboard-container { 
+                padding: 24px 16px; 
+                width: 100%; 
+                max-width: 100%; 
+                gap: 24px;
+            }
+            .welcome-banner { 
+                flex-direction: column; 
+                align-items: flex-start; 
+                padding: 24px 16px; 
+                gap: 24px; 
+                border-radius: 16px;
+            }
+            .welcome-text h1 { font-size: 1.6rem; color: #f8fafc; }
+            .welcome-text p { font-size: 0.95rem; color: #94a3b8; line-height: 1.5; }
+            
+            .banner-actions { flex-direction: column; width: 100%; }
+            .btn-action-primary, .btn-action-secondary { width: 100%; justify-content: center; }
+            
+            .stats-grid, .cards-grid { grid-template-columns: 1fr; gap: 12px; }
+            .stat-card { padding: 16px; min-height: 92px; }
+            
+            .nav-links { display: none; }
+            
+            .admin-details { 
+                display: flex; 
+                max-width: 90px;
+            }
+            .admin-name { font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+            .admin-email { font-size: 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+            .btn-logout { padding: 10px; min-width: 44px; min-height: 44px; justify-content: center; }
+            .btn-logout-text { display: none; }
+            .brand-title { font-size: 1.1rem; }
+            .admin-badge { padding: 2px 6px; font-size: 0.65rem; }
+            
+            .section-title { font-size: 1.15rem; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+    </style>
+    <script src="auth-status.js" defer></script>
+</head>
+<body>
+
+    <!-- SECURE AUTH GUARD LOADER -->
+    <div id="auth-loader">
+        <div class="auth-spinner"></div>
+        <p style="color: #94a3b8; margin-top: 18px; font-weight: 500;">Authenticating Admin Privileges...</p>
+    </div>
+
+    <!-- MAIN ADMIN CONTENT (Hidden until verification completes) -->
+    <div id="admin-content" style="display: none;">
+        
+        <!-- HEADER -->
+        <header class="admin-header">
+            <div class="brand-section">
+                <div class="brand-logo">S</div>
+                <div class="brand-title">STUDY</div>
+                <span class="admin-badge">Admin Portal</span>
+            </div>
+
+            <nav class="nav-links">
+                <a href="admin-dashboard.html" class="nav-item active">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                    Dashboard
+                </a>
+                <a href="admin-upload.html" class="nav-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                    Upload Materials
+                </a>
+                <a href="admin-materials.html" class="nav-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                    Manage Materials
+                </a>
+                <a href="choose-path.html" class="nav-item" target="_blank" title="Preview Student Portal">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                    Student View
+                </a>
+            </nav>
+
+            <div class="user-section">
+                <div class="admin-user-info">
+                    <div class="admin-avatar" id="admin-avatar-initial">A</div>
+                    <div class="admin-details">
+                        <span class="admin-name" id="admin-display-name">Admin</span>
+                        <span class="admin-email" id="admin-display-email">admin@study.edu</span>
+                    </div>
+                </div>
+                <button class="btn-logout" id="btn-admin-logout" title="Sign out from Admin" aria-label="Logout">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                    <span class="btn-logout-text">Logout</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- DASHBOARD CONTAINER -->
+        <main class="dashboard-container">
+            
+            <!-- WELCOME BANNER -->
+            <section class="welcome-banner">
+                <div class="welcome-text">
+                    <h1>Administrator Central</h1>
+                    <p>Manage curriculum resources, upload study materials, past question papers, syllabus schemes, and supervise student branch repositories.</p>
+                </div>
+                <div class="banner-actions">
+                    <a href="admin-upload.html" class="btn-action-primary">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        Upload Resource
+                    </a>
+                    <a href="admin-materials.html" class="btn-action-secondary">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        Browse All Files
+                    </a>
+                </div>
+            </section>
+
+            <!-- STATS CARDS -->
+            <section class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon-wrapper icon-indigo">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-label">Total Resources</span>
+                        <span class="stat-value">—</span>
+                        <span class="stat-subtext">From uploaded materials</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon-wrapper icon-teal">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-label">Active Branches</span>
+                        <span class="stat-value">—</span>
+                        <span class="stat-subtext">From uploaded materials</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon-wrapper icon-amber">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-label">Question Papers / PYQ</span>
+                        <span class="stat-value">—</span>
+                        <span class="stat-subtext">From uploaded materials</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon-wrapper icon-rose">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-label">Curriculum Modules</span>
+                        <span class="stat-value">—</span>
+                        <span class="stat-subtext">From uploaded materials</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- BRANCH REPOSITORIES & QUICK ACCESS -->
+            <section>
+                <div class="section-header">
+                    <h2 class="section-title">Branch Repository Hubs</h2>
+                </div>
+                <div class="cards-grid">
+                    <div class="action-card">
+                        <div class="action-card-header">
+                            <div class="action-badge">1Y</div>
+                            <h3>1st Year Common Scheme</h3>
+                        </div>
+                        <p>Manage Group A & Group B foundational engineering modules, Physics, Chemistry, Basic Electrical, Programming, and Mechanics.</p>
+                        <a href="first-year.html" target="_blank" class="action-link">
+                            View Live Curriculum
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </div>
+
+                    <div class="action-card">
+                        <div class="action-card-header">
+                            <div class="action-badge" style="color: #60a5fa; background: rgba(59, 130, 246, 0.12);">CSE</div>
+                            <h3>Computer Science & Engineering</h3>
+                        </div>
+                        <p>Manage 3rd & 4th Semester DSA, Discrete Mathematics, Computer Architecture, OOP, Operating Systems, and Theory of Computation.</p>
+                        <a href="second-year-cse.html" target="_blank" class="action-link">
+                            View Live Curriculum
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </div>
+
+                    <div class="action-card">
+                        <div class="action-card-header">
+                            <div class="action-badge" style="color: #34d399; background: rgba(16, 185, 129, 0.12);">IT</div>
+                            <h3>Information Technology</h3>
+                        </div>
+                        <p>Manage Database Management Systems, Web Technologies, Software Engineering, Networks, and Operating Systems for IT students.</p>
+                        <a href="second-year-it.html" target="_blank" class="action-link">
+                            View Live Curriculum
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </div>
+
+                    <div class="action-card">
+                        <div class="action-card-header">
+                            <div class="action-badge" style="color: #c084fc; background: rgba(168, 85, 247, 0.12);">DS</div>
+                            <h3>Data Science</h3>
+                        </div>
+                        <p>Manage Applied Statistics, Python for Data Science, Linear Algebra, Machine Learning Foundations, and Big Data resources.</p>
+                        <a href="second-year-ds.html" target="_blank" class="action-link">
+                            View Live Curriculum
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- RECENT REPOSITORY ACTIVITY TABLE -->
+            <section class="table-card">
+                <div class="section-header">
+                    <h2 class="section-title">Recent Repository Additions</h2>
+                    <a href="admin-materials.html" class="action-link">View Full Directory &rarr;</a>
+                </div>
+                
+                <table class="activity-table">
+                    <thead>
+                        <tr>
+                            <th>Document Title</th>
+                            <th>Target Branch</th>
+                            <th>Subject</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody><tr><td colspan="5">Loading materials…</td></tr></tbody>
+                </table>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- SCRIPT SECTION -->
+    <script type="module">
+        import { 
+            auth, 
+            db, 
+            isUserAdmin,
+            onAuthStateChanged,
+            signOut,
+            doc,
+            getDoc,
+            collection,
+            getDocs
+        } from "./firebase-config.js";
+
+        // SECURE ADMIN AUTHORIZATION GUARD
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                // Not authenticated -> redirect to admin login
+                window.location.replace("admin-login.html");
+                return;
+            }
+
+            try {
+                if (isUserAdmin(user)) {
+                    let data = { role: "admin", active: true };
+                    try {
+                        const adminDocRef = doc(db, "admins", user.uid);
+                        const adminDocSnap = await getDoc(adminDocRef);
+                        if (adminDocSnap.exists()) {
+                            data = adminDocSnap.data();
+                        }
+                    } catch(e) {
+                        console.warn("Could not fetch admin details:", e);
+                    }
+                    
+                    // Access granted!
+                    populateAdminUI(user, data);
+                    document.getElementById('auth-loader').style.display = 'none';
+                    document.getElementById('admin-content').style.display = 'block';
+
+                    // Load real material count from Firestore
+                    loadStats();
+                    return;
+                }
+            } catch (err) {
+                console.error("Admin verification error:", err);
+            }
+
+            // A signed-in student keeps their session and returns to the student area.
+            window.location.replace("choose-path.html");
+        });
+
+        async function loadStats() {
+            try {
+                const snap = await getDocs(collection(db, "materials"));
+                const count = snap.size;
+                // Update the "Total Resources" stat card
+                const statValue = document.querySelector('.stat-card:first-child .stat-value');
+                if (statValue) statValue.textContent = count;
+                const values = Array.from(snap.docs, d => d.data());
+                const cards = document.querySelectorAll('.stat-value');
+                cards[1].textContent = new Set(values.map(m => m.groupId)).size + ' Groups';
+                cards[2].textContent = values.filter(m => m.type === 'Question Paper (PYQ)').length;
+                cards[3].textContent = new Set(values.map(m => m.subject)).size + ' Subjects';
+                // Update recent additions table with real data
+                loadRecentMaterials(snap);
+            } catch(e) {
+                console.warn("Could not load stats:", e);
+            }
+        }
+
+        function loadRecentMaterials(snapshot) {
+            const tbody = document.querySelector('.activity-table tbody');
+            if (!tbody) return;
+
+            const docs = [];
+            snapshot.forEach(d => docs.push({ id: d.id, ...d.data() }));
+            // Sort by createdAt descending, take top 5
+            docs.sort((a, b) => {
+                const ta = a.createdAt?.seconds ?? 0;
+                const tb = b.createdAt?.seconds ?? 0;
+                return tb - ta;
+            });
+            const recent = docs.slice(0, 5);
+
+            if (recent.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5">No materials uploaded yet.</td></tr>';
+                return;
+            }
+
+            const branchLabel = { 'year-1': '1st Year Common', 'year-2': '2nd Year', 'year-3': '3rd Year', 'year-4': '4th Year' };
+            const tagMap = { 'year-1': 'tag-purple', 'year-2': 'tag-blue', 'year-3': 'tag-teal', 'year-4': 'tag-blue' };
+
+            tbody.innerHTML = recent.map(m => {
+                const yl = branchLabel[m.yearId] || m.yearId || '';
+                const gl = m.groupId ? ` / ${m.groupId.toUpperCase()}` : '';
+                const tc = tagMap[m.yearId] || 'tag-blue';
+                return `<tr>
+                    <td style="font-weight:600;color:#fff;">${escapeHtml(m.title)}</td>
+                    <td><span class="tag ${tc}">${escapeHtml(yl + gl)}</span></td>
+                    <td>${escapeHtml(m.subject || m.subjectId || '—')}</td>
+                    <td>${escapeHtml(m.type || '—')}</td>
+                    <td><span class="tag tag-emerald">Published</span></td>
+                </tr>`;
+            }).join('');
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            return String(text).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+        }
+
+        function populateAdminUI(user, adminData) {
+            const displayName = user.displayName || adminData.name || (user.email ? user.email.split('@')[0] : "Admin");
+            const email = user.email || "admin@study.edu";
+
+            document.getElementById('admin-display-name').textContent = displayName;
+            document.getElementById('admin-display-email').textContent = email;
+            document.getElementById('admin-avatar-initial').textContent = displayName.charAt(0).toUpperCase();
+        }
+
+        // ADMIN LOGOUT — goes to admin-login.html
+        document.getElementById('btn-admin-logout').addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                window.location.replace("admin-login.html");
+            } catch (error) {
+                console.error("Logout error:", error);
+                alert("Failed to logout. Please try again.");
+            }
+        });
+    </script>
+</body>
+</html>
