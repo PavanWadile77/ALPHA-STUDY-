@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - ALPHA STUDY</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --surface-color: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-tertiary: #94a3b8;
+            --border-color: #e2e8f0;
+            --border-light: #f1f5f9;
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --error-color: #ef4444;
+            --shadow-sm: 0 1px 3px rgba(15,23,42,0.05);
+            --shadow-md: 0 4px 12px rgba(15,23,42,0.08);
+            --border-radius-lg: 24px;
+            --border-radius-md: 16px;
+            --max-width: 600px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100dvh;
+        }
+
+        .top-app-bar {
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-light);
+            position: sticky;
+            top: 0;
+            z-index: 40;
+        }
+
+        .wordmark {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+
+        .main-content {
+            flex: 1;
+            width: 100%;
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 32px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .profile-card {
+            background: var(--surface-color);
+            width: 100%;
+            border-radius: var(--border-radius-lg);
+            padding: 40px 24px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .p-avatar {
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(59,130,246,0.2);
+            border: 4px solid white;
+        }
+
+        .p-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .p-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .p-email {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        .btn-logout {
+            width: 100%;
+            max-width: 300px;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            background: #fef2f2;
+            color: var(--error-color);
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-logout:hover {
+            background: #fee2e2;
+        }
+
+        .btn-logout:active {
+            transform: scale(0.98);
+        }
+
+        #loader {
+            position: fixed;
+            inset: 0;
+            background: rgba(255,255,255,0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border-color);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div id="loader">
+        <div class="spinner"></div>
+    </div>
+
+    <div class="app-container">
+        <header class="top-app-bar">
+            <div class="wordmark">STUDY</div>
+        </header>
+
+        <main class="main-content" style="display: none;" id="main-content">
+            <div class="profile-card">
+                <div class="p-avatar" id="p-avatar">?</div>
+                <h1 class="p-name" id="p-name">Loading...</h1>
+                <p class="p-email" id="p-email">loading@email.com</p>
+
+                <button class="btn-logout" id="btn-logout">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    Logout
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <script type="module" src="bottom-nav.js"></script>
+    <script type="module">
+        import { auth, onAuthStateChanged, signOut } from "./firebase-config.js";
+
+        const loader = document.getElementById('loader');
+        const mainContent = document.getElementById('main-content');
+        
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                let displayName = user.displayName;
+                if (!displayName && user.email) displayName = user.email.split('@')[0];
+                if (!displayName) displayName = "Student";
+
+                const pAvatar = document.getElementById('p-avatar');
+                if (user.photoURL) {
+                    pAvatar.innerHTML = \`<img src="\${user.photoURL}" alt="Profile Photo">\`;
+                } else {
+                    pAvatar.textContent = displayName.charAt(0).toUpperCase();
+                }
+
+                document.getElementById('p-name').textContent = displayName;
+                document.getElementById('p-email').textContent = user.email || '';
+                
+                loader.style.display = 'none';
+                mainContent.style.display = 'flex';
+            } else {
+                window.location.replace("login.html");
+            }
+        });
+
+        document.getElementById('btn-logout').addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                window.location.replace("login.html");
+            } catch (error) {
+                alert("Failed to log out.");
+            }
+        });
+    </script>
+</body>
+</html>

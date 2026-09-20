@@ -5,11 +5,12 @@ import { connectMaterialLinks } from './supabase-storage.js';
 
 connectMaterialLinks();
 
-const host = document.querySelector('[data-materials-year]');
+const host = document.querySelector('[data-materials-view]') || document.querySelector('[data-materials-year]');
 if (host) {
-  const year = host.dataset.materialsYear;
+  let year = host.dataset.materialsYear || '';
   const fixedGroup = host.dataset.materialsGroup || '';
   const subject = host.dataset.materialsSubject || '';
+  const fixedCategory = host.dataset.materialsCategory || '';
   let stop = () => {}, user = null, generation = 0, records = [];
   
   host.innerHTML = `
@@ -21,6 +22,16 @@ if (host) {
       <div class="materials-status" role="status" aria-live="polite">Sign in to view materials.</div>
     </div>
     <div class="materials-controls">
+      <label class="materials-year-label" style="display: ${year ? 'none' : 'block'}">
+        <span class="sr-only">Year</span>
+        <select class="materials-year-select" aria-label="Year">
+            <option value="" disabled selected>Select Year...</option>
+            <option value="year-1">1st Year</option>
+            <option value="year-2">2nd Year</option>
+            <option value="year-3">3rd Year</option>
+            <option value="year-4">4th Year</option>
+        </select>
+      </label>
       <label class="materials-group-label">
         <span class="sr-only">Group / Branch</span>
         <select class="materials-group-select" aria-label="Group / Branch"></select>
@@ -43,11 +54,28 @@ if (host) {
       searchInput.value = initialFilter;
   }
   
-  for (const group of getGroupsForYear(year)) {
-      const o = document.createElement('option');
-      o.value = group.id;
-      o.textContent = group.label;
-      groupSelect.appendChild(o);
+  const yearSelect = host.querySelector('.materials-year-select');
+
+  const populateGroups = (y) => {
+      groupSelect.innerHTML = '';
+      if (!y) return;
+      for (const group of getGroupsForYear(y)) {
+          const o = document.createElement('option');
+          o.value = group.id;
+          o.textContent = group.label;
+          groupSelect.appendChild(o);
+      }
+  };
+
+  populateGroups(year);
+  if (yearSelect) yearSelect.value = year || '';
+
+  if (yearSelect) {
+      yearSelect.addEventListener('change', () => {
+          year = yearSelect.value;
+          populateGroups(year);
+          subscribe();
+      });
   }
   
   if (fixedGroup && isValidYearGroup(year, fixedGroup)) {
@@ -71,10 +99,12 @@ if (host) {
   
   const render = () => {
       const needle = searchInput.value.toLowerCase().trim();
-      const matches = records.filter(m => 
-          (!subject || subjectKey(m.subject) === subjectKey(subject) || subjectKey(m.subjectId) === subjectKey(subject)) && 
-          [m.title, m.subject, m.description, m.type].join(' ').toLowerCase().includes(needle)
-      );
+      const matches = records.filter(m => {
+          const matchCategory = !fixedCategory || m.type === fixedCategory;
+          const matchSubject = (!subject || subjectKey(m.subject) === subjectKey(subject) || subjectKey(m.subjectId) === subjectKey(subject));
+          const matchSearch = [m.title, m.subject, m.description, m.type].join(' ').toLowerCase().includes(needle);
+          return matchCategory && matchSubject && matchSearch;
+      });
       
       if (!user) {
          statusEl.textContent = 'Sign in to view materials.';

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DBATU 1st Year - STUDY</title>
+    <title>Reference Books - ALPHA STUDY</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         /* ==================================================
@@ -954,17 +954,17 @@
 
         import { isValidYearGroup, getYearLabel, getGroupLabel } from './year-group-config.js';
         const parameters = new URLSearchParams(location.search);
-        const year = parameters.get('year') || (parameters.get('branch') ? 'year-2' : 'year-1');
-        const group = parameters.get('group') || parameters.get('branch') || (localStorage.getItem('dbatu_group') === 'B' ? 'group-b' : 'group-a');
+        const year = parameters.get('year') || localStorage.getItem('dbatu_year') || '';
+        const group = parameters.get('group') || localStorage.getItem('dbatu_group') || '';
         const subject = parameters.get('subject') || '';
         const host = document.getElementById('live-subject-materials');
-        if (isValidYearGroup(year, group)) {
+        if (true) {
             host.dataset.materialsYear = year;
             host.dataset.materialsGroup = group;
             host.dataset.materialsSubject = subject;
-            document.getElementById('subject-title').textContent = subject ? subject.replace(/-/g, ' ') : getGroupLabel(year, group);
-            document.getElementById('subject-badge').textContent = getYearLabel(year);
-            document.getElementById('subject-code').textContent = getGroupLabel(year, group);
+            
+            if(year) document.getElementById('subject-badge').textContent = getYearLabel(year);
+            if(year && group) document.getElementById('subject-code').textContent = getGroupLabel(year, group);
             import('./materials-view.js').catch(() => { host.textContent = 'Unable to load materials. Please reload.'; });
         } else { host.textContent = 'Invalid year or group. Please return to the year selection page.'; }
         // GLOBAL AUTH STATE
@@ -1027,4 +1027,6 @@
 <script type="module" src="bottom-nav.js"></script>
 </body>
 </html>
+
+
 
