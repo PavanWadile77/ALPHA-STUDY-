@@ -78,6 +78,9 @@
            HEADER / NAVBAR
            -------------------------------------------------- */
         .admin-header {
+            position: sticky;
+            top: 0;
+            z-index: 40;
             height: 72px;
             background: rgba(20, 23, 34, 0.8);
             backdrop-filter: blur(16px);
@@ -86,8 +89,8 @@
             align-items: center;
             justify-content: space-between;
             padding: 0 32px;
-            position: sticky;
-            top: 0;
+            
+            
             z-index: 100;
         }
 
@@ -562,6 +565,9 @@
         
         @media (max-width: 767px) {
             .admin-header {
+            position: sticky;
+            top: 0;
+            z-index: 40;
                 padding: 0 16px;
                 gap: 12px;
             }
@@ -666,6 +672,7 @@
                 </button>
             </div>
         </header>
+
 
         <!-- DASHBOARD CONTAINER -->
         <main class="dashboard-container">

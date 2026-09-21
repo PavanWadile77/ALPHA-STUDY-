@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>STUDY - Login</title>
-    <meta name="google-signin-client_id" content="151775555113-g3l1dfuavqotb20q1j933d1kd8ovsksu.apps.googleusercontent.com">
+    <meta name="google-signin-client_id"
+        content="151775555113-g3l1dfuavqotb20q1j933d1kd8ovsksu.apps.googleusercontent.com">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         /* ==================================================
@@ -16,41 +18,27 @@
             box-sizing: border-box;
         }
 
-        @property --lamp-color {
-            syntax: '<color>';
-            inherits: true;
-            initial-value: #FFD86B;
-        }
-
         :root {
             /* Base Colors */
-            --bg-base: #0f0f11;
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --card-bg: rgba(255, 255, 255, 0.03);
-            --card-border: rgba(255, 255, 255, 0.08);
-            
+            --bg-base: #f8fafc;
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --card-bg: #ffffff;
+            --card-border: #e2e8f0;
+            --shadow-md: 0 10px 40px rgba(0, 0, 0, 0.08);
+
             /* Error / Success */
-            --error-color: #ff5e5e;
-            --success-color: #4ade80;
+            --error-color: #ef4444;
+            --success-color: #10b981;
 
-            /* Lamp Unlit Colors */
-            --shade-color-off: #e8e4db;
-            --pole-color-off: #a3a8b0;
-            --face-color: #333333;
-            --handle-color: #D9775F; /* Coral */
-            --bulb-color-off: #5a5a5a;
+            /* Accent Color */
+            --handle-color: #3B82F6;
 
-            /* Lamp Active Colors - Updated via JS */
-            --lamp-color: #FFD86B; 
-            
-            /* UI colors derived from state */
+            /* UI colors */
             --btn-bg: var(--handle-color);
             --btn-border: var(--handle-color);
             --btn-text: #fff;
-            --btn-hover-bg: #e8846a;
-
-            transition: --lamp-color 0.6s ease;
+            --btn-hover-bg: #2563EB;
         }
 
         body {
@@ -59,24 +47,12 @@
             font-family: 'Outfit', sans-serif;
             min-height: 100dvh;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             overflow-x: hidden;
             background-image: none;
-            transition: background-image 0.6s ease, background-color 0.6s ease;
-        }
-
-        body.lamp-on {
-            background-color: #121010;
-            background-image: 
-                radial-gradient(circle at top right, color-mix(in srgb, var(--lamp-color) 8%, transparent), transparent 50%),
-                radial-gradient(circle at bottom left, color-mix(in srgb, var(--lamp-color) 6%, transparent), transparent 50%);
-            
-            /* Update UI colors for subtle lamp reaction */
-            --btn-bg: color-mix(in srgb, var(--lamp-color) 15%, transparent);
-            --btn-border: color-mix(in srgb, var(--lamp-color) 40%, transparent);
-            --btn-text: var(--text-primary);
-            --btn-hover-bg: color-mix(in srgb, var(--lamp-color) 25%, transparent);
+            padding: 40px 16px;
         }
 
         /* ==================================================
@@ -84,26 +60,24 @@
            ================================================== */
         .page-container {
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             width: 100%;
-            max-width: 1100px;
-            padding: 40px;
-            gap: 80px;
+            max-width: 420px;
+            gap: 32px;
             animation: elegantFadeIn 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             opacity: 0;
             transform: translateY(15px);
         }
 
         .brand-logo-container {
-            position: absolute;
-            top: 40px;
-            left: 40px;
             display: flex;
             align-items: center;
             gap: 12px;
             z-index: 100;
             user-select: none;
+            justify-content: center;
         }
 
         .brand-text {
@@ -115,158 +89,21 @@
         .brand-text-alpha {
             font-size: 26px;
             font-weight: 800;
-            color: #f8fafc;
+            color: #0f172a;
             letter-spacing: 1.5px;
         }
 
         .brand-text-study {
             font-size: 24px;
             font-weight: 700;
-            color: #F6C84C;
+            color: #3B82F6;
             letter-spacing: 0.5px;
-        }
-
-        /* ==================================================
-           3. LAMP
-           ================================================== */
-        .lamp-section {
-            flex: 1;
-            max-width: 400px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-
-        .lamp-svg {
-            width: 100%;
-            height: auto;
-            max-height: 500px;
-            overflow: visible;
-            cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
-            outline: none;
-        }
-
-        .lamp-svg:focus-visible {
-            border-radius: 20px;
-            box-shadow: 0 0 0 4px rgba(255,255,255,0.2);
-        }
-
-        .lamp-body {
-            transition: filter 0.6s ease;
-        }
-
-        body.lamp-off .lamp-body {
-            filter: brightness(0.7);
-        }
-
-        /* Elements */
-        .shade-dome {
-            fill: var(--shade-color-off);
-            transition: fill 0.6s ease, filter 0.6s ease;
-        }
-
-        .shade-opening {
-            fill: color-mix(in srgb, var(--shade-color-off) 80%, #000);
-            transition: fill 0.6s ease;
-        }
-
-        .metal-part {
-            fill: var(--pole-color-off);
-        }
-
-        /* Face */
-        .face-part {
-            fill: var(--face-color);
-        }
-        .face-stroke {
-            stroke: var(--face-color);
-            fill: none;
-        }
-
-        /* Bulb */
-        .bulb {
-            fill: var(--bulb-color-off);
-            transition: fill 0.6s ease, filter 0.6s ease, opacity 0.6s ease;
-        }
-
-        /* ==================================================
-           4. LIGHTING
-           ================================================== */
-        .beam {
-            opacity: 0;
-            transition: opacity 0.6s ease;
-            filter: blur(16px);
-            pointer-events: none;
-        }
-
-        /* Stop colors animate natively in modern browsers */
-        stop {
-            transition: stop-color 0.6s ease;
-        }
-
-        body.lamp-on .beam {
-            opacity: 1;
-        }
-
-        body.lamp-on .bulb {
-            fill: var(--lamp-color);
-            filter: drop-shadow(0 0 15px var(--lamp-color));
-        }
-
-        body.lamp-on .shade-dome {
-            /* Warm tint to shade when ON */
-            fill: color-mix(in srgb, var(--shade-color-off) 80%, var(--lamp-color));
-            filter: drop-shadow(0 0 25px color-mix(in srgb, var(--lamp-color) 25%, transparent));
-        }
-
-        body.lamp-on .shade-opening {
-            fill: color-mix(in srgb, var(--shade-color-off) 60%, var(--lamp-color));
-        }
-
-        /* ==================================================
-           5. PULL CORD
-           ================================================== */
-        .interactive-cord {
-            cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
-            outline: none;
-        }
-
-        #cord-line, #cord-handle {
-            transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
-            transform-origin: 220px 150px;
-        }
-
-        #cord-handle {
-            fill: var(--handle-color);
-        }
-
-        .interactive-cord:hover #cord-handle {
-            filter: brightness(1.15);
-        }
-
-        .interactive-cord:active #cord-line {
-            transform: scaleY(1.15);
-        }
-
-        .interactive-cord:active #cord-handle {
-            transform: translateY(18px);
-        }
-
-        .interactive-cord:focus-visible #cord-handle {
-            stroke: #fff;
-            stroke-width: 2px;
         }
 
         /* ==================================================
            6. AUTHENTICATION CARD
            ================================================== */
         .auth-section {
-            flex: 1;
-            max-width: 420px;
             width: 100%;
             z-index: 10;
         }
@@ -274,21 +111,13 @@
         .auth-card {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
-            border-radius: 22px;
+            border-radius: 24px;
             padding: 40px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            box-shadow: var(--shadow-md);
             transition: all 0.6s ease;
             position: relative;
             overflow: hidden;
-        }
-
-        body.lamp-on .auth-card {
-            border-color: color-mix(in srgb, var(--lamp-color) 35%, transparent);
-            box-shadow: 0 15px 50px color-mix(in srgb, var(--lamp-color) 12%, transparent), 
-                        inset 0 0 25px color-mix(in srgb, var(--lamp-color) 8%, transparent);
-            background: rgba(255, 255, 255, 0.05);
+            width: 100%;
         }
 
         .panel {
@@ -302,7 +131,7 @@
 
         .panel h2 {
             font-size: 2rem;
-            font-weight: 600;
+            font-weight: 700;
             margin-bottom: 8px;
             color: var(--text-primary);
             letter-spacing: -0.5px;
@@ -334,12 +163,12 @@
         .input-group input {
             width: 100%;
             padding: 14px 16px;
-            background: rgba(0, 0, 0, 0.2);
+            background: #f8fafc;
             border: 1px solid var(--card-border);
             border-radius: 12px;
-            color: #ffffff;
-            -webkit-text-fill-color: #ffffff;
-            caret-color: #ffffff;
+            color: var(--text-primary);
+            -webkit-text-fill-color: var(--text-primary);
+            caret-color: var(--text-primary);
             font-size: 1rem;
             font-family: inherit;
             outline: none;
@@ -350,14 +179,9 @@
         }
 
         .input-group input:focus {
-            background: rgba(255, 255, 255, 0.05);
+            background: #ffffff;
             border-color: var(--handle-color);
-            box-shadow: 0 0 0 3px rgba(217, 119, 95, 0.15);
-        }
-
-        body.lamp-on .input-group input:focus {
-            border-color: color-mix(in srgb, var(--lamp-color) 80%, transparent);
-            box-shadow: 0 0 0 3px color-mix(in srgb, var(--lamp-color) 20%, transparent);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
         }
 
         .input-group input::placeholder {
@@ -366,12 +190,12 @@
             opacity: 1;
         }
 
-        /* Password Input Visibility & Masking Fix (Desktop & Mobile/Android Chrome) */
+        /* Password Input Visibility & Masking Fix */
         #password,
         input[type="password"] {
-            color: #ffffff !important;
-            -webkit-text-fill-color: #ffffff !important;
-            caret-color: #ffffff !important;
+            color: var(--text-primary) !important;
+            -webkit-text-fill-color: var(--text-primary) !important;
+            caret-color: var(--text-primary) !important;
             opacity: 1 !important;
             font-size: 1rem !important;
             position: relative;
@@ -400,12 +224,12 @@
 
         /* Prevent Chrome Autofill from hiding text or distorting colors */
         input:-webkit-autofill,
-        input:-webkit-autofill:hover, 
+        input:-webkit-autofill:hover,
         input:-webkit-autofill:focus,
         input:-webkit-autofill:active {
-            -webkit-text-fill-color: #ffffff !important;
-            -webkit-box-shadow: 0 0 0 1000px #1a1a1f inset !important;
-            caret-color: #ffffff !important;
+            -webkit-text-fill-color: var(--text-primary) !important;
+            -webkit-box-shadow: 0 0 0 1000px #f1f5f9 inset !important;
+            caret-color: var(--text-primary) !important;
             transition: background-color 5000s ease-in-out 0s;
         }
 
@@ -427,10 +251,11 @@
             z-index: 3;
         }
 
-        .password-toggle:hover, .password-toggle:focus-visible {
+        .password-toggle:hover,
+        .password-toggle:focus-visible {
             color: var(--text-primary);
         }
-        
+
         .password-toggle:focus-visible {
             box-shadow: 0 0 0 2px var(--handle-color);
         }
@@ -502,15 +327,15 @@
         }
 
         .btn-primary:disabled {
-            background-color: rgba(255, 255, 255, 0.05);
-            border-color: rgba(255, 255, 255, 0.1);
-            color: rgba(255, 255, 255, 0.4);
+            background-color: #e2e8f0;
+            border-color: #cbd5e1;
+            color: #94a3b8;
             cursor: not-allowed;
             box-shadow: none;
         }
-        
+
         .btn-primary:focus-visible {
-            outline: 2px solid #fff;
+            outline: 2px solid var(--text-primary);
             outline-offset: 2px;
         }
 
@@ -523,14 +348,20 @@
             font-weight: 500;
         }
 
-        .divider::before, .divider::after {
+        .divider::before,
+        .divider::after {
             content: '';
             flex: 1;
             border-bottom: 1px solid var(--card-border);
         }
 
-        .divider::before { margin-right: 15px; }
-        .divider::after { margin-left: 15px; }
+        .divider::before {
+            margin-right: 15px;
+        }
+
+        .divider::after {
+            margin-left: 15px;
+        }
 
         .btn-secondary {
             width: 100%;
@@ -551,12 +382,12 @@
         }
 
         .btn-secondary:hover:not(:disabled) {
-            background-color: rgba(255, 255, 255, 0.05);
-            border-color: rgba(255, 255, 255, 0.2);
+            background-color: #f8fafc;
+            border-color: #cbd5e1;
         }
-        
+
         .btn-secondary:focus-visible {
-            outline: 2px solid #fff;
+            outline: 2px solid var(--text-primary);
             outline-offset: 2px;
         }
 
@@ -567,7 +398,7 @@
             color: var(--text-secondary);
         }
 
-        /* Standalone link button - used outside form-footer (e.g. Forgot Password) */
+        /* Standalone link button */
         button.link-btn {
             background: none;
             border: none;
@@ -580,10 +411,13 @@
             outline: none;
             padding: 0;
         }
-        button.link-btn:hover, button.link-btn:focus-visible {
+
+        button.link-btn:hover,
+        button.link-btn:focus-visible {
             color: var(--text-primary);
             text-decoration: underline;
         }
+
         button.link-btn:focus-visible {
             box-shadow: 0 0 0 2px var(--handle-color);
             border-radius: 2px;
@@ -602,13 +436,10 @@
             outline: none;
         }
 
-        body.lamp-on .form-footer button.link-btn {
-            color: var(--lamp-color);
-        }
-
         .form-footer button.link-btn:hover {
             text-decoration: underline;
         }
+
         .form-footer button.link-btn:focus-visible {
             text-decoration: underline;
         }
@@ -621,149 +452,76 @@
             display: none;
             animation: fadeIn 0.3s ease;
         }
+
         .msg-success {
             color: var(--success-color);
             font-size: 0.9rem;
             margin-bottom: 20px;
             display: none;
             animation: fadeIn 0.3s ease;
-            background: rgba(74, 222, 128, 0.1);
+            background: rgba(16, 185, 129, 0.1);
             padding: 12px;
             border-radius: 8px;
-            border: 1px solid rgba(74, 222, 128, 0.2);
+            border: 1px solid rgba(16, 185, 129, 0.2);
         }
 
         .spinner {
             width: 18px;
             height: 18px;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-top-color: #fff;
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            border-top-color: currentColor;
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
-        }
-
-        /* ==================================================
-           8. COLOR INDICATORS
-           ================================================== */
-        .color-dots {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            margin-top: -10px;
-            z-index: 5;
-            position: relative;
-        }
-
-        .color-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
-            opacity: 0.4;
-        }
-
-        .color-dot:hover {
-            transform: scale(1.3);
-            opacity: 0.8;
-        }
-
-        .color-dot.active {
-            opacity: 1;
-            transform: scale(1.4);
-            box-shadow: 0 0 0 2px var(--bg-base), 0 0 0 3px currentColor, 0 0 10px currentColor;
-        }
-        
-        .color-dot:focus-visible {
-            outline: none;
-            transform: scale(1.4);
-            box-shadow: 0 0 0 2px #fff;
-            opacity: 1;
         }
 
         /* ==================================================
            9. ANIMATIONS
            ================================================== */
         @keyframes elegantFadeIn {
-            to { opacity: 1; transform: translateY(0); }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
-
-        #lampshade-group {
-            transform-origin: 150px 140px;
-        }
-
-        @keyframes bounceShade {
-            0% { transform: translateY(0); }
-            30% { transform: translateY(-6px); }
-            100% { transform: translateY(0); }
-        }
-        .bounce { animation: bounceShade 0.4s ease; }
-
-        @keyframes flashBulb {
-            0% { filter: brightness(1) drop-shadow(0 0 15px var(--lamp-color)); }
-            50% { filter: brightness(1.6) drop-shadow(0 0 30px var(--lamp-color)); }
-            100% { filter: brightness(1) drop-shadow(0 0 15px var(--lamp-color)); }
-        }
-        .flash { animation: flashBulb 0.4s ease; }
 
         /* ==================================================
            10. RESPONSIVE
            ================================================== */
-        @media (max-width: 850px) {
-            .page-container { gap: 40px; }
-        }
-
-        @media (max-width: 768px) {
-            .page-container {
-                flex-direction: column;
-                padding: 30px 16px;
-                gap: 24px;
-            }
-            .brand-logo-container {
-                position: static;
-                width: 100%;
-                justify-content: center;
-                margin-bottom: -10px;
-                order: 1;
-            }
-            .auth-section {
-                order: 2;
-                width: 100%;
-            }
-            .lamp-section {
-                order: 3;
-                max-width: 240px;
-                height: auto;
-                align-self: center;
-            }
-            .auth-card {
-                padding: 30px 20px;
-                width: 100%;
-                max-width: 100%;
-            }
-            .color-dots {
-                margin-top: -5px;
-            }
-        }
-
         @media (max-width: 430px) {
-            .lamp-section { max-width: 200px; }
+            body {
+                padding: 24px 16px;
+            }
+
             .auth-card {
                 padding: 24px 16px;
                 border-radius: 20px;
             }
-            .panel h2 { font-size: 1.75rem; }
-            .input-group input, .btn-primary, .btn-secondary {
-                min-height: 48px; /* Touch target size */
+
+            .panel h2 {
+                font-size: 1.75rem;
+            }
+
+            .input-group input,
+            .btn-primary,
+            .btn-secondary {
+                min-height: 48px;
+                /* Touch target size */
             }
         }
     </style>
@@ -779,14 +537,16 @@
             z-index: 9999;
             transition: opacity 0.4s ease;
         }
+
         #auth-loading-overlay.hidden {
             opacity: 0;
             pointer-events: none;
         }
+
         .auth-loader-ring {
             width: 40px;
             height: 40px;
-            border: 3px solid rgba(255,255,255,0.1);
+            border: 3px solid #e2e8f0;
             border-top-color: var(--handle-color);
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
@@ -794,7 +554,8 @@
     </style>
     <script src="auth-status.js" defer></script>
 </head>
-<body class="lamp-off">
+
+<body>
 
     <!-- AUTH LOADING OVERLAY: Hides content until Firebase resolves auth state -->
     <div id="auth-loading-overlay">
@@ -802,10 +563,12 @@
     </div>
 
     <div class="page-container">
-        
+
         <!-- BRAND LOGO -->
-        <div class="brand-logo-container">
-            <svg class="brand-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#F6C84C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-label="Education Icon">
+        <div class="sticky-header-wrapper" style="position: sticky; top: 0; z-index: 40; display: flex; flex-direction: column; width: 100%;">
+<div class="brand-logo-container">
+            <svg class="brand-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#3B82F6"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-label="Education Icon">
                 <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
                 <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
             </svg>
@@ -814,75 +577,36 @@
                 <span class="brand-text-study">STUDY</span>
             </div>
         </div>
+<style>
+.dev-credit-widget {
+    text-align: center;
+    font-family: inherit;
+    font-size: 12.5px;
+    box-sizing: border-box;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.dev-credit-label { color: #475569; }
+.dev-credit-name { color: #1E3A5F; font-weight: 600; }
+.dev-credit-dept { color: #475569; }
+.dev-credit-separator { color: #64748B; margin: 0 4px; }
+@media (max-width: 480px) {
+    .dev-credit-widget { font-size: 11px; padding-left: 4px; padding-right: 4px; }
+    .dev-credit-separator { margin: 0 2px; }
+}
+</style>
+<div class="developer-credit-strip dev-credit-widget" style="padding: 9px 8px; background-color: var(--bg-base, #f8fafc); border-bottom: 1px solid var(--card-border, #e2e8f0); z-index: 50; position: relative;">
+    <span class="dev-credit-label">Developed by </span><span class="dev-credit-name">Pragati Deshmukh</span> <span class="dev-credit-dept">· DS</span><span class="dev-credit-separator">|</span><span class="dev-credit-name">Pavan Wadile</span> <span class="dev-credit-dept">· IT</span>
+</div>
+</div>
 
-        <!-- LAMP SECTION -->
-        <div class="lamp-section">
-            <!-- Full lamp is interactive -->
-            <svg viewBox="0 0 300 500" class="lamp-svg" id="lamp-container" role="button" aria-label="Interactive Lamp Toggle and Color Cycle" tabindex="0">
-                <defs>
-                    <linearGradient id="beam-gradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stop-color="var(--lamp-color)" stop-opacity="0.8" />
-                        <stop offset="40%" stop-color="var(--lamp-color)" stop-opacity="0.25" />
-                        <stop offset="100%" stop-color="var(--lamp-color)" stop-opacity="0" />
-                    </linearGradient>
-                </defs>
-
-                <!-- Light Beam -->
-                <polygon points="100,165 200,165 380,550 -80,550" fill="url(#beam-gradient)" class="beam" />
-                
-                <g class="lamp-body">
-                    <!-- Base -->
-                    <rect x="100" y="450" width="100" height="16" rx="8" class="metal-part" />
-                    <rect x="135" y="435" width="30" height="15" class="metal-part" />
-                    
-                    <!-- Lower Pole -->
-                    <rect x="144" y="200" width="12" height="240" class="metal-part" rx="6" />
-                    
-                    <!-- Joint -->
-                    <circle cx="150" cy="200" r="14" fill="#64748b" />
-                    <circle cx="150" cy="200" r="6" fill="#475569" />
-                    
-                    <!-- Upper Pole -->
-                    <line x1="150" y1="200" x2="150" y2="140" stroke="var(--pole-color-off)" stroke-width="12" stroke-linecap="round" />
-                    
-                    <!-- Dynamic Bouncing Shade Group -->
-                    <g id="lampshade-group">
-                        <!-- Lampshade Dome -->
-                        <path d="M 50 150 C 50 35 250 35 250 150 Z" class="shade-dome" />
-                        
-                        <!-- Face -->
-                        <g class="face">
-                            <!-- Eyes -->
-                            <circle cx="110" cy="115" r="5" class="face-part" />
-                            <circle cx="111.5" cy="113" r="1.5" fill="#fff" />
-                            <circle cx="190" cy="115" r="5" class="face-part" />
-                            <circle cx="191.5" cy="113" r="1.5" fill="#fff" />
-                            
-                            <!-- Smile -->
-                            <path d="M 138 128 Q 150 138 162 128" class="face-stroke" stroke-width="3.5" stroke-linecap="round" />
-                        </g>
-
-                        <!-- Shade Bottom Opening -->
-                        <ellipse cx="150" cy="150" rx="100" ry="18" class="shade-opening" />
-                        
-                        <!-- Light Bulb Core -->
-                        <circle cx="150" cy="155" r="16" class="bulb" id="bulb-element" />
-
-                        <!-- Pull Cord System (Separate Interaction) -->
-                        <g id="pull-system" class="interactive-cord" role="button" aria-label="Toggle Lamp Power" tabindex="0">
-                            <line id="cord-line" x1="220" y1="150" x2="220" y2="280" stroke="#64748b" stroke-width="3.5" stroke-linecap="round" />
-                            <rect id="cord-handle" x="213" y="280" width="14" height="28" rx="7" />
-                        </g>
-                    </g>
-                </g>
-            </svg>
-            <div class="color-dots" id="color-dots" aria-label="Select Lamp Color"></div>
-        </div>
 
         <!-- AUTH SECTION -->
         <div class="auth-section">
             <div class="auth-card">
-                
+
                 <!-- 1. LOGIN PANEL -->
                 <div id="panel-login" class="panel active">
                     <form id="form-login">
@@ -897,15 +621,13 @@
 
                         <div class="input-group">
                             <label for="password">Password</label>
-                            <input
-                              type="password"
-                              id="password"
-                              placeholder="Enter your password"
-                              autocomplete="current-password"
-                            >
-                            <button type="button" class="password-toggle" id="toggle-login-pwd" aria-label="Show password">
+                            <input type="password" id="password" placeholder="Enter your password"
+                                autocomplete="current-password">
+                            <button type="button" class="password-toggle" id="toggle-login-pwd"
+                                aria-label="Show password">
                                 <!-- Eye Icon -->
-                                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                                     <circle cx="12" cy="12" r="3"></circle>
                                 </svg>
@@ -918,10 +640,12 @@
                                 <input type="checkbox" id="remember-me" checked>
                                 <span>Remember me</span>
                             </label>
-                            <button type="button" class="link-btn forgot-link" id="nav-to-forgot">Forgot Password?</button>
+                            <button type="button" class="link-btn forgot-link" id="nav-to-forgot">Forgot
+                                Password?</button>
                         </div>
 
-                        <span class="msg-error" id="err-login-general" style="margin-bottom: 12px; display:block;" aria-live="polite"></span>
+                        <span class="msg-error" id="err-login-general" style="margin-bottom: 12px; display:block;"
+                            aria-live="polite"></span>
 
                         <button type="submit" class="btn-primary" id="btn-login">
                             <span class="btn-text">Login</span>
@@ -930,20 +654,30 @@
 
                         <div class="divider">OR</div>
 
-                        <div id="googleAuthError" class="msg-error" aria-live="polite" style="margin-bottom: 12px; display:none;"></div>
+                        <div id="googleAuthError" class="msg-error" aria-live="polite"
+                            style="margin-bottom: 12px; display:none;"></div>
                         <button type="button" class="btn-secondary" id="googleLoginBtn">
                             <svg viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-                                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                                <path
+                                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                                    fill="#4285F4" />
+                                <path
+                                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                                    fill="#34A853" />
+                                <path
+                                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                                    fill="#FBBC05" />
+                                <path
+                                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                                    fill="#EA4335" />
                             </svg>
                             <span class="btn-text">Continue with Google</span>
                             <span class="spinner" style="display:none;"></span>
                         </button>
 
                         <div class="form-footer">
-                            Don't have an account? <button type="button" class="link-btn" id="nav-to-signup">Sign Up</button>
+                            Don't have an account? <button type="button" class="link-btn" id="nav-to-signup">Sign
+                                Up</button>
                         </div>
                     </form>
                 </div>
@@ -953,7 +687,7 @@
                     <form id="form-signup">
                         <h2>Create Account</h2>
                         <p class="subtitle">Join us and start studying</p>
-                        
+
                         <div class="input-group">
                             <label for="signup-name">Full Name</label>
                             <input type="text" id="signup-name" placeholder="John Doe" autocomplete="name">
@@ -968,9 +702,12 @@
 
                         <div class="input-group">
                             <label for="signup-password">Password</label>
-                            <input type="password" id="signup-password" placeholder="••••••••" autocomplete="new-password">
-                            <button type="button" class="password-toggle" id="toggle-signup-pwd" aria-label="Show password">
-                                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <input type="password" id="signup-password" placeholder="••••••••"
+                                autocomplete="new-password">
+                            <button type="button" class="password-toggle" id="toggle-signup-pwd"
+                                aria-label="Show password">
+                                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                                     <circle cx="12" cy="12" r="3"></circle>
                                 </svg>
@@ -980,9 +717,12 @@
 
                         <div class="input-group">
                             <label for="signup-confirm">Confirm Password</label>
-                            <input type="password" id="signup-confirm" placeholder="••••••••" autocomplete="new-password">
-                            <button type="button" class="password-toggle" id="toggle-signup-confirm" aria-label="Show password">
-                                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <input type="password" id="signup-confirm" placeholder="••••••••"
+                                autocomplete="new-password">
+                            <button type="button" class="password-toggle" id="toggle-signup-confirm"
+                                aria-label="Show password">
+                                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                                     <circle cx="12" cy="12" r="3"></circle>
                                 </svg>
@@ -990,7 +730,8 @@
                             <span class="msg-error" id="err-signup-confirm"></span>
                         </div>
 
-                        <span class="msg-error" id="err-signup-general" style="margin-bottom: 12px; display:block;"></span>
+                        <span class="msg-error" id="err-signup-general"
+                            style="margin-bottom: 12px; display:block;"></span>
 
                         <button type="submit" class="btn-primary" id="btn-signup" style="margin-top: 10px;">
                             <span class="btn-text">Create Account</span>
@@ -998,7 +739,8 @@
                         </button>
 
                         <div class="form-footer">
-                            Already have an account? <button type="button" class="link-btn" id="nav-to-login">Sign In</button>
+                            Already have an account? <button type="button" class="link-btn" id="nav-to-login">Sign
+                                In</button>
                         </div>
                     </form>
                 </div>
@@ -1008,7 +750,7 @@
                     <form id="form-forgot">
                         <h2>Reset Password</h2>
                         <p class="subtitle">Enter your email and we'll send you a password reset link.</p>
-                        
+
                         <div class="msg-success" id="msg-forgot-success" aria-live="polite"></div>
 
                         <div class="input-group">
@@ -1017,7 +759,8 @@
                             <span class="msg-error" id="err-forgot-email"></span>
                         </div>
 
-                        <span class="msg-error" id="err-forgot-general" style="margin-bottom: 12px; display:block;"></span>
+                        <span class="msg-error" id="err-forgot-general"
+                            style="margin-bottom: 12px; display:block;"></span>
 
                         <button type="submit" class="btn-primary" id="btn-forgot" style="margin-top: 10px;">
                             <span class="btn-text">Send Reset Link</span>
@@ -1041,7 +784,7 @@
         // --------------------------------------------------
         // 1. FIREBASE INITIALIZATION & IMPORTS
         // --------------------------------------------------
-        import { 
+        import {
             auth,
             onAuthStateChanged,
             signInWithEmailAndPassword,
@@ -1111,118 +854,6 @@
         });
 
         // --------------------------------------------------
-        // 3. LAMP STATE & COLOR CYCLING
-        // --------------------------------------------------
-        const colors = [
-            { name: 'Warm Yellow', hex: '#FFD86B' },
-            { name: 'Soft Orange', hex: '#FF9F68' },
-            { name: 'Coral Pink',  hex: '#FF7A8A' },
-            { name: 'Purple',      hex: '#A78BFA' },
-            { name: 'Electric Blue',hex: '#60A5FA' },
-            { name: 'Cyan',        hex: '#67E8F9' },
-            { name: 'Mint Green',  hex: '#6EE7B7' },
-            { name: 'Soft White',  hex: '#FFF4DC' }
-        ];
-
-        let currentColorIndex = 0;
-        const root = document.documentElement;
-        const body = document.body;
-        
-        const lampSvg = document.getElementById('lamp-container');
-        const pullSystem = document.getElementById('pull-system');
-        const dotsContainer = document.getElementById('color-dots');
-        const shadeGroup = document.getElementById('lampshade-group');
-        const bulbEl = document.getElementById('bulb-element');
-
-        function applyColor(index) {
-            const hex = colors[index].hex;
-            root.style.setProperty('--lamp-color', hex);
-            
-            // update dots UI
-            document.querySelectorAll('.color-dot').forEach((dot, i) => {
-                dot.classList.toggle('active', i === index);
-            });
-        }
-
-        function playLampFeedback() {
-            // Remove animation classes
-            shadeGroup.classList.remove('bounce');
-            bulbEl.classList.remove('flash');
-            
-            // Trigger browser reflow to restart animation
-            void shadeGroup.offsetWidth; 
-            
-            // Add classes back
-            shadeGroup.classList.add('bounce');
-            bulbEl.classList.add('flash');
-        }
-
-        function setLampState(turnOn) {
-            if (turnOn) {
-                body.classList.remove('lamp-off');
-                body.classList.add('lamp-on');
-            } else {
-                body.classList.remove('lamp-on');
-                body.classList.add('lamp-off');
-            }
-        }
-
-        // Initialize indicator dots
-        colors.forEach((c, i) => {
-            const dot = document.createElement('button');
-            dot.className = 'color-dot';
-            dot.style.backgroundColor = c.hex;
-            dot.style.color = c.hex;
-            dot.setAttribute('aria-label', `Select ${c.name} light`);
-            dot.addEventListener('click', (e) => {
-                e.stopPropagation();
-                currentColorIndex = i;
-                applyColor(i);
-                setLampState(true);
-                playLampFeedback();
-            });
-            dotsContainer.appendChild(dot);
-        });
-        
-        // Initial setup
-        applyColor(0);
-
-        // SVG click (entire lamp)
-        lampSvg.addEventListener('click', () => {
-            if (body.classList.contains('lamp-on')) {
-                // Cycle
-                currentColorIndex = (currentColorIndex + 1) % colors.length;
-                applyColor(currentColorIndex);
-            } else {
-                // Turn on
-                setLampState(true);
-            }
-            playLampFeedback();
-        });
-
-        lampSvg.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                lampSvg.click();
-            }
-        });
-
-        // Pull handle click
-        pullSystem.addEventListener('click', (e) => {
-            e.stopPropagation(); // prevent parent SVG click
-            setLampState(!body.classList.contains('lamp-on'));
-            playLampFeedback();
-        });
-
-        pullSystem.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                e.stopPropagation();
-                pullSystem.click();
-            }
-        });
-
-        // --------------------------------------------------
         // 4. UI / PANEL SWITCHING
         // --------------------------------------------------
         function switchPanel(panelId) {
@@ -1255,7 +886,7 @@
             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
             <circle cx="12" cy="12" r="3"></circle>
         </svg>`;
-        
+
         const iconEyeSlash = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
             <line x1="1" y1="1" x2="23" y2="23"></line>
@@ -1283,14 +914,14 @@
         // --------------------------------------------------
         function showError(id, msg) {
             const el = document.getElementById(id);
-            if(el) {
+            if (el) {
                 el.textContent = msg;
                 el.style.display = 'block';
             }
         }
         function clearError(id) {
             const el = document.getElementById(id);
-            if(el) {
+            if (el) {
                 el.textContent = '';
                 el.style.display = 'none';
             }
@@ -1301,9 +932,9 @@
                 clearError(`err-${inp.id}`);
                 // also clear general errors on that form
                 const form = inp.closest('form');
-                if(form) {
+                if (form) {
                     const generalError = form.querySelector('[id$="-general"]');
-                    if(generalError) clearError(generalError.id);
+                    if (generalError) clearError(generalError.id);
                 }
             });
         });
@@ -1340,9 +971,9 @@
             const spanText = btn.querySelector('.btn-text');
             const spinner = btn.querySelector('.spinner');
             const icon = btn.querySelector('svg');
-            
+
             btn.disabled = isLoading;
-            if(isLoading) {
+            if (isLoading) {
                 btn.dataset.originalText = spanText.textContent;
                 spanText.textContent = text;
                 spinner.style.display = 'block';
@@ -1374,7 +1005,7 @@
             if (!valid) return;
 
             setLoading('btn-login', true, 'Logging in...');
-            
+
             try {
                 const persistence = rememberMe ? browserLocalPersistence : browserSessionPersistence;
                 await setPersistence(auth, persistence);
@@ -1404,7 +1035,7 @@
             } catch (error) {
                 console.error("Popup Sign-in Error:", error);
                 const code = error.code || '';
-                
+
                 // Fallback for appropriate popup-related errors
                 if (code === 'auth/popup-blocked' || code === 'auth/operation-not-supported-in-this-environment') {
                     try {
@@ -1460,12 +1091,12 @@
         document.getElementById('form-forgot').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('forgot-email').value.trim();
-            
-            if (!email) { 
-                showError('err-forgot-email', 'Email is required.'); 
+
+            if (!email) {
+                showError('err-forgot-email', 'Email is required.');
                 return;
-            } else if (!isValidEmail(email)) { 
-                showError('err-forgot-email', 'Invalid email format.'); 
+            } else if (!isValidEmail(email)) {
+                showError('err-forgot-email', 'Invalid email format.');
                 return;
             }
 
@@ -1486,4 +1117,5 @@
 
     </script>
 </body>
+
 </html>

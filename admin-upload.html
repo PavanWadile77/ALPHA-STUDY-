@@ -58,10 +58,13 @@
 
         /* HEADER */
         .admin-header {
+            position: sticky;
+            top: 0;
+            z-index: 40;
             height: 72px; background: rgba(20,23,34,0.8);
             backdrop-filter: blur(16px); border-bottom: 1px solid var(--border-color);
             display: flex; align-items: center; justify-content: space-between;
-            padding: 0 32px; position: sticky; top: 0; z-index: 100;
+            padding: 0 32px;   z-index: 100;
         }
         .brand-section { display: flex; align-items: center; gap: 12px; }
         .brand-logo {
@@ -213,7 +216,10 @@
         }
 
         @media (max-width: 768px) {
-            .admin-header { padding: 0 16px; }
+            .admin-header {
+            position: sticky;
+            top: 0;
+            z-index: 40; padding: 0 16px; }
             .nav-links { display: none; }
             .form-grid { grid-template-columns: 1fr; }
             .col-span-2 { grid-column: span 1; }
@@ -265,6 +271,7 @@
                 </button>
             </div>
         </header>
+
 
         <main class="upload-container">
             <div class="page-intro">
