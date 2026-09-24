@@ -1,16 +1,53 @@
-# React + Vite
+# Alpha Study 📚
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A web-based study platform focused on organizing **academic learning resources, study materials, and student workflows**.
 
-Currently, two official plugins are available:
+## Overview
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Alpha Study is designed as a student-oriented platform with dedicated pages for learning materials and administrative management.
 
-## React Compiler
+## ✨ Highlights
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Student study interface
+- Academic material management
+- Admin login and dashboard
+- Material upload workflow
+- Material browsing
+- Firebase-backed project configuration
+- Responsive web pages
 
-## Expanding the Oxlint configuration
+## 📂 Main Areas
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+- Student-facing study pages
+- Admin login
+- Admin dashboard
+- Material management
+- Material upload
+- Project configuration and deployment files
+
+## ▶️ Getting Started
+
+Clone the repository:
+
+```bash
+git clone https://github.com/PavanWadile77/ALPHA-STUDY-.git
+cd ALPHA-STUDY-
+```
+
+The repository contains static HTML pages and Firebase configuration. Open the relevant HTML entry point through a local web server during development.
+
+## 🔐 Security
+
+Firebase configuration should be reviewed before production deployment. Never commit private credentials, service-account files, or other secrets.
+
+## 📁 Repository
+
+https://github.com/PavanWadile77/ALPHA-STUDY-
+
+## Author
+
+**Pavan Wadile**
+
+---
+
+Built as an educational project for improving access to organized study resources.
