@@ -1,53 +1,42 @@
 # Alpha Study 📚
 
-A web-based study platform focused on organizing **academic learning resources, study materials, and student workflows**.
+A student-focused **digital learning platform** designed to organize academic resources, study materials, and administrative workflows.
 
-## Overview
+🌐 **Live:** http://alpha-study-one.vercel.app/
 
-Alpha Study is designed as a student-oriented platform with dedicated pages for learning materials and administrative management.
+## 🎯 Purpose
+Make academic resources easier to organize, discover, and manage for students.
 
 ## ✨ Highlights
-
-- Student study interface
+- Student-oriented study interface
 - Academic material management
-- Admin login and dashboard
-- Material upload workflow
-- Material browsing
-- Firebase-backed project configuration
-- Responsive web pages
+- Admin authentication and dashboard
+- Material upload and browsing
+- Firebase-backed configuration
+- Responsive web experience
 
-## 📂 Main Areas
-
-- Student-facing study pages
+## 🧩 Main Modules
+- Student learning area
 - Admin login
 - Admin dashboard
 - Material management
 - Material upload
-- Project configuration and deployment files
+- Firebase configuration
 
 ## ▶️ Getting Started
-
-Clone the repository:
-
 ```bash
 git clone https://github.com/PavanWadile77/ALPHA-STUDY-.git
 cd ALPHA-STUDY-
 ```
 
-The repository contains static HTML pages and Firebase configuration. Open the relevant HTML entry point through a local web server during development.
+Run the HTML application through a local web server.
+
+## 🔗 Links
+- 🌐 [Live Application](http://alpha-study-one.vercel.app/)
+- 💻 [GitHub Repository](https://github.com/PavanWadile77/ALPHA-STUDY-)
 
 ## 🔐 Security
+Review Firebase configuration before production deployment and never commit private credentials.
 
-Firebase configuration should be reviewed before production deployment. Never commit private credentials, service-account files, or other secrets.
-
-## 📁 Repository
-
-https://github.com/PavanWadile77/ALPHA-STUDY-
-
-## Author
-
-**Pavan Wadile**
-
----
-
-Built as an educational project for improving access to organized study resources.
+## 👨‍💻 Author
+**Pavan Wadile** · B.Tech Information Technology Student
