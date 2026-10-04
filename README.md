@@ -1,5 +1,14 @@
 # Alpha Study 📚
 
+<div align="center">
+
+**EdTech • Learning Platform**
+
+<img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white">
+
+</div>
+
+
 A student-focused **digital learning platform** designed to organize academic resources, study materials, and administrative workflows.
 
 🌐 **Live:** http://alpha-study-one.vercel.app/
@@ -40,3 +49,18 @@ Review Firebase configuration before production deployment and never commit priv
 
 ## 👨‍💻 Author
 **Pavan Wadile** · B.Tech Information Technology Student
+
+## 🔧 Engineering Focus
+
+Student learning, academic material management, admin workflows and Firebase configuration.
+
+
+---
+
+<div align="center">
+
+**Pavan Wadile · B.Tech Information Technology**
+
+[GitHub](https://github.com/PavanWadile77)
+
+</div>
