@@ -2,6 +2,13 @@
 
 <div align="center">
 
+<img src="https://komarev.com/ghpvc/?username=PavanWadile77&label=PROFILE+VIEWS&color=2563EB&style=for-the-badge" alt="Profile views" />
+
+</div>
+
+
+<div align="center">
+
 **EdTech • Learning Platform**
 
 <img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white">
